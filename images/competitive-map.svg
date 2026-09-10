@@ -1,0 +1,66 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" font-family="'Segoe UI',Helvetica,Arial,sans-serif" role="img" aria-label="Competitive positioning map: statutory-filing depth versus price">
+  <!-- Plot panel: mid-tone so it reads on both light and dark page backgrounds -->
+  <rect x="120" y="60" width="720" height="440" rx="10" fill="#c9cfd8" stroke="#8b93a1" stroke-width="1.5"/>
+
+  <!-- Highlight band: deep-filing region where "us" sits -->
+  <rect x="480" y="60" width="360" height="440" rx="0" fill="#e5814f" opacity="0.14"/>
+
+  <!-- Quadrant dividers -->
+  <line x1="480" y1="60" x2="480" y2="500" stroke="#7c8494" stroke-width="1.2" stroke-dasharray="6 5"/>
+  <line x1="120" y1="280" x2="840" y2="280" stroke="#7c8494" stroke-width="1.2" stroke-dasharray="6 5"/>
+
+  <!-- Quadrant captions -->
+  <text x="290" y="88" text-anchor="middle" fill="#5a6270" font-size="12" font-style="italic">Premium suite, shallow filing</text>
+  <text x="670" y="88" text-anchor="middle" fill="#5a6270" font-size="12" font-style="italic">Premium, deep filing</text>
+  <text x="290" y="486" text-anchor="middle" fill="#5a6270" font-size="12" font-style="italic">Free / cheap, shallow filing</text>
+  <text x="670" y="486" text-anchor="middle" fill="#5a6270" font-size="12" font-style="italic">Value, deep filing</text>
+
+  <!-- Axes -->
+  <line x1="120" y1="500" x2="855" y2="500" stroke="#3a3f4b" stroke-width="2"/>
+  <line x1="120" y1="500" x2="120" y2="52" stroke="#3a3f4b" stroke-width="2"/>
+  <polygon points="855,500 845,495 845,505" fill="#3a3f4b"/>
+  <polygon points="120,52 115,62 125,62" fill="#3a3f4b"/>
+
+  <!-- Axis titles -->
+  <text x="480" y="540" text-anchor="middle" fill="#2a2f3a" font-size="15" font-weight="600">Statutory-filing depth &#8594;</text>
+  <text x="150" y="502" text-anchor="start" fill="#5a6270" font-size="12">shallow</text>
+  <text x="828" y="502" text-anchor="end" fill="#5a6270" font-size="12">deep (EPF / ESI / PT / 24Q / LWF)</text>
+  <text x="70" y="280" text-anchor="middle" fill="#2a2f3a" font-size="15" font-weight="600" transform="rotate(-90 70 280)">Price &#8594;</text>
+  <text x="112" y="496" text-anchor="end" fill="#5a6270" font-size="12">free</text>
+  <text x="112" y="72" text-anchor="end" fill="#5a6270" font-size="12">premium</text>
+
+  <!-- Title -->
+  <text x="120" y="34" fill="#2a2f3a" font-size="19" font-weight="700">India HRMS competitive map</text>
+  <text x="120" y="52" fill="#5a6270" font-size="12">Filing depth &#215; price &#8212; the deep-filing / value quadrant is uncontested</text>
+
+  <!-- Competitor points (mid-tone fills, dark text) -->
+  <!-- Kredily d2 p1 -->
+  <circle cx="264" cy="456" r="9" fill="#7fb3a2" stroke="#3a3f4b" stroke-width="1.2"/>
+  <text x="264" y="479" text-anchor="middle" fill="#2a2f3a" font-size="13" font-weight="600">Kredily</text>
+
+  <!-- Zoho d4 p3 -->
+  <circle cx="408" cy="368" r="9" fill="#d99a6c" stroke="#3a3f4b" stroke-width="1.2"/>
+  <text x="408" y="391" text-anchor="middle" fill="#2a2f3a" font-size="13" font-weight="600">Zoho</text>
+
+  <!-- greytHR d6.5 p4.5 -->
+  <circle cx="588" cy="302" r="9" fill="#7ba6d0" stroke="#3a3f4b" stroke-width="1.2"/>
+  <text x="588" y="325" text-anchor="middle" fill="#2a2f3a" font-size="13" font-weight="600">greytHR</text>
+
+  <!-- Keka d5 p5.5 -->
+  <circle cx="480" cy="258" r="9" fill="#b38fc4" stroke="#3a3f4b" stroke-width="1.2"/>
+  <text x="480" y="248" text-anchor="middle" fill="#2a2f3a" font-size="13" font-weight="600">Keka</text>
+
+  <!-- PeopleStrong d5 p8.5 -->
+  <circle cx="480" cy="126" r="9" fill="#c4ab63" stroke="#3a3f4b" stroke-width="1.2"/>
+  <text x="468" y="118" text-anchor="end" fill="#2a2f3a" font-size="13" font-weight="600">PeopleStrong</text>
+
+  <!-- Darwinbox d5.5 p9 -->
+  <circle cx="516" cy="104" r="9" fill="#d98fa8" stroke="#3a3f4b" stroke-width="1.2"/>
+  <text x="528" y="99" text-anchor="start" fill="#2a2f3a" font-size="13" font-weight="600">Darwinbox</text>
+
+  <!-- us d9 p5 -->
+  <circle cx="768" cy="280" r="16" fill="none" stroke="#e5814f" stroke-width="2.5" opacity="0.9"/>
+  <circle cx="768" cy="280" r="11" fill="#e5814f" stroke="#3a3f4b" stroke-width="1.5"/>
+  <text x="768" y="256" text-anchor="middle" fill="#2a2f3a" font-size="15" font-weight="700">Us</text>
+  <text x="768" y="308" text-anchor="middle" fill="#8a4a25" font-size="11" font-weight="600">filing-first, mid-price</text>
+</svg>

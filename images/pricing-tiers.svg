@@ -1,0 +1,123 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" font-family="'Segoe UI',Helvetica,Arial,sans-serif" role="img" aria-label="Pricing tiers: Free funnel under 20, filing-based Beachhead 20 to 200, tapered Expansion 200 to 2000, with feature gates and why-not-the-free-alternative note">
+
+  <!-- Title -->
+  <text x="16" y="30" fill="#2a2f3a" font-size="19" font-weight="700">HRMS pricing tiers &#8212; the filing layer is the paywall</text>
+  <text x="16" y="50" fill="#5a6270" font-size="11.5">Free funnel &#183; filing-based beachhead &#183; tapered expansion. The price floor is &#8377;0 and defended &#8212; we monetise the filing, not the payslip.</text>
+
+  <!-- ===== Row stripes (body 164-500) ===== -->
+  <rect x="16" y="164" width="868" height="48" fill="#c9cfd8"/>
+  <rect x="16" y="212" width="868" height="48" fill="#bfc6cf"/>
+  <rect x="16" y="260" width="868" height="48" fill="#c9cfd8"/>
+  <rect x="16" y="356" width="868" height="48" fill="#c9cfd8"/>
+  <rect x="16" y="404" width="868" height="48" fill="#bfc6cf"/>
+  <rect x="16" y="452" width="868" height="48" fill="#c9cfd8"/>
+
+  <!-- Filing-as-a-service row: the boundary, emphasised -->
+  <rect x="16" y="308" width="868" height="48" fill="#e5814f" opacity="0.16"/>
+  <rect x="16" y="308" width="4" height="48" fill="#e5814f"/>
+
+  <!-- ===== Header bands ===== -->
+  <!-- Free (muted teal) -->
+  <rect x="246" y="76" width="208" height="88" rx="8" fill="#9fc3b6"/>
+  <!-- Beachhead (muted orange) -->
+  <rect x="458" y="76" width="208" height="88" rx="8" fill="#e5a074"/>
+  <!-- Expansion (muted blue) -->
+  <rect x="670" y="76" width="214" height="88" rx="8" fill="#9fbdd8"/>
+  <!-- Feature-column header -->
+  <rect x="16" y="76" width="224" height="88" rx="8" fill="#b6bdc8"/>
+  <text x="28" y="115" fill="#2a2f3a" font-size="13" font-weight="700">Capability</text>
+  <text x="28" y="135" fill="#3a3f4b" font-size="11">Gated on headcount, a size</text>
+  <text x="28" y="149" fill="#3a3f4b" font-size="11">proxy &#8212; never crippled features</text>
+
+  <!-- ===== Beachhead highlight overlay (revenue tier) ===== -->
+  <rect x="458" y="76" width="208" height="424" rx="8" fill="#e5814f" opacity="0.10"/>
+  <rect x="458" y="76" width="208" height="424" rx="8" fill="none" stroke="#e5814f" stroke-width="2.5"/>
+
+  <!-- ===== Column separators ===== -->
+  <line x1="243" y1="164" x2="243" y2="500" stroke="#a9b0bc" stroke-width="1"/>
+  <line x1="668" y1="164" x2="668" y2="500" stroke="#a9b0bc" stroke-width="1"/>
+
+  <!-- ===== Tier header text ===== -->
+  <!-- Free -->
+  <text x="350" y="102" text-anchor="middle" fill="#2a2f3a" font-size="16" font-weight="700">FREE</text>
+  <text x="350" y="123" text-anchor="middle" fill="#33413b" font-size="12">&lt; 20 employees</text>
+  <text x="350" y="147" text-anchor="middle" fill="#2a2f3a" font-size="15" font-weight="700">&#8377;0 forever</text>
+  <text x="350" y="160" text-anchor="middle" fill="#33413b" font-size="9.5">acquisition funnel</text>
+
+  <!-- Beachhead -->
+  <text x="562" y="98" text-anchor="middle" fill="#8a4a25" font-size="9" font-weight="700" letter-spacing="1">&#9670; PRIMARY REVENUE TIER</text>
+  <text x="562" y="117" text-anchor="middle" fill="#2a2f3a" font-size="16" font-weight="700">BEACHHEAD</text>
+  <text x="562" y="135" text-anchor="middle" fill="#5a3320" font-size="12">20 &#8211; 200 employees</text>
+  <text x="562" y="154" text-anchor="middle" fill="#2a2f3a" font-size="15" font-weight="700">&#8377;80&#8211;150 PEPM</text>
+  <text x="562" y="162.5" text-anchor="middle" fill="#5a3320" font-size="9">published card &#183; continuous ramp</text>
+
+  <!-- Expansion -->
+  <text x="777" y="102" text-anchor="middle" fill="#2a2f3a" font-size="16" font-weight="700">EXPANSION</text>
+  <text x="777" y="123" text-anchor="middle" fill="#28394a" font-size="12">200 &#8211; 2,000 employees</text>
+  <text x="777" y="147" text-anchor="middle" fill="#2a2f3a" font-size="14" font-weight="700">Tapered base + overage</text>
+  <text x="777" y="160" text-anchor="middle" fill="#28394a" font-size="9.5">&lt; flat PEPM at scale</text>
+
+  <!-- ===== Feature rows ===== -->
+  <!-- r1 c188 -->
+  <text x="28" y="184" fill="#2a2f3a" font-size="13" font-weight="600">Payroll engine</text>
+  <text x="28" y="200" fill="#5a6270" font-size="11">PF &#183; ESI &#183; PT &#183; TDS calculation</text>
+  <text x="350" y="195" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+  <text x="562" y="195" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+  <text x="777" y="195" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+
+  <!-- r2 c236 -->
+  <text x="28" y="232" fill="#2a2f3a" font-size="13" font-weight="600">Payslips + employee app</text>
+  <text x="28" y="248" fill="#5a6270" font-size="11">self-service &#183; investment declaration</text>
+  <text x="350" y="243" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+  <text x="562" y="243" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+  <text x="777" y="243" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+
+  <!-- r3 c284 -->
+  <text x="28" y="280" fill="#2a2f3a" font-size="13" font-weight="600">Multi-state PT &amp; LWF, 24Q</text>
+  <text x="28" y="296" fill="#5a6270" font-size="11">Form 16 generation &#183; registers</text>
+  <text x="350" y="291" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+  <text x="350" y="304" text-anchor="middle" fill="#5a6270" font-size="9">(no differentiation credit)</text>
+  <text x="562" y="291" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+  <text x="777" y="291" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+
+  <!-- r4 c332 : FILING boundary -->
+  <text x="28" y="328" fill="#8a4a25" font-size="13" font-weight="700">FILING-as-a-service</text>
+  <text x="28" y="344" fill="#7c5030" font-size="11">ECR &#183; challans &#183; returns actually filed</text>
+  <text x="350" y="339" text-anchor="middle" fill="#7c8494" font-size="18" font-weight="700">&#8212;</text>
+  <text x="350" y="352" text-anchor="middle" fill="#7c8494" font-size="9">export only, self-file</text>
+  <text x="562" y="337" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+  <text x="562" y="352" text-anchor="middle" fill="#8a4a25" font-size="9" font-weight="700">the unit of delivery</text>
+  <text x="777" y="339" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+
+  <!-- r5 c380 -->
+  <text x="28" y="376" fill="#2a2f3a" font-size="13" font-weight="600">CA / accountant console</text>
+  <text x="28" y="392" fill="#5a6270" font-size="11">channel surface &#183; multi-client view</text>
+  <text x="350" y="387" text-anchor="middle" fill="#7c8494" font-size="18" font-weight="700">&#8212;</text>
+  <text x="562" y="387" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+  <text x="777" y="385" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+  <text x="777" y="398" text-anchor="middle" fill="#28394a" font-size="9">+ multi-entity / group</text>
+
+  <!-- r6 c428 -->
+  <text x="28" y="424" fill="#2a2f3a" font-size="13" font-weight="600">AI assistant</text>
+  <text x="28" y="440" fill="#5a6270" font-size="11">deflection &#183; cost-of-goods, not a line item</text>
+  <text x="350" y="435" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+  <text x="562" y="435" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+  <text x="777" y="435" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+
+  <!-- r7 c476 -->
+  <text x="28" y="472" fill="#2a2f3a" font-size="13" font-weight="600">Maintained statutory updates</text>
+  <text x="28" y="488" fill="#5a6270" font-size="11">gazette tracking + support SLA</text>
+  <text x="350" y="481" text-anchor="middle" fill="#7c8494" font-size="18" font-weight="700">&#8212;</text>
+  <text x="350" y="494" text-anchor="middle" fill="#7c8494" font-size="9">community / best-effort</text>
+  <text x="562" y="481" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+  <text x="777" y="479" text-anchor="middle" fill="#2f7d5f" font-size="18" font-weight="700">&#10003;</text>
+  <text x="777" y="492" text-anchor="middle" fill="#28394a" font-size="9">priority SLA</text>
+
+  <!-- ===== Footer: why not the free alternative ===== -->
+  <rect x="16" y="510" width="868" height="78" rx="8" fill="#b6bdc8" stroke="#8b93a1" stroke-width="1"/>
+  <rect x="16" y="510" width="5" height="78" rx="2" fill="#e5814f"/>
+  <text x="34" y="532" fill="#8a4a25" font-size="13" font-weight="700">Why not just Kredily / Zoho / Tally for free?</text>
+  <text x="34" y="551" fill="#2a2f3a" font-size="11.5">They give the payroll <tspan font-weight="700">calc</tspan> for &#8377;0 &#8212; that floor is real and defended by well-capitalised incumbents, so we do not fight it. What they</text>
+  <text x="34" y="567" fill="#2a2f3a" font-size="11.5">paywall (Kredily: challans, Form 12BB, Form 16) or structurally cannot run as a service (Tally) is the <tspan font-weight="700">filing layer</tspan> &#8212; ECR, 24Q,</text>
+  <text x="34" y="583" fill="#2a2f3a" font-size="11.5">CA console, maintained updates. The size-proxy gate at 20 heads converts the free funnel automatically as EPF obligation switches on.</text>
+</svg>

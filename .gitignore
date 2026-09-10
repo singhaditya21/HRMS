@@ -27,3 +27,6 @@ __pycache__/
 *.py[cod]
 .venv/
 venv/
+
+# PRD build staging (not committed)
+prd_build/

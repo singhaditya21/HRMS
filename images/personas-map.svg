@@ -1,0 +1,75 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 600" font-family="Helvetica, Arial, sans-serif" role="img" aria-label="HRMS personas mapped by influence on purchase versus daily usage">
+  <title>HRMS Personas — Influence on Purchase x Daily Usage</title>
+
+  <!-- Title -->
+  <text x="60" y="34" font-size="19" font-weight="700" fill="#8b95a3">HRMS Personas</text>
+  <text x="60" y="52" font-size="12.5" fill="#8b95a3">Positioned by influence on the purchase decision and by how heavily each uses the product day to day.</text>
+
+  <!-- Plot border -->
+  <rect x="140" y="72" width="710" height="418" fill="none" stroke="#9aa3b0" stroke-width="1.5"/>
+
+  <!-- Quadrant dividers -->
+  <line x1="495" y1="72" x2="495" y2="490" stroke="#9aa3b0" stroke-width="1" stroke-dasharray="5 5"/>
+  <line x1="140" y1="281" x2="850" y2="281" stroke="#9aa3b0" stroke-width="1" stroke-dasharray="5 5"/>
+
+  <!-- Quadrant strategic labels -->
+  <text x="152" y="92" font-size="11" font-style="italic" fill="#8b95a3">Power users · retain &amp; deflect</text>
+  <text x="838" y="92" font-size="11" font-style="italic" fill="#8b95a3" text-anchor="end">Champions · build the core here</text>
+  <text x="152" y="480" font-size="11" font-style="italic" fill="#8b95a3">Consumers · cost &amp; scale surface</text>
+  <text x="838" y="480" font-size="11" font-style="italic" fill="#8b95a3" text-anchor="end">Buyers · sell risk removed</text>
+
+  <!-- Axis: X -->
+  <text x="495" y="545" font-size="13" font-weight="700" fill="#8b95a3" text-anchor="middle" letter-spacing="0.5">INFLUENCE ON PURCHASE</text>
+  <text x="150" y="510" font-size="11.5" fill="#8b95a3">Low</text>
+  <text x="840" y="510" font-size="11.5" fill="#8b95a3" text-anchor="end">High</text>
+
+  <!-- Axis: Y -->
+  <text x="34" y="281" font-size="13" font-weight="700" fill="#8b95a3" text-anchor="middle" letter-spacing="0.5" transform="rotate(-90 34 281)">DAILY USAGE</text>
+  <text x="128" y="88" font-size="11.5" fill="#8b95a3" text-anchor="end">High</text>
+  <text x="128" y="484" font-size="11.5" fill="#8b95a3" text-anchor="end">Low</text>
+
+  <!-- ===== P1 Meera ===== -->
+  <g>
+    <circle cx="455" cy="120" r="30" fill="#2f9e8f"/>
+    <text x="455" y="127" font-size="19" font-weight="700" fill="#ffffff" text-anchor="middle">P1</text>
+    <rect x="350" y="156" width="210" height="44" rx="10" fill="#eef0f3" fill-opacity="0.96" stroke="#2f9e8f" stroke-width="1.5"/>
+    <text x="455" y="174" font-size="13" font-weight="700" fill="#24303f" text-anchor="middle">Meera</text>
+    <text x="455" y="191" font-size="11" fill="#55606f" text-anchor="middle">HR admin / generalist</text>
+  </g>
+
+  <!-- ===== P3 CA Anjali ===== -->
+  <g>
+    <circle cx="745" cy="145" r="30" fill="#d68a34"/>
+    <text x="745" y="152" font-size="19" font-weight="700" fill="#ffffff" text-anchor="middle">P3</text>
+    <rect x="640" y="181" width="210" height="44" rx="10" fill="#eef0f3" fill-opacity="0.96" stroke="#d68a34" stroke-width="1.5"/>
+    <text x="745" y="199" font-size="13" font-weight="700" fill="#24303f" text-anchor="middle">CA Anjali</text>
+    <text x="745" y="216" font-size="11" fill="#55606f" text-anchor="middle">Compliance consultant / bureau</text>
+  </g>
+
+  <!-- ===== P2 Suresh ===== -->
+  <g>
+    <circle cx="425" cy="290" r="30" fill="#4f68c9"/>
+    <text x="425" y="297" font-size="19" font-weight="700" fill="#ffffff" text-anchor="middle">P2</text>
+    <rect x="320" y="326" width="210" height="44" rx="10" fill="#eef0f3" fill-opacity="0.96" stroke="#4f68c9" stroke-width="1.5"/>
+    <text x="425" y="344" font-size="13" font-weight="700" fill="#24303f" text-anchor="middle">Suresh</text>
+    <text x="425" y="361" font-size="11" fill="#55606f" text-anchor="middle">Payroll officer / accountant</text>
+  </g>
+
+  <!-- ===== P4 Ravi ===== -->
+  <g>
+    <circle cx="250" cy="380" r="30" fill="#9069b0"/>
+    <text x="250" y="387" font-size="19" font-weight="700" fill="#ffffff" text-anchor="middle">P4</text>
+    <rect x="145" y="416" width="210" height="44" rx="10" fill="#eef0f3" fill-opacity="0.96" stroke="#9069b0" stroke-width="1.5"/>
+    <text x="250" y="434" font-size="13" font-weight="700" fill="#24303f" text-anchor="middle">Ravi</text>
+    <text x="250" y="451" font-size="11" fill="#55606f" text-anchor="middle">Employee (desk + deskless)</text>
+  </g>
+
+  <!-- ===== P5 Vikram ===== -->
+  <g>
+    <circle cx="745" cy="395" r="30" fill="#cc5f70"/>
+    <text x="745" y="402" font-size="19" font-weight="700" fill="#ffffff" text-anchor="middle">P5</text>
+    <rect x="640" y="431" width="210" height="44" rx="10" fill="#eef0f3" fill-opacity="0.96" stroke="#cc5f70" stroke-width="1.5"/>
+    <text x="745" y="449" font-size="13" font-weight="700" fill="#24303f" text-anchor="middle">Vikram</text>
+    <text x="745" y="466" font-size="11" fill="#55606f" text-anchor="middle">Founder / CXO</text>
+  </g>
+</svg>
