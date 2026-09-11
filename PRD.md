@@ -8449,7 +8449,7 @@ sequenceDiagram
     end
     loop Heartbeat (last-seen + clock-skew, FR-DEV-003)
         T->>R: Heartbeat (device-local clock)
-        R->>R: Measure offset vs server time; alert if unseen > 6h before lock
+        R->>R: Measure offset vs server time, alert if unseen over 6h before lock
     end
 
     Note over T,R: Long-weekend outage Fri 18:00 to Mon 09:00 - 42 workers punch to local store
@@ -8739,7 +8739,7 @@ Central Rules 8 May 2026). **[Hypothesis]** the exact safeguard checklist
 stateDiagram-v2
     [*] --> RawPunch: punch ingested (any channel, FR-ATT-010)
 
-    RawPunch --> SkewCorrected: apply per-device clock offset (FR-DEV-003); raw retained
+    RawPunch --> SkewCorrected: apply per-device clock offset (FR-DEV-003), raw retained
     SkewCorrected --> Deduped: drop re-deliveries on (device_sn,user,ts,dir)+payload_hash (FR-DEV-001 AC4)
     Deduped --> DirectionResolved: order by time; AUTO alternates IN/OUT/IN/OUT
 
@@ -8760,21 +8760,21 @@ stateDiagram-v2
     ExceptionMissingIn --> Regularization
     Regularization --> DirectionResolved: approved edit recomputes day (FR-ATT-001, FR-REG-001)
 
-    SessionPaired --> WorkedHours: deduct unpaid break; grace absorbs late-in (FR-SHF-001)
+    SessionPaired --> WorkedHours: deduct unpaid break, grace absorbs late-in (FR-SHF-001)
     note right of WorkedHours
         Overnight (22:00 to 06:15): worked hours
         anchored to shift-START pay date, not
         split at midnight (AC1)
         Pre-shift early-in excluded unless OT
-        pre-approved; late-out -> OT candidate
+        pre-approved; late-out is OT candidate
     end note
 
-    WorkedHours --> SpreadOverCheck: over 5h unbroken raises compliance flag; spread-over vs cap
+    WorkedHours --> SpreadOverCheck: over 5h unbroken raises compliance flag, spread-over vs cap
     SpreadOverCheck --> DayStatus: derive status + LOP/paid-days (FR-ATT-021)
 
     DayStatus --> [*]: Present / Half-day / Absent / On-leave / Weekly-off / Holiday / OD / LOP
     note right of DayStatus
-        Deterministic: identical input ->
+        Deterministic: identical input yields
         identical output (AC4). Recomputable
         against rule version in force for the date.
     end note
@@ -10255,26 +10255,26 @@ sequenceDiagram
     participant P as Payroll register / engine
 
     R->>O: Convert pre-boarding record to onboarding case (no re-keying of CTC/PII)
-    Note over R,O: Or a directly-added hire; migrated employee carries opening balances
+    Note over R,O: Or a directly-added hire, migrated employee carries opening balances
 
     J->>O: Submit statutory docs: PAN, Aadhaar, photo, address proof (FR-T-O02)
     O->>B: Verify bank account (name/IFSC/account)
     B-->>O: Penny-drop result
 
-    J->>O: EPF Form 11 (existing UAN?), Form 2 nomination, ESI Form 1 (FR-T-O03)
+    J->>O: EPF Form 11 existing UAN?, Form 2 nomination, ESI Form 1 (FR-T-O03)
     J->>O: Prev-employer income Form 12B + YTD TDS deducted (FR-T-O04)
     J->>O: Tax-regime election + investment declaration (FR-T-O05)
-    Note over O: No election -> new regime (s.115BAC default), surfaced not silent
+    Note over O: No election means new regime s.115BAC default, surfaced not silent
 
     alt Form 11 declares existing UAN (FR-T-O07)
         O->>E: Link existing UAN (no duplicate)
         E-->>O: UAN linked
-    else No UAN and EPF-eligible (tenant >= 20)
+    else No UAN and EPF-eligible, tenant 20 or more
         O->>E: Generate new UAN
         E-->>O: New UAN issued
     end
 
-    opt Joiner ESI-eligible (wages <= Rs 21,000/mo)
+    opt Joiner ESI-eligible, wages up to Rs 21,000/mo
         O->>I: Generate ESI IP number
         I-->>O: IP number issued
     end
@@ -10283,8 +10283,8 @@ sequenceDiagram
     Note over O,J: Statutory artefact from employee one since 21 Nov 2025
 
     O->>P: Register commit: effective joining date + prorated first-period wage + UAN/IP (FR-T-O10)
-    P-->>P: Employee on active register; appears in next ECR / ESI / PT for correct period
-    Note over P: Joining date validated by EPFO; mismatch bounces the ECR
+    P-->>P: Employee on active register, appears in next ECR / ESI / PT for correct period
+    Note over P: Joining date validated by EPFO, mismatch bounces the ECR
 ```
 
 
@@ -11206,17 +11206,17 @@ The benefits model is defined as much by its *transitions* as its tables. Three 
 stateDiagram-v2
     state "1. Enrollment status" as ENR {
         [*] --> proposed
-        proposed --> active : Employer confirms / PRAN issued\nemit add-member; accrue from effective_from
-        proposed --> void : Never activated e.g. PRAN rejected\nno accrual; row kept for audit
-        active --> suspended : Unpaid leave / sabbatical / LOP\naccrual STOPS; row retained; modify-member
-        suspended --> active : Return from leave\naccrual resumes; no data loss; re-add
-        active --> terminated : Exit / scheme withdrawal\npro-rated final period; gratuity+EDLI settle; delete-member
+        proposed --> active : Employer confirms / PRAN issued<br>emit add-member, accrue from effective_from
+        proposed --> void : Never activated e.g. PRAN rejected<br>no accrual, row kept for audit
+        active --> suspended : Unpaid leave / sabbatical / LOP<br>accrual STOPS, row retained, modify-member
+        suspended --> active : Return from leave<br>accrual resumes, no data loss, re-add
+        active --> terminated : Exit / scheme withdrawal<br>pro-rated final period, gratuity+EDLI settle, delete-member
         void --> [*]
         terminated --> [*]
     }
 
     note right of ENR
-        Every transition is an audited event (BEN-05); no hard delete.
+        Every transition is an audited event (BEN-05), no hard delete.
         Perquisite/contribution accrual follows the enrollment state.
     end note
 
@@ -11225,7 +11225,7 @@ stateDiagram-v2
         drafted --> sent : batched per policy per cycle (BEN-10)
         sent --> acknowledged : ack_ref received
         acknowledged --> premium_adjusted : insurer re-bills premium
-        sent --> exception : no ack_ref past SLA\nsurfaces in exceptions queue (BEN-11)
+        sent --> exception : no ack_ref past SLA<br>surfaces in exceptions queue (BEN-11)
         premium_adjusted --> [*]
     }
 
@@ -11233,12 +11233,12 @@ stateDiagram-v2
         state "Declaration" as DEC {
             [*] --> draft
             draft --> submitted : employee allocates CTC for FY
-            submitted --> locked : locks with investment-declaration cycle;\nhard proof-lock before Q4 true-up (BEN-35)
+            submitted --> locked : locks with investment-declaration cycle,<br>hard proof-lock before Q4 true-up (BEN-35)
         }
         state "proof_of_spend (per line, parallel)" as POS {
             [*] --> pending
-            pending --> approved : evidence verified -> exempt
-            pending --> rejected : no valid proof -> taxable
+            pending --> approved : evidence verified, exempt
+            pending --> rejected : no valid proof, taxable
             pending --> query : clarification sought
             query --> approved
             query --> rejected
@@ -14456,13 +14456,13 @@ Because the whole product is "did the return go out and get accepted," `Filing` 
 ```mermaid
 stateDiagram-v2
     direction LR
-    [*] --> prepared: Filing minted from PayRun; input_snapshot_ref frozen (nil_return_flag if zero-liability)
-    prepared --> validated: local format checks pass; format_version bound
+    [*] --> prepared: Filing minted from PayRun, input_snapshot_ref frozen, nil_return_flag if zero-liability
+    prepared --> validated: local format checks pass, format_version bound
     validated --> prepared: validation error, fix inputs
     validated --> submitted: uploaded to portal
     submitted --> acknowledged: ack_no + submitted_at captured
     acknowledged --> accepted: portal accepts
-    acknowledged --> rejected: structured rejection reasons (e.g. AADHAAR_UAN_MISMATCH, IFSC invalid)
+    acknowledged --> rejected: structured rejection reasons e.g. AADHAAR_UAN_MISMATCH, IFSC invalid
     rejected --> validated: fix identifier state, re-validate against SAME input_snapshot_ref
     accepted --> revised: correction / arrears delta
     rejected --> revised: re-file as correction
@@ -16486,13 +16486,13 @@ analysis.
 ```mermaid
 stateDiagram-v2
     direction LR
-    [*] --> prepared: Filing minted from PayRun; input_snapshot_ref frozen (nil_return_flag if zero-liability)
-    prepared --> validated: local format checks pass; format_version bound
+    [*] --> prepared: Filing minted from PayRun, input_snapshot_ref frozen, nil_return_flag if zero-liability
+    prepared --> validated: local format checks pass, format_version bound
     validated --> prepared: validation error, fix inputs
     validated --> submitted: uploaded to portal
     submitted --> acknowledged: ack_no + submitted_at captured
     acknowledged --> accepted: portal accepts
-    acknowledged --> rejected: structured rejection reasons (e.g. AADHAAR_UAN_MISMATCH, IFSC invalid)
+    acknowledged --> rejected: structured rejection reasons e.g. AADHAAR_UAN_MISMATCH, IFSC invalid
     rejected --> validated: fix identifier state, re-validate against SAME input_snapshot_ref
     accepted --> revised: correction / arrears delta
     rejected --> revised: re-file as correction
