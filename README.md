@@ -27,7 +27,7 @@ Claims carry confidence markers — **[Verified]**, **[Hypothesis]**, **[Killed]
 `PRD.md` is assembled from per-section sources in `prd_build/`: `sections/*.md` (one file per section), Mermaid diagrams in `diagrams/*.mmd`, the corrections ledger `LEDGER.md`, the underlying research in `research/r1`–`r5`, and `assemble.py`. All of it is committed except the validator's installed dependencies — restore those with `cd prd_build/tools && pnpm install`. Edit the sources, then rebuild:
 
 ```bash
-python3 prd_build/assemble.py v1.0 2026-09-11
+python3 prd_build/assemble.py v1.0 2026-09-12
 ```
 
 ```bash
