@@ -1,0 +1,73 @@
+flowchart TB
+    classDef tenant fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef data fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef shared fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+    classDef control fill:#4a3a0b,stroke:#8a6d14,color:#fff6da,stroke-width:1px;
+    classDef boundary fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+
+    subgraph RESIDENCY["India region by default · CERT-In logs in India, SPDI r.7, sectoral overlays · not a DPDP mandate"]
+        direction TB
+
+        subgraph CONTROL["Control plane (tenant-agnostic)"]
+            direction LR
+            IAM["Identity & RBAC<br/>tenant_id in every JWT<br/>SSO / role scope"]:::control
+            ROUTER["Tenant router<br/>resolves tenant_id<br/>-> partition + region"]:::control
+        end
+
+        subgraph TENANTS["Tenant isolation (logical, row-level security)"]
+            direction LR
+            T1["Tenant A<br/>estab in MH<br/>tenant_id=A"]:::tenant
+            T2["Tenant B<br/>estab in KA + TN<br/>tenant_id=B"]:::tenant
+            T3["Tenant C<br/>one group, two legal employers<br/>tenant_id=C"]:::tenant
+        end
+
+        subgraph DATAPART["Per-tenant data partition"]
+            direction LR
+            DPA["Partition A<br/>RLS: tenant_id=A<br/>employees, payroll,<br/>docs, ledger"]:::data
+            DPB["Partition B<br/>RLS: tenant_id=B<br/>encrypted-at-rest<br/>per-tenant KMS key"]:::data
+            DPC["Partition C<br/>RLS: tenant_id=C<br/>employer_id scopes<br/>each legal employer"]:::data
+        end
+
+        subgraph RULES["Shared statutory-rules engine (single deployment, all tenants)"]
+            direction TB
+            REG["Effective-dated rule registry<br/>versioned, bitemporal, never erased<br/>valid_from / valid_to + decision time"]:::shared
+            EPF["EPF / EPS / EDLI<br/>rates + wage ceilings"]:::shared
+            PT["Professional Tax<br/>per-state slabs (MH/KA/TN/WB...)"]:::shared
+            ESI["ESI thresholds<br/>+ district coverage flags"]:::shared
+            TDS["TDS Form 138 (central)<br/>LWF per-state cadence"]:::shared
+            REG --> EPF & PT & ESI & TDS
+        end
+
+        subgraph SILO["Silo escape hatch, priced compliance SKU"]
+            T4["Tenant D<br/>named regulated account<br/>dedicated data plane"]:::boundary
+        end
+
+        CA["CA / bureau org<br/>revocable per-client grants<br/>no tenant of its own clients"]:::control
+        CAP[("CA-org projection<br/>calendar metadata only<br/>no employee-level field")]:::control
+
+        AUDIT["Per-tenant audit trail<br/>immutable log · which rule-version<br/>applied to which period"]:::boundary
+    end
+
+    IAM --> ROUTER
+    ROUTER --> T1 & T2 & T3
+    T1 --> DPA
+    T2 --> DPB
+    T3 --> DPC
+
+    DPA -. "reads rules, never writes" .-> REG
+    DPB -. "reads rules, never writes" .-> REG
+    DPC -. "reads rules, never writes" .-> REG
+
+    PT -. "resolve slab by work-location state" .-> DPB
+    EPF -. "apply as-of period date" .-> DPA
+
+    ROUTER --> T4
+    CA -. "grant from tenant A" .-> DPA
+    CA -. "grant from tenant B" .-> DPB
+    DPA -. "filing events" .-> CAP
+    DPB -. "filing events" .-> CAP
+    T4 -. "reads rules, never writes" .-> REG
+
+    DPA --> AUDIT
+    DPB --> AUDIT
+    DPC --> AUDIT

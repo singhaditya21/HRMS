@@ -1,0 +1,64 @@
+flowchart LR
+    subgraph PEOPLE["Personas - people"]
+        M["P1 Meera<br/>HR generalist"]
+        S["P2 Suresh<br/>payroll officer"]
+        V["P5 Vikram<br/>founder - CFO above ~120"]
+        A["P3 CA Anjali<br/>channel only"]
+        R["P4 Ravi<br/>employee"]
+        L["S1 Line manager"]
+    end
+
+    subgraph ROLES["Actors named in §08 and §22"]
+        OP["Payroll operator<br/>maker"]
+        RV["CA reviewer<br/>practice check"]
+        AP["Approver<br/>checker"]
+        PA["Payment approver"]
+        NA["Named approver<br/>portal instructions"]
+        PU["Employer's portal user"]
+        ES["ESS and MSS<br/>requests and approvals"]
+    end
+
+    subgraph GATES["Gates in the machines"]
+        G2["M2 close inputs"]
+        G4["M4 and M5 process"]
+        G6["M6 approve and M8 lock"]
+        G9["M9 bank release"]
+        GR["Approve EPFO return statement"]
+        G10["M10 verification gate and challan"]
+        GX["Mark a date of exit"]
+    end
+
+    M -->|"below ~80"| OP
+    S -->|"above ~80"| OP
+    A -.->|"CA-run client - junior makes"| OP
+    A -.->|"reviews"| RV
+    V -->|"below ~120"| AP
+    V --> PA
+    V --> NA
+    M --> PU
+    S --> PU
+    R --> ES
+    L --> ES
+
+    OP --> G2
+    OP --> G4
+    AP --> G6
+    PA --> G9
+    NA --> GR
+    NA --> G10
+    NA --> GX
+    PU -.->|"operates the portal, never instructs"| GR
+    RV -.->|"review only - never replaces M6"| G6
+    ES -.->|"regularisations feed"| G2
+
+    RULE["Four eyes survive role collapse:<br/>the maker never approves the same run - FR-PAY-304<br/>the approver never performs the portal act - AC-004.3<br/>absence escalates to a backup, never to the maker - FR-CHR-086"]
+    AP --- RULE
+
+    classDef person fill:#e8f0fe,stroke:#1a56db,color:#111827;
+    classDef role fill:#ecfdf5,stroke:#047857,color:#111827;
+    classDef gate fill:#fef3c7,stroke:#b45309,color:#111827;
+    classDef note fill:#f3f4f6,stroke:#9ca3af,color:#374151,font-style:italic;
+    class M,S,V,A,R,L person;
+    class OP,RV,AP,PA,NA,PU,ES role;
+    class G2,G4,G6,G9,GR,G10,GX gate;
+    class RULE note;

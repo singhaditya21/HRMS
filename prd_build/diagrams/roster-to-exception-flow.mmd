@@ -1,0 +1,40 @@
+flowchart TD
+    subgraph INPUTS["Effective-dated inputs"]
+        SHIFT["Shift definition (FR-SHF-001)<br/>start/end, grace, paid/unpaid breaks,<br/>spread-over cap and rest interval<br/>are Hypothesis parameters, warn-only"]
+        CAL["Calendars (FR-SHF-004)<br/>national + state festival + optional/floating"]
+        MASTER["Employee master<br/>OT eligibility, female flag, tenure"]
+    end
+
+    SHIFT --> ROSTER["Build / copy-forward roster (FR-SHF-002)<br/>patterns: rotating 6-day, 3-shift, 4-on/2-off"]
+    CAL --> ROSTER
+    MASTER --> ROSTER
+
+    ROSTER --> RESTGATE{"Weekly rest day present and<br/>at most 10 consecutive days?<br/>FR-SHF-002 AC1"}
+    RESTGATE -->|"no rest day or over 10 days"| FLAG7["Flag: rest-day rule breach<br/>Wages Rules r.6"]
+    RESTGATE -->|OK| NIGHTGATE
+
+    NIGHTGATE{"Female worker rostered<br/>before 06:00 or after 19:00?<br/>FR-SHF-005"} -->|"no valid consent"| BLOCK["BLOCK roster<br/>consent gate, not a warning"]
+    NIGHTGATE -->|"consent + safeguards met"| PUBLISH
+    NIGHTGATE -->|"not applicable"| PUBLISH
+
+    PUBLISH["Publish roster + notify workers<br/>vernacular, worker-initiated-aware (FR-SHF-002 AC2)"]
+
+    PUNCH["Actual punches arrive<br/>(normalized stream, all channels)"] --> AUTODET{"Multiple eligible shifts?"}
+    AUTODET -->|yes| DETECT["Auto shift detection (FR-SHF-003)<br/>nearest-window, deterministic, supervisor-overridable"]
+    AUTODET -->|no| ENGINE
+    DETECT --> ENGINE
+
+    PUBLISH --> ENGINE["Exception engine: roster x actual punches (FR-SHF-002 AC3, to 09.5)"]
+
+    ENGINE --> E1["Punch on rostered rest day<br/>substituted rest day AND OT wages<br/>holiday: per state rule"]
+    ENGINE --> E2["Spread-over over configured ceiling<br/>warning, independent of OT"]
+    ENGINE --> E3["Unbroken stretch over configured limit<br/>rest-interval warning"]
+    ENGINE --> E4["Late beyond grace / early-out<br/>-> deduction / half-day / flagged per policy"]
+
+    E1 --> QUEUE["Exception & regularization queue<br/>(FR-ATT-022 pre-lock reconciliation)"]
+    E2 --> QUEUE
+    E3 --> QUEUE
+    E4 --> QUEUE
+    ENGINE --> E5["Quarterly OT over configured ceiling<br/>advisory warning, never a block"]
+    E5 --> QUEUE
+    FLAG7 --> QUEUE

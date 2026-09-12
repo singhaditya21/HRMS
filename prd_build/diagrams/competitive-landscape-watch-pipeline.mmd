@@ -1,0 +1,51 @@
+flowchart TD
+    classDef src fill:#eef1f5,stroke:#6b7a90,color:#1b2a44;
+    classDef step fill:#e8eef7,stroke:#41618c,color:#1b2a44;
+    classDef gate fill:#fff4d6,stroke:#b8891f,color:#5a4208;
+    classDef stop fill:#f9e3e3,stroke:#a04040,color:#4a1515;
+    classDef ok fill:#eef7e8,stroke:#5a8c41,color:#24401b;
+
+    subgraph S["Watched artefacts - one method per artefact type"]
+        direction TB
+        S1["Comment-bearing pricing page - Keka India, US, UAE<br/>hash the raw page twice, with and without comments"]:::src
+        S2["JS-injected pricing - Qandle<br/>hash the vendor's own pricing config file, confirm by rendering"]:::src
+        S3["Render-only page - Zimyo returns 403 to a non-browser fetch<br/>rendered read"]:::src
+        S4["Terms and pricing FAQs<br/>clause-level diff"]:::src
+        S5["Payroll pages of the six, Zoho and Kredily<br/>term search - filing, submission, e-filing, TRACES, EPFO, SLA"]:::src
+        S6["Source trees and release notes - Frappe stable tags, TallyPrime releases<br/>re-run the parity greps"]:::src
+        S7["AI pages and changelogs<br/>waitlist and badge detection"]:::src
+        S8["Corporate events - acquisitions, fintech moves<br/>manual watch"]:::src
+    end
+
+    S1 --> D{"Either hash changed?"}:::gate
+    S2 --> D
+    S3 --> D
+    S4 --> D
+    S5 --> D
+    S6 --> D
+    S7 --> D
+    S8 --> D
+
+    D -->|no| Z["No action - next cadence sweep"]:::ok
+    D -->|yes| A["Alert raised with a diff summary<br/>evidence copy retained"]:::step
+    A --> T{"Triaged inside the alert triage window<br/>by the research owner"}:::gate
+    T -->|immaterial - copy, layout or unrendered config value| Z
+    T -->|material| C["New capture recorded against the artefact<br/>method, tool, network, date, operator"]:::step
+
+    C --> R{"What does the change touch?"}:::gate
+    R -->|a published price or block| P1["Re-run the price engine<br/>re-publish the effective-price tables"]:::step
+    R -->|a parity cell| P2["Update the parity cell and its class<br/>re-open the affected rows"]:::step
+    R -->|a submission or filing term| P3["Re-test the submission null<br/>scenario CRS-06 or CRS-07 moves to TRIGGERED"]:::step
+    R -->|terms, AI posture or a count| P4["Update the claim's evidence and posture label"]:::step
+
+    P1 --> W["Every claim resting on the changed capture returns to WITHDRAWN"]:::stop
+    P2 --> W
+    P3 --> W
+    P4 --> W
+    W --> F["Fan out to every claim use row<br/>live artefacts pulled or re-cleared inside the withdrawal window"]:::stop
+    F --> RC{"Re-clearable on the new capture?"}:::gate
+    RC -->|yes| OK["Re-cleared and re-published with the new capture date"]:::ok
+    RC -->|no| K["Claim retired - entry and reason kept"]:::stop
+
+    T -.->|scenario trigger matched| SC["Scenario moves to TRIGGERED<br/>pre-agreed response runs, section 20 risk row updated"]:::step
+    SC --> OK

@@ -1,0 +1,23 @@
+flowchart TB
+  CORPUS["Corpus-level counts govern every survivor<br/>Rounds 1-2: 28 strategic conclusions KILLED &middot; ~90 claims retracted per Draft 1, ~60 per the r2 critic, all optimistic<br/>Rounds 3-5: ~13 findings per dimension died on source re-check, errors in both directions"]
+
+  CORPUS --> REG["Full register: 128 rows<br/>92 live EV-001..EV-092 + 36 killed EV-K01..EV-K36<br/>EV-005 and EV-012 carry split markers"]
+
+  REG --> LIVE["92 LIVE rows &mdash; 94 marker entries"]
+  REG --> KILL
+
+  LIVE --> V["[Verified] live &mdash; 87<br/>Contract- and hard-code-safe as of capture date<br/>4 mirror or provenance-caveat &middot; 2 not yet in force &middot; 1 claim posture"]
+  LIVE --> H["[Hypothesis] + kill criterion &mdash; 5<br/>EV-005 gross-up &middot; EV-006 our price &middot; EV-008 AI absolute<br/>EV-012 144-hour cap &middot; EV-019 meal and gift figures"]
+  LIVE --> U["Ungraded &mdash; 2 (first-class, not rounding error)"]
+
+  U --> UO["Open &mdash; 1<br/>EV-004 ESI after the savings expiry<br/>no authoritative instrument yet &rarr; fail-safe"]
+  U --> UU["Undone &mdash; 1<br/>EV-015 state PT/LWF dataset<br/>greenfield in both incumbents<br/>PT verified only for MH, OD and KA effect - EV-014"]
+  U --> UB["Blocked &mdash; 0<br/>EV-009 resolved by re-capture<br/>blocked grading Reversed"]
+
+  KILL["[Killed] &mdash; 36<br/>EV-K01..EV-K11 early rounds, on the §20 blocklist<br/>EV-K12..EV-K36 one per corrections-ledger item"]
+
+  H -.->|"kills outnumber live hypotheses about 7:1"| KILL
+  KILL -.-> OVER["3 kills reverse an earlier over-correction<br/>EV-K12 PT/LWF &middot; EV-K20 price ceiling &middot; EV-K21 Keka"]
+
+  NOTE["Verified majority is dated, not eternal<br/>dated forced checks: EPF/ESI ~21.11.2026 &middot; WABA 31.12.2026<br/>DPDP ~13.05.2027 &middot; Form 138 Q4 due 31.05.2027"]
+  V -.-> NOTE

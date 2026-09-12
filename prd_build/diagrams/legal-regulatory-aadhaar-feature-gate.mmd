@@ -1,0 +1,24 @@
+flowchart TD
+    P["Proposed feature touches an Aadhaar number, an Aadhaar document,<br/>a Virtual ID, or Aadhaar verification or authentication<br/>FR-LEG-018 design review"] --> Q1{"Does it verify, authenticate or e-KYC<br/>an Aadhaar holder for a customer?"}
+    Q1 -->|Yes| K1["CANNOT BE BUILT<br/>AOVR reg 16A(2) and 15(2) - EV-070<br/>s.57 omitted, s.4(4) permission route - EV-071"]
+    Q1 -->|No| Q2{"Does it store or display a Virtual ID?"}
+    Q2 -->|Yes| K2["CANNOT BE BUILT<br/>AOVR reg 4A(4), no entity stores a VID - EV-070"]
+    Q2 -->|No| Q3{"Would the legal entity that stores numbers<br/>register as an OVSE?"}
+    Q3 -->|Yes| K3["STOP<br/>s.8A(4)(b) bars a registered OVSE from storing numbers - EV-069<br/>counsel before any registration, CR-21"]
+    Q3 -->|No| Q4{"Sharing Reg 5 steps met?<br/>lawful purpose, three-part disclosure, consent"}
+    Q4 -->|No| K4["Input refused until the consent record exists<br/>FR-CHR-099, FR-CHR-100"]
+    Q4 -->|Yes| Q5{"Sharing Reg 6 duties met?<br/>vault only, encrypted transmission, purpose ceiling,<br/>last-4 display, excluded from models and sub-processors"}
+    Q5 -->|No| K5["Redesign<br/>reg 6(2), 6(4), 6(5) - EV-068"]
+    Q5 -->|Yes| Q6{"Does it make Aadhaar a condition of<br/>employment, payroll or any benefit?"}
+    Q6 -->|Yes| K6["NEVER SHIP - Part D-10<br/>exclude-and-flag instead - FR-CHR-101"]
+    Q6 -->|No| Q7{"Does it rest on a counsel-open question?<br/>vault regime, portal requesting-entity status,<br/>offshore hosting, SaaS as a reg 5 entity"}
+    Q7 -->|Yes| CR["Build on the conservative default<br/>and log it against the counsel register"]
+    Q7 -->|No| OK["Design-review sign-off<br/>read access logged with actor and reason,<br/>the record an s.43 due-diligence defence would rest on"]
+    CR --> OK
+
+    classDef stop fill:#fde2e2,stroke:#c0392b,color:#3a0d0d;
+    classDef fix fill:#fff3cd,stroke:#b8860b,color:#3a2f00;
+    classDef go fill:#e8f5e9,stroke:#2e7d32,color:#0d2a12;
+    class K1,K2,K3,K6 stop;
+    class K4,K5,CR fix;
+    class OK go;

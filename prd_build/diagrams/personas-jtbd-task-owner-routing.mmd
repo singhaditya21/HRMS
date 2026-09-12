@@ -1,0 +1,51 @@
+flowchart TD
+    RAISE["A hand-off is raised<br/>machine event, validator, person or notice"]
+    Q1{"Is the fact the employee's own to supply<br/>or the employee's own choice?"}
+    Q2{"Is it an attendance or leave fact<br/>inside one team?"}
+    Q3{"Does it change a statutory field, a bank detail<br/>or a wage structure?"}
+    Q4{"Is it an instruction for an irreversible<br/>or money-moving portal act?"}
+    Q5{"Does it need the written authority<br/>or a DSC-bound step?"}
+    Q6{"Is the missing thing rule data<br/>or state data we maintain?"}
+    EMP["Holder - the employee<br/>own channel only, never the manager<br/>UAN activation, declarations, consent, seeding"]
+    MGR["Holder - the line manager<br/>regularisation, leave, overtime approval"]
+    CHK["Holder - the compliance checker<br/>never the maker of the same change"]
+    APR["Holder - the named approver<br/>routed to a sign-off artefact, never decided in the item"]
+    SIG["Holder - the authorised signatory<br/>the DSC never leaves the signatory"]
+    DESK["Holder - our statutory desk<br/>the only vendor-held class - published as a rule version"]
+    OPR["Holder - the payroll operator<br/>everything the operator can close in-product"]
+    VAC{"Does a named person hold that role<br/>in this tenant today?"}
+    OWNER["Holder - the tenant owner<br/>listed on the role readiness report until the role is held"]
+    OUT["Item created - holder, due moment,<br/>blocking class and consequence on its face"]
+
+    RAISE --> Q1
+    Q1 -->|"yes"| EMP
+    Q1 -->|"no"| Q2
+    Q2 -->|"yes"| MGR
+    Q2 -->|"no"| Q3
+    Q3 -->|"yes"| CHK
+    Q3 -->|"no"| Q4
+    Q4 -->|"yes"| APR
+    Q4 -->|"no"| Q5
+    Q5 -->|"yes"| SIG
+    Q5 -->|"no"| Q6
+    Q6 -->|"yes"| DESK
+    Q6 -->|"no"| OPR
+    EMP --> VAC
+    MGR --> VAC
+    CHK --> VAC
+    APR --> VAC
+    SIG --> VAC
+    OPR --> VAC
+    DESK --> OUT
+    VAC -->|"yes"| OUT
+    VAC -->|"no"| OWNER
+    OWNER --> OUT
+
+    classDef start fill:#e8f0fe,stroke:#1a56db,color:#111827;
+    classDef test fill:#fef3c7,stroke:#b45309,color:#111827;
+    classDef holder fill:#ecfdf5,stroke:#047857,color:#111827;
+    classDef fallback fill:#fee2e2,stroke:#b91c1c,color:#111827;
+    class RAISE start;
+    class Q1,Q2,Q3,Q4,Q5,Q6,VAC test;
+    class EMP,MGR,CHK,APR,SIG,DESK,OPR,OUT holder;
+    class OWNER fallback;

@@ -1,0 +1,45 @@
+sequenceDiagram
+    autonumber
+    participant R as Recruiting - pre-boarding record FR-T-R54
+    participant J as Joiner - self-service FR-T-O09
+    participant O as Onboarding case FR-T-O01
+    participant B as Bank - penny-drop
+    participant U as UMANG - EPFO face-auth UAN allotment
+    participant I as ESIC employer portal - attended task
+    participant P as Payroll register and engine
+
+    R->>O: Convert pre-boarding record to onboarding case, no re-keying of CTC or PII
+    Note over R,O: Or a directly-added hire. A migrated employee carries opening balances
+
+    J->>O: Written consent for bank details, then PAN, bank, photo, address proof FR-T-O02
+    Note over J,O: Aadhaar only if the joiner chooses, into the core-HR token store, never a gate
+    O->>B: Verify bank account name, IFSC and account number
+    B-->>O: Penny-drop result
+
+    J->>O: EPF joining declaration with any existing UAN, EPF nomination, ESI joining declaration FR-T-O03
+    J->>O: Previous-employer income on Form 122, ex-12B, and TDS already deducted FR-T-O04
+    J->>O: Tax-regime election and investment declaration on Form 124, ex-12BB FR-T-O05
+    Note over O: No election means the default new regime, surfaced not silent
+
+    alt The EPF joining declaration names an existing UAN
+        O->>O: Link the existing UAN, never a duplicate FR-T-O07
+    else No UAN and the establishment is EPF-covered
+        O->>J: Route the joiner to UMANG face-authentication UAN allotment
+        J->>U: Allot and activate UAN
+        U-->>J: UAN issued
+        J->>O: Declare the new UAN
+    end
+    Note over O,U: Employer-side UAN generation only for International Workers and citizens of Nepal and Bhutan, as an attended portal task
+    Note over O,U: A joiner who declines Aadhaar cannot use UMANG face authentication. The case still commits, and the ECR line is excluded and flagged until a UAN exists, FR-CHR-101
+
+    opt Joiner ESI-eligible under the configured wage ceiling
+        O->>I: Attended IP registration task
+        I-->>O: IP number issued
+    end
+
+    O->>J: Issue appointment letter in the state-prescribed form FR-T-O06
+    Note over O,J: Required of establishments of 10 or more workers, form set by the appropriate Government
+
+    O->>P: Register commit with joining date, prorated first-period wage, UAN and IP FR-T-O10
+    P-->>P: Employee on active register for the next ECR, ESI and PT period
+    Note over P: Date of joining sits on the member record, not in the ECR file. Contributions outside the valid joining-to-leaving window are rejected

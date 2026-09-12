@@ -1,0 +1,23 @@
+flowchart TD
+    REQ["Erasure request (terminated employee)<br/>product capability today;<br/>DPDP s.12 when in force, ~May 2027"] --> LOOP{"For each field, keyed by its<br/>data-class + processing-purpose tag"}
+
+    LOOP --> UNTAGGED{"Field carries a<br/>retention-class tag?"}
+    UNTAGGED -->|No| BF1["BUILD-FAIL<br/>untagged column<br/>(CI lint must be 0)"]
+    UNTAGGED -->|Yes| HOLD{"Statutory retention<br/>hold applies?"}
+
+    HOLD -->|"No hold identified<br/>(discretionary)"| DISC["Discretionary data:<br/>wellness, opt-benefit marketing,<br/>non-mandated survey"]
+    DISC --> GUARD{"Reproducibility guard:<br/>does erasing this break<br/>regen of a filed return?<br/>(ties to NFR-SEC-401 rule-versioning)"}
+    GUARD -->|No| ERASE["ERASE via the §14 mechanism<br/>crypto-shred subject key or tombstone;<br/>must survive a backup restore"]
+    GUARD -->|Yes| BLOCK["Do not silently break filing:<br/>retain the reproducibility-linked<br/>fields, erase the rest"]
+
+    HOLD -->|"Hold exists"| CITE{"Basis state?"}
+    CITE -->|"Neither a cited basis<br/>nor a counsel flag"| BF2["BUILD-FAIL<br/>retained class with<br/>no basis and no flag"]
+    CITE -->|"Cited, [Verified] - EV-054"| RETAIN["RETAIN with documented hold:<br/>class + cited basis + expiry date"]
+    CITE -->|"Statutory basis under<br/>counsel review"| HYP["HOLD - never erase, never invent a period<br/>statement says basis under counsel review<br/>parameter set on counsel opinion (§23)"]
+    HYP --> RETAIN
+
+    RETAIN --> CLASSES["Held classes:<br/>Wages Forms I, IV, IX + Form V - 5 yrs after last entry (r.51(4))<br/>OSH Forms XIII, XIV, XV, XIX, XX + XVI - 5 calendar yrs; leave register destruction bar (r.76(2))<br/>SS Form XXII - 5 calendar yrs; in-ink conflict to counsel<br/>ICT and LLM logs - 180 days minimum, in India<br/>EPF, ESI, TDS / Form 138 / Form 130, gratuity,<br/>appointment letter, state-sphere forms - configurable, counsel review<br/>DPDP r.8(3) one-year floor - not in force, not hard-coded"]
+
+    ERASE --> STMT["Itemised statement:<br/>erased list + retained-with-reason list<br/>+ expiry dates where set, produced automatically"]
+    BLOCK --> STMT
+    CLASSES --> STMT

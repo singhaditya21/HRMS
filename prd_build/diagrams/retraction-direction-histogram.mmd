@@ -1,0 +1,47 @@
+flowchart LR
+    classDef opt fill:#fde2e2,stroke:#c0392b,color:#7b1a12;
+    classDef cor fill:#e2f0e2,stroke:#2e7d32,color:#14401a;
+    classDef verdict fill:#fff4d6,stroke:#b8860b,color:#5c4400;
+
+    subgraph R1["Round 1 - optimistic claim"]
+        direction TB
+        A1["Market size: India TAM $23.32bn to $38.36bn"]
+        A2["Denominator: 6 cr MSMEs / 24.18 lakh registered"]
+        A3["Beachhead: 20-50 is a competitive vacuum"]
+        A4["Price floor: room for a paid product at low end"]
+        A5["AI as revenue: a monetisable differentiator"]
+        A6["Differentiators: multi-state PT/LWF + inv-declaration"]
+        A7["Enterprise: reachable as a launch segment"]
+        A8["Timing: rules still draft, therefore urgent"]
+    end
+
+    subgraph R2["Round 2 correction - all one direction"]
+        direction TB
+        B1["Real spend Rs 2,100-3,900 Cr  ->  SMALLER"]
+        B2["7.66 lakh contributing establishments  ->  SMALLER"]
+        B3["Over-served: Zoho, Kredily, HivePayroll, RazorpayX  ->  DENSER"]
+        B4["Floor is Rs 0, defended by capitalised incumbents  ->  LOWER"]
+        B5["7 vendors price HR AI at zero  ->  ALREADY OCCUPIED"]
+        B6["Inv-declaration: shipped free by Zoho  ->  ALREADY OCCUPIED<br/>PT/LWF: REVERSED in round 3 - greenfield in Frappe and Tally"]
+        B7["Arithmetically closed ~3 yrs by RFP incumbency  ->  LATER"]
+        B8["Central Rules settled 8 May 2026  ->  WINDOW MOVED"]
+    end
+
+    A1 -- retracted --> B1
+    A2 -- retracted --> B2
+    A3 -- retracted --> B3
+    A4 -- retracted --> B4
+    A5 -- retracted --> B5
+    A6 -- retracted --> B6
+    A7 -- retracted --> B7
+    A8 -- retracted --> B8
+
+    B1 & B2 & B3 & B4 & B5 & B6 & B7 & B8 --> TALLY["Rounds 1 to 2: 8 of 8 axes moved the SAME way<br/>(smaller, later, denser, lower, occupied)"]
+    TALLY --> PROB["If error were random noise:<br/>8 same-direction flips = (1/2)^8 ~= 0.4%<br/>7 without the reversed axis = (1/2)^7 ~= 0.8%"]
+    PROB --> BIAS["Not noise - a measured OPTIMISM BIAS<br/>in the round-one generator"]
+    BIAS --> LATER["Rounds 3 to 5: ~13 findings per dimension died on source re-check<br/>some round-2 corrections overshot - PT/LWF, price band, Keka"]
+    LATER --> RULE["Operative rule: discount business-case claims downward<br/>re-check competitor claims at source - no safe direction<br/>unrechecked early claims ~70-75% reliable"]
+
+    class A1,A2,A3,A4,A5,A6,A7,A8 opt;
+    class B1,B2,B3,B4,B5,B6,B7,B8 cor;
+    class TALLY,PROB,BIAS,LATER,RULE verdict;

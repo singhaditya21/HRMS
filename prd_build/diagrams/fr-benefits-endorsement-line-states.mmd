@@ -1,0 +1,29 @@
+stateDiagram-v2
+    [*] --> drafted : coverage-affecting change, EL1
+    drafted --> held : adapter schema fails, EL2
+    held --> drafted : data fixed, EL3
+    drafted --> validated : schema passes, census payload frozen, EL4
+    validated --> sent : batch sealed and sent, EL5
+    sent --> sent : no ack past SLA, resent byte-identical, EL8
+    sent --> acknowledged : insurer accepts the line, EL6
+    sent --> rejected : insurer rejects the line, EL7
+    acknowledged --> premium_adjusted : insurer states premium change, EL9
+    rejected --> superseded : correcting line created, EL10
+    acknowledged --> reversed : later correction reverses it, EL11
+    drafted --> cancelled : cause withdrawn before send, EL12
+    held --> cancelled : cause withdrawn before send, EL12
+    validated --> cancelled : cause withdrawn before send, EL12
+    premium_adjusted --> [*]
+    superseded --> [*]
+    reversed --> [*]
+    cancelled --> [*]
+
+    note right of sent
+        Never inferred from a file being generated.
+        Exception queue holds it until acknowledged, BEN-11.
+    end note
+
+    note left of rejected
+        Coverage window voided, CV3.
+        A correction is a new line that names this one.
+    end note

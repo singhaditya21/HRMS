@@ -1,0 +1,24 @@
+flowchart LR
+    classDef step fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef gate fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+    classDef spine fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+
+    H1["From employee 1<br/>TDS on salary - s.392, ex-s.192<br/>Form 138 quarterly, Form 130 annual<br/>Shops and Establishments, minimum wages<br/>POSH Internal Committee - every employer, s.4&#40;1&#41;"]:::step
+    H10["10+<br/>ESI, gratuity, maternity benefit<br/>Appointment letter - establishment of 10+ workers<br/>form prescribed by the state"]:::step
+    H20["20+<br/>EPF - ECR monthly by the 15th<br/>Grievance Redressal Committee - 20+ workers"]:::step
+    H50["50+<br/>Creche"]:::step
+    H100["100+<br/>Canteen<br/>Works Committee only if Government orders it"]:::step
+    H300["300+<br/>Standing orders<br/>Retrenchment and closure approval"]:::step
+
+    STATE{{"PT and LWF are state-levied<br/>not headcount-triggered<br/>per-state rule tables, V-09"}}:::gate
+    UNIT{{"Counting unit - worker or employee<br/>and sphere - central or state<br/>differ per obligation: schema fields"}}:::gate
+
+    SPINE["Filing calendar = product spine<br/>each step adds a recurring return or register"]:::spine
+
+    H1 --> H10 --> H20 --> H50 --> H100 --> H300
+    STATE -.overlays every band.-> SPINE
+    UNIT -.governs every threshold.-> H10
+    H1 --> SPINE
+    H10 --> SPINE
+    H20 --> SPINE
+    H300 --> SPINE

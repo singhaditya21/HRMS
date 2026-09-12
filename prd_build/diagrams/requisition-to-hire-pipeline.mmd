@@ -1,0 +1,61 @@
+flowchart TD
+    REQ["Requisition created<br/>FR-T-R01: title, band, N openings,<br/>employment type, two wage bases"]
+    CLASS{"Employment-type classification<br/>FR-T-R07<br/>permanent / fixed-term /<br/>apprentice / contractor"}
+    CROSS["Statutory-crossing flag<br/>FR-T-R06: 10 / 20 / 50 / 100 / 300<br/>per establishment, per counting unit"]
+    APPR{"Approval chain approved?<br/>FR-T-R03 (precondition to post)"}
+    REQ --> CLASS --> CROSS --> APPR
+    APPR -->|"rejected / held"| HELD["Not distributed"]
+    APPR -->|"approved"| POST["Multi-post to own contracts<br/>FR-T-R10 (bring-your-own-contract)"]
+
+    subgraph BOARDS["Job boards — post out only"]
+        LI["LinkedIn<br/>Job Posting API"]
+        NK["Naukri<br/>post only, NO Resdex search"]
+        FO["foundit<br/>path to capture, else CSV/email"]
+        AP["apna / WorkIndia<br/>path to capture, else CSV/email"]
+        IN["Indeed<br/>path to capture, else CSV/email"]
+    end
+    POST --> LI & NK & FO & AP & IN
+
+    INGEST["Application ingest FR-T-R11<br/>per-source attribution"]
+    LI -->|"Apply Connect (structured, high fidelity)"| INGEST
+    NK -->|"inbox parse (fragile, low-conf flagged)"| INGEST
+    FO --> INGEST
+    AP --> INGEST
+    IN --> INGEST
+
+    DEDUP{"Cross-source dedup FR-T-R12<br/>email + phone (E.164 +91) match?"}
+    INGEST --> DEDUP
+    DEDUP -->|"email + phone + name align"| MERGE["Auto-merge to one candidate<br/>keep all source touchpoints"]
+    DEDUP -->|"phone only, names differ"| SUSPECT["Suspected duplicate<br/>recruiter confirms (never silent)"]
+    SUSPECT --> MERGE
+
+    subgraph PIPE["ATS pipeline FR-T-R20 (per requisition)"]
+        S1["Applied"] --> S2["Screened<br/>knockouts FR-T-R23"]
+        S2 --> S3["Interview<br/>independent scorecards FR-T-R32"]
+        S3 --> S4["Offer stage"]
+    end
+    MERGE --> S1
+    S2 -. "reason taxonomy FR-T-R28 · named confirmer if AI-influenced FR-T-D001" .-> REJ["Rejected / Withdrawn / On-hold"]
+    S3 -. "reason taxonomy FR-T-R28 · named confirmer if AI-influenced FR-T-D001" .-> REJ
+
+    OFFER["Offer builder FR-T-R50<br/>CTC = Basic + HRA + allowances + FBP"]
+    ADDBACK{"Add-back FR-T-R51<br/>excluded heads E > t x R?<br/>t = 0.5 today, a notified variable"}
+    S4 --> OFFER --> ADDBACK
+    ADDBACK -->|"yes: deem excess as wages,<br/>re-base PF / gratuity, ack required"| APPROVEO
+    ADDBACK -->|"no"| APPROVEO["Offer approval FR-T-R52"]
+    APPROVEO --> LETTER["Offer letter + eSign FR-T-R53<br/>(versioned, re-runs add-back)"]
+
+    ACCEPT{"Candidate accepts?"}
+    LETTER --> ACCEPT
+    ACCEPT -->|"reneges (FR-T-R55)"| REOPEN["Requisition auto-reopen"]
+    REOPEN --> POST
+    ACCEPT -->|"accepts"| PREBOARD["Pre-boarding record FR-T-R54<br/>carries CTC forward, no re-keying"]
+    PREBOARD --> HIRED["Hired"]
+    HIRED --> HANDOFF["Handoff to onboarding case FR-T-O01<br/>-> register commit FR-T-O10 (employee)"]
+
+    classDef statutory fill:#fef9c3,stroke:#854d0e,color:#111;
+    classDef blocked fill:#fee2e2,stroke:#991b1b,color:#111;
+    classDef terminal fill:#dcfce7,stroke:#166534,color:#111;
+    class CROSS,ADDBACK,CLASS statutory;
+    class REJ,HELD blocked;
+    class HANDOFF,PREBOARD terminal;

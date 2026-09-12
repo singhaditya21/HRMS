@@ -1,0 +1,40 @@
+stateDiagram-v2
+    direction TB
+    [*] --> CANDIDATE: G0 a design partner needs the state, or the roadmap calls it
+    CANDIDATE --> SOURCING: G1 named analyst and reviewer assigned, watch sources registered
+    SOURCING --> AUTHORING: G2 every V-09 field carries a state-primary gazette URL and date
+    SOURCING --> BLOCKED_SOURCE: G3 a field has no primary source, or the gazette is unreadable
+    BLOCKED_SOURCE --> SOURCING: G4 source found, or a counsel reading recorded
+    BLOCKED_SOURCE --> DECLINED: G5 the state cannot be sourced this cycle
+    AUTHORING --> CERTIFYING: G6 rule and due-date versions reviewed by the second qualified person
+    CERTIFYING --> AUTHORING: G7 a golden or boundary case diverges
+    CERTIFYING --> CAPTURE: G8 every case reproduces, including one boundary case per rule version
+    CAPTURE --> PILOT: G9 portal and return flow captured in a Mode B first submission, runbooks published
+    PILOT --> OFFERABLE: G10 one full live cycle filed and reconciled for a design partner
+    PILOT --> AUTHORING: G11 the live cycle contradicts a drafted rule
+    OFFERABLE --> MAINTAINED: G12 the state pack enters the normal watch and review cadence
+    MAINTAINED --> DEGRADED: G13 a watch source goes silent, or a runbook passes its re-verify date
+    DEGRADED --> MAINTAINED: G14 source restored and the runbook re-verified
+    DEGRADED --> WITHDRAWN: G15 the state cannot be maintained - tenants move to computation plus carve-out
+    DECLINED --> [*]
+    WITHDRAWN --> [*]
+
+    note right of CANDIDATE
+      No tenant is offered a state before
+      OFFERABLE. Liability still computes
+      and shows, with the reason no
+      session is offered.
+    end note
+
+    note right of CAPTURE
+      Aggregator tables never seed a rule
+      row or a runbook. A portal banner is
+      a lead to verify, not a source.
+    end note
+
+    note left of DEGRADED
+      Degradation is visible to the tenant
+      through the coverage statement, and
+      the obligation keeps its deadline
+      clock whatever our state.
+    end note

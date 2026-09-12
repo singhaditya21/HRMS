@@ -1,0 +1,57 @@
+flowchart TD
+    START([PRD complete — no funding or headcount committed]) --> G0
+
+    subgraph G0FRAME [" "]
+        G0{{"Gate 0 — Desk complete<br/>zero-cost, no field work"}}
+        G0REQ["Must clear first:<br/>V-06 mid-market sweep - closed 5 Sep 2026 · V-08 ESI regime<br/>V-09 PT/LWF dataset · V-17 OT-hours cap · V-18 meal perquisite rule<br/>V-20 Income-tax Rules reads · V-21 Code-era mappings · V-24 EPF para 25 · desk CQs in V-28"]
+        G0OUT["Authorises: rewrite §04 sizing &amp; §18/§21 positioning;<br/>ship OT warnings and the meal perquisite on read rule text"]
+        G0REQ --> G0 --> G0OUT
+    end
+
+    G0OUT --> G1
+
+    subgraph G1FRAME [" "]
+        G1{{"Gate 1 — Pricing &amp; channel viable"}}
+        G1REQ["Must clear first:<br/>V-01 CA/bureau price · V-02 Tally enablement · V-03 realised ARPU<br/>V-05 CA channel · V-16 filing-SLA baseline"]
+        G1OUT["Authorises: defensible pricing model + CA/Tally channel decision<br/>➜ basis for a SEED RAISE"]
+        G1REQ --> G1 --> G1OUT
+    end
+
+    G1OUT --> G2
+
+    subgraph G2FRAME [" "]
+        G2{{"Gate 2 — Unit economics &amp; buildability"}}
+        G2REQ["Must clear first:<br/>V-04 tokens/query · V-07 AI willingness-to-pay · V-10 device effort<br/>V-11 ADMS push · V-13 residency matrix · V-15 mid-year cutover<br/>V-26 supervised minutes per filing"]
+        G2OUT["Authorises: commit AI-bundled architecture + frontline roadmap<br/>➜ SCALE statutory + engineering team beyond founding core"]
+        G2REQ --> G2 --> G2OUT
+    end
+
+    CONT["Continuous — Statutory watch<br/>V-08 · V-09 · V-19 · V-22 · V-27 ongoing · V-14 · V-26 in-product<br/>prevents shipping a wrong number; never clears (§22)"]
+    CONT -.watches.-> G0
+    CONT -.watches.-> G1
+    CONT -.watches.-> G2
+
+    G2OUT --> ENT["Enterprise-segment spend<br/>waits for the §20.1 documentary gate regardless:<br/>ISO 27001 ≥12 mo · ≥30k-emp reference · GFR relaxation in bid doc"]
+
+    LAUNCH{{"Launch gate — attended submission, per portal"}}
+    LREQ["Must clear first: V-25 counsel opinion for that portal<br/>V-23 portal facts for its runbook"]
+    LOUT["Authorises attended submission on that portal<br/>an uncleared portal ships artefact-only - R-32"]
+    LREQ --> LAUNCH --> LOUT
+
+    RULE["RULE: skipping a lower-numbered gate is out of order"]
+    RULE -.governs.-> G0
+    RULE -.governs.-> G1
+    RULE -.governs.-> G2
+
+    classDef gate fill:#1d4ed8,stroke:#1e3a8a,color:#ffffff;
+    classDef req fill:#eff6ff,stroke:#60a5fa,color:#0f172a;
+    classDef out fill:#dcfce7,stroke:#22c55e,color:#052e16;
+    classDef cont fill:#fef3c7,stroke:#f59e0b,color:#451a03;
+    classDef rule fill:#fee2e2,stroke:#ef4444,color:#450a0a;
+    class G0,G1,G2,LAUNCH gate;
+    class LREQ req;
+    class LOUT out;
+    class G0REQ,G1REQ,G2REQ req;
+    class G0OUT,G1OUT,G2OUT,ENT out;
+    class CONT cont;
+    class RULE rule;

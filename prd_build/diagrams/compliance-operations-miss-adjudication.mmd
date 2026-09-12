@@ -1,0 +1,37 @@
+flowchart TD
+    classDef rec fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef test fill:#2a2a2a,stroke:#777,color:#f0f0f0,stroke-width:1px;
+    classDef prod fill:#5a1a1a,stroke:#a33,color:#ffecec,stroke-width:2px;
+    classDef ten fill:#4a3a10,stroke:#a08020,color:#fff6dc,stroke-width:1px;
+    classDef auth fill:#35224a,stroke:#7a55a8,color:#f3eaff,stroke-width:1px;
+    classDef open fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+
+    M["An instance passes its due date<br/>without FILED. Review opens automatically<br/>on the causation record"]:::rec
+    AD1{"AD-1 was the line inside the SLA<br/>on this due date, and was the lead<br/>rule SS-1 satisfied?"}
+    OUT["Outside the SLA. Recorded in the<br/>coverage-gap register with its cause,<br/>never counted as a success"]:::open
+    AD2{"AD-2 and AD-3 did the tenant act late -<br/>closed inputs, approved, funded, signed,<br/>or revoked the authority?"}
+    AD3{"was a warning stored and sent before<br/>tenant_action_lead for that family?"}
+    AD4{"AD-4 is there portal evidence -<br/>captured error, outage notice, or an<br/>unpublished format on a watch key?"}
+    AD5{"AD-6 was an approved and funded<br/>instance inside our queue at the<br/>hand-back cut-off with no package?"}
+    AD6{"AD-7 does the record show a wrong<br/>figure, a late rule version or a<br/>defective artefact from us?"}
+    PC["Product-caused.<br/>Fix, disclose, remedy per the cap"]:::prod
+    TC["Tenant-caused.<br/>Warning evidence attached"]:::ten
+    AC["Authority-caused.<br/>Evidence attached, next window planned"]:::auth
+    UNK["UNCLASSIFIED_PENDING_EVIDENCE.<br/>Never a default class. Escalates to the<br/>filing desk lead, then counsel if disputed"]:::test
+
+    M --> AD1
+    AD1 -->|"no"| OUT
+    AD1 -->|"yes"| AD2
+    AD2 -->|"yes"| AD3
+    AD3 -->|"no - AD-2"| PC
+    AD3 -->|"yes - AD-3"| TC
+    AD2 -->|"no"| AD4
+    AD4 -->|"yes"| AC
+    AD4 -->|"asserted but not evidenced"| UNK
+    AD4 -->|"no"| AD5
+    AD5 -->|"yes"| PC
+    AD5 -->|"no"| AD6
+    AD6 -->|"yes"| PC
+    AD6 -->|"no"| UNK
+
+    UNK -.->|"evidence arrives"| AD4

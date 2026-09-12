@@ -1,0 +1,41 @@
+stateDiagram-v2
+    direction TB
+    [*] --> IMPORTED: O1 cutover import loaded, section 16
+    IMPORTED --> RECONCILED: O2 tie-out passes on every V-15 head at zero rupees
+    IMPORTED --> DISPUTED: O3 a head differs from its independent record
+    DISPUTED --> IMPORTED: O4 corrected import loaded
+    RECONCILED --> ATTESTED: O5 the employer's named signer attests the set
+    ATTESTED --> IN_USE: O6 the first live run reads it
+    IN_USE --> SUPERSEDED: O7 a later attested correction replaces it
+    SUPERSEDED --> IN_USE: O8 the correction is itself attested and in use
+    DISPUTED --> [*]: O9 go-live refused for the employee
+
+    note right of IMPORTED
+      Not an evaluation input yet.
+      No run may read a set
+      short of ATTESTED.
+    end note
+
+    note right of ATTESTED
+      Carries the attesting person,
+      the date, the source system and
+      the evidence reference. It carries
+      no rule version - these figures
+      were never computed here.
+    end note
+
+    note right of IN_USE
+      Read by the TDS projection step 1,
+      the Article 276 running cap, the
+      ESI contribution-period state, the
+      lifetime exemption balances and the
+      year-end record. Replay returns the
+      attested value, never a recomputation.
+    end note
+
+    note right of SUPERSEDED
+      Both sets stay resolvable.
+      Runs already locked keep the set
+      they read - a correction reaches
+      them only as a correction run.
+    end note

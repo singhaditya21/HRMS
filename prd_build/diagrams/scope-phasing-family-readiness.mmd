@@ -1,0 +1,29 @@
+stateDiagram-v2
+    direction LR
+    [*] --> NOT_BUILT: AF1 family row created with its oracle
+    NOT_BUILT --> BUILT: AF2 generator and validator pass golden and seeded cases
+    BUILT --> AUTHORITY_VALIDATED: AF3 authority validator passes on real data, where one exists
+    BUILT --> PL01_PASSED: AF4 first real submission accepted in Mode B
+    AUTHORITY_VALIDATED --> PL01_PASSED: AF4 first real submission accepted in Mode B
+    PL01_PASSED --> VERSION_PENDING: AF5 breaking format version certified for a period
+    VERSION_PENDING --> PL01_PASSED: AF6 first real submission on the new version accepted
+    PL01_PASSED --> SUSPENDED: AF7 product-caused rejection of a real submission
+    VERSION_PENDING --> SUSPENDED: AF7 product-caused rejection of a real submission
+    SUSPENDED --> PL01_PASSED: AF8 hold cleared and the next instance accepted
+
+    note right of BUILT
+      Coverage lines may read SLA_PENDING_FIRST_SUBMISSION.
+      A rejected first submission here opens a D2 defect
+      and blocks the family at its gate, nothing more.
+    end note
+
+    note right of VERSION_PENDING
+      Lines stay IN_SLA.
+      Each tenant's first instance on the new
+      version runs co-attended in Mode B.
+    end note
+
+    note right of SUSPENDED
+      Release hold RS8 for the family.
+      Existing tenants keep the Mode A fallback.
+    end note

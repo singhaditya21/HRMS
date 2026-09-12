@@ -1,0 +1,38 @@
+flowchart TD
+    START["Meal value V provided in the period<br/>rule version picked by period: cap C is Rs 50 to 31 Mar 2026, Rs 200 from 1 Apr 2026<br/>EV-019 Hypothesis, citation null until V-18"]
+    MODE{"meal_delivery_mode"}
+    START --> MODE
+
+    MODE -->|"cash_allowance or other<br/>incl. cash reimbursement of bills"| TAXALL["Exempt 0, taxable V<br/>M1, M2"]
+    MODE -->|"voucher"| VATT{"non_transferable AND eating_outlet_only<br/>both attested and valid on the issue date?"}
+    MODE -->|"premises"| PATT{"premises_during_working_hours<br/>attested?"}
+
+    VATT -->|"no"| EXC["Exempt 0, taxable V<br/>configuration exception BV-12 or BV-13<br/>payroll run never blocked"]
+    PATT -->|"no"| EXC
+
+    VATT -->|"yes"| REG{"Period before 1 Apr 2026<br/>and new regime?"}
+    PATT -->|"yes"| PCOST{"Cost per meal recorded<br/>and no employee recovery?"}
+    PCOST -->|"cost missing"| BLOCK["Blocking item as AC-106.4, BV-14<br/>never zero, never guessed"]
+    PCOST -->|"recovery recorded"| REVIEW["Operator review, BV-15<br/>meal_recovery_treatment has no default"]
+    PCOST -->|"yes"| REG
+
+    REG -->|"yes"| TAXNEW["Exempt 0, taxable V<br/>M4, M8"]
+    REG -->|"no"| COUNT["Eligible meals E from DayStatus<br/>over the attendance cycle LOP came from<br/>present x meals_per_working_day<br/>half-day, WFH, on-duty per convention, default 0<br/>off, holiday, leave, LOP count 0"]
+
+    COUNT --> PATH{"Valuation path"}
+    PATH -->|"voucher"| VCEIL["Ceiling E x C, pooled per meal_ceiling_pooling<br/>default: per period<br/>exempt = lesser of V and ceiling<br/>M5, M6"]
+    PATH -->|"premises"| PMEAL["Each of up to E meals exempt up to C<br/>cost above C taxable, meals beyond E taxable<br/>M9"]
+
+    VCEIL --> FEED["Perquisite input to the payroll engine<br/>gross, exempt, taxable, rule version, conventions<br/>section 11.9.5"]
+    PMEAL --> FEED
+    TAXALL --> FEED
+    EXC --> FEED
+    TAXNEW --> FEED
+    FEED --> SLIP["Payslip prints the convention used<br/>Form 123 carries the taxable part"]
+
+    classDef tax fill:#f8d7da,stroke:#a33,color:#000;
+    classDef hold fill:#fff3cd,stroke:#a80,color:#000;
+    classDef ok fill:#d4edda,stroke:#2a7,color:#000;
+    class TAXALL,EXC,TAXNEW tax;
+    class BLOCK,REVIEW hold;
+    class VCEIL,PMEAL ok;

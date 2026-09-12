@@ -1,0 +1,31 @@
+flowchart TB
+  subgraph MONTH["One calendar month, decomposed - NFR-AVAIL-801 and 802"]
+    direction LR
+    CW["CRITICAL WINDOW<br/>25th of M to the 2nd of M+1<br/>length = days_in_M minus 24, plus 2<br/>SLO 99.95%"]
+    SW["STATUTORY WINDOWS<br/>around the section 06.11 due dates:<br/>EPF ECR and ESI on the 15th,<br/>TDS deposit on the 7th [Hypothesis],<br/>state PT per state<br/>internal objective 99.95% + deploy freeze"]
+    OD["ALL OTHER DAYS<br/>SLO 99.5%"]
+  end
+
+  CW --> B1["31-day M: 9 days = 12,960 min -&gt; 6.48 min<br/>30-day M: 8 days = 11,520 min -&gt; 5.76 min<br/>29-day M: 7 days = 10,080 min -&gt; 5.04 min<br/>28-day M: 6 days = 8,640 min -&gt; 4.32 min"]
+  OD --> B2["Always 22 days = 31,680 min<br/>naive budget 158.4 min<br/>invariant across month lengths"]
+  SW --> B3["S days inside those 22<br/>at 99.95%, not 99.5%<br/>S = statutory_window_days x due dates in the month<br/>parameter unset - section 17.16"]
+
+  B1 --> F1["ENGINEERING TARGET IS THE FEBRUARY FIGURE<br/>4.32 min, the tightest month of the year<br/>a system sized to spend 6.48 min<br/>breaches in February while the annual number looks healthy"]
+  B2 --> COMP["Composed budget outside the critical window<br/>S x 1440 x 0.0005 + (22 minus S) x 1440 x 0.005"]
+  B3 --> COMP
+  COMP --> F2["Illustration at S = 4:<br/>2.88 + 129.6 = 132.48 min<br/>the naive reading over-states by 25.9 min, about 16%<br/>S = 4 illustrates the arithmetic only"]
+
+  F1 --> AL1["Critical and statutory windows:<br/>ABSOLUTE paging<br/>a conventional 2%-of-budget burn alert fires at 5.2 s<br/>on a 4.32 min budget - below the noise floor"]
+  F2 --> AL2["Other days:<br/>BURN-RATE paging, fast and slow pairs<br/>budget large enough for the arithmetic"]
+
+  AL1 --> POL["Budget exhausted:<br/>non-emergency deploys stop until the window closes;<br/>next release needs a written reliability review;<br/>two consecutive exhausted critical windows<br/>send AVAIL-801 back to section 20 as evidence<br/>the target was set wrong [Hypothesis]"]
+  AL2 --> POL
+
+  classDef win fill:#e7f0fd,stroke:#2c6fbb,color:#000;
+  classDef calc fill:#fff8e1,stroke:#b8860b,color:#000;
+  classDef find fill:#fde7e7,stroke:#c0392b,color:#000;
+  classDef out fill:#e7f9ee,stroke:#1e8449,color:#000;
+  class CW,SW,OD win;
+  class B1,B2,B3,COMP calc;
+  class F1,F2 find;
+  class AL1,AL2,POL out;

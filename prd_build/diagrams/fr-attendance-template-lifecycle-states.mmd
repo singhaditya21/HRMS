@@ -1,0 +1,18 @@
+stateDiagram-v2
+    [*] --> ACTIVE: ticket consumed, live written consent and election for the modality
+    ACTIVE --> ACTIVE: sync to a further device, server-synced mode only
+    ACTIVE --> SUSPENDED: erasure request opens, any trigger
+    SUSPENDED --> ERASING: due time reached, phase 1 key destroyed or not applicable
+    ERASING --> CLOSED: every device item confirmed or closed by attestation
+    CLOSED --> ERASING: an item reopens, returning device or restored backup
+    CLOSED --> [*]
+    note right of SUSPENDED
+        Server copy unreadable except to the erasure job.
+        A device still holding the template can match it,
+        and every such match raises M4.
+    end note
+    note right of CLOSED
+        Row tombstoned, key gone.
+        Re-enrolment creates a new template id.
+        No state leads back to ACTIVE.
+    end note

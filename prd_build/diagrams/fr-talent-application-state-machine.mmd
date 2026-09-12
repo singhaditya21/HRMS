@@ -1,0 +1,47 @@
+stateDiagram-v2
+    direction TB
+
+    state "Open application" as OPEN {
+        state "Applied" as APPLIED
+        state "Screening" as SCREENING
+        state "Assessment" as ASSESSMENT
+        state "Offer" as OFFER
+        [*] --> APPLIED: A1 ingested or submitted, consent captured, dedup run
+        APPLIED --> SCREENING: A2 advanced, or knock-out passed
+        SCREENING --> ASSESSMENT: A5 interview scheduled
+        ASSESSMENT --> OFFER: A7 every scorecard in, or stage force-closed with a reason
+    }
+
+    state "On hold, review date set" as ON_HOLD
+    state "Hired" as HIRED
+    state "Rejected, snapshot written" as REJECTED
+    state "Withdrawn by the candidate" as WITHDRAWN
+    state "Position closed, not progressed" as POSITION_CLOSED
+    state "Merged into a surviving application" as MERGED
+
+    OPEN --> REJECTED: A3 deterministic knock-out failed, the only rejection without a human
+    OPEN --> REJECTED: A4 human rejection, named confirmer and reason when AI-influenced
+    OPEN --> WITHDRAWN: A10 candidate withdraws or declines the offer
+    OPEN --> ON_HOLD: A11 hold with a reason and a review date
+    ON_HOLD --> OPEN: A12 resume at the stage it left
+    ON_HOLD --> REJECTED: A13 human rejection, same guard as A4
+    OFFER --> HIRED: A8 offer accepted
+    OPEN --> POSITION_CLOSED: A14 requisition filled or cancelled
+    OPEN --> MERGED: A16 duplicate merge confirmed
+    MERGED --> OPEN: A17 unmerge restores the application
+    REJECTED --> OPEN: A15 reinstated, the rejection and its snapshot stay on record
+    HIRED --> [*]: A9 onboarding case opened
+    REJECTED --> [*]
+    WITHDRAWN --> [*]
+    POSITION_CLOSED --> [*]
+
+    note right of REJECTED
+        Every stage-class change writes a decision snapshot.
+        An AI-influenced rejection is never part of a batch.
+    end note
+
+    note right of POSITION_CLOSED
+        Not an evaluative decision. The snapshot records the
+        ordering rank at closure and whether a human opened
+        the application.
+    end note

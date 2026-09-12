@@ -1,0 +1,18 @@
+flowchart LR
+    REV["Revenue<br/>scales per employee<br/>two anchors: value floor near ₹50 PEPM ·<br/>clearing band ₹80–200 PEPM (EV-027)"]
+
+    subgraph COGS["Four COGS lines (EV-088)"]
+        direction TB
+        L1["Inference<br/>per employee · per query<br/>SMALLEST line<br/>₹0.15–3.27 PEPM = placeholders (EV-008)<br/>modelled in §13"]
+        L2["WhatsApp messaging<br/>per message since 1 Jul 2025<br/>employee-initiated free inside the 24-hour window<br/>WABA on INR billing by 31 Dec 2026<br/>or delivery stops 1 Jan 2027"]
+        L3["Supervised filing<br/>per registration × state × filing type<br/>DOMINANT line · UNSIZED<br/>sized in §22"]
+        L4["Compliance curation<br/>per state maintained<br/>UNSIZED · sized in §22"]
+    end
+
+    REV --> MIS{"Pricing unit is not the cost unit:<br/>revenue per employee,<br/>dominant cost per registration"}
+    L3 --> MIS
+    MIS --> P1["§18: registration cap<br/>or multi-registration line"]
+    MIS --> P2["Build brief: target<br/>max_supervised_minutes_per_filing_cycle<br/>routed to §20 · sized in §22"]
+
+    L1 --> CTRL["§13 controls: router · rules-first ·<br/>budgets · attribution<br/>keep inference the smallest line"]
+    OLD["[Reversed] 93–99% inference gross margin:<br/>a margin on one line, not a gross margin (EV-K13)"] -.-> L1

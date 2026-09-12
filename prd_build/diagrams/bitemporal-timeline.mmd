@@ -1,0 +1,30 @@
+flowchart TB
+    subgraph BT["BUSINESS TIME (fixed): addback_percent governs wage months from 21-Nov-2025"]
+      direction TB
+      P["March period<br/>the business time never moves"]
+    end
+
+    subgraph K1["KNOWLEDGE TIME - as recorded Apr-2026"]
+      A["Row A: addback = 50%<br/>effective_from = 21-Nov-2025<br/>effective_to = NULL<br/>recorded_at = Apr-2026"]
+    end
+
+    subgraph K2["KNOWLEDGE TIME - as recorded 15-Sep-2026 (illustrative corrigendum)"]
+      A2["Row A: 50%<br/>superseded_at = 15-Sep-2026<br/>(not deleted, belief preserved)"]
+      B["Row B: addback = 47% (illustrative)<br/>effective_from = 21-Nov-2025<br/>recorded_at = 15-Sep-2026<br/>corrigendum_of = Row A"]
+    end
+
+    P --> A
+    A -->|"corrigendum recorded, supersedes prior belief"| A2
+    A2 --> B
+
+    A ==>|"query as-known-in-Apr / March run"| R1["Resolution picks Row A -> 50%<br/>PayrollResult lineage cites Row A"]
+    R1 --> F1["Original March Filing<br/>preserved byte-identical"]
+
+    B ==>|"retro run for March, T = now<br/>latest knowledge, historical period"| R2["Resolution picks Row B -> 47%<br/>arrears PayrollResult<br/>applies_to_period=March, run_in_period=Sep"]
+    R2 --> F2["Correction filing attempt<br/>routed within EV-037 guards<br/>paid ECR: arrear flow, fenced EV-043"]
+
+    F2 -.->|"corrects_filing_id"| F1
+
+    AC["Both answers simultaneously reproducible from one store (AC-DM-22)"]
+    F1 --- AC
+    F2 --- AC

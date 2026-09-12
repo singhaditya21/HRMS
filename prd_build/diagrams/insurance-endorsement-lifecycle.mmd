@@ -1,0 +1,49 @@
+flowchart TD
+    subgraph TRIG["Triggers (enrollment + dependant changes)"]
+        J["New joiner<br/>-> add-member"]
+        L["Leaver / exit<br/>-> delete-member"]
+        D["Newborn / spouse<br/>-> add-dependant"]
+        S["Promotion / grade change<br/>-> sum-insured change (BEN-16)"]
+        M["Suspend / reactivate<br/>-> modify-member (BEN-07)"]
+    end
+
+    GATE{"Enforce tenant policy (BEN-12):<br/>family-definition 1+X,<br/>newborn / marriage addition window"}
+    J --> GATE
+    L --> GATE
+    D --> GATE
+    S --> GATE
+    M --> GATE
+    GATE -->|"outside window / over family cap"| BLK["Blocked with rule cited"]
+    GATE -->|"within rule"| GEN["Generate structured endorsement line items (BEN-10)"]
+
+    GEN --> BATCH["Batch per policy per cycle<br/>stable batch_id<br/>e.g. 5 joiners + 2 leavers = 7 line items"]
+
+    subgraph LC["Endorsement status lifecycle (BEN-11, append-only)"]
+        drafted --> sent
+        sent -->|"ack_ref received"| acknowledged
+        acknowledged -->|"insurer re-bills"| premium_adjusted["premium-adjusted"]
+        sent -->|"no ack_ref past SLA"| exception
+        exception --> EXQ["Exceptions queue<br/>never silently 'sent'"]
+    end
+    BATCH --> drafted
+
+    premium_adjusted --> RECON["Reconcile vs insurer / TPA census import (BEN-15)"]
+    RECON -->|"drift over threshold"| EXQ
+    RECON -->|"in sync"| SOR["System of record:<br/>who is covered, per period"]
+
+    PERQ["Value employer-paid premium as perquisite (BEN-13)<br/>taxable slice e.g. parental top-up;<br/>base employee GMC not taxable"]
+    GEN --> PERQ
+    PERQ --> TDS["Feed s.392 TDS (ex-s.192) + Form 123 (ex-12BA)<br/>+ annual tax computation feeding Form 138 Annexure II"]
+
+    RENEW["Plan-year renewal (BEN-14):<br/>prior scheme effective_to-dated,<br/>new effective-dated scheme; census + diff report carried forward"]
+    SOR --> RENEW
+    RENEW --> GEN
+
+    OOS["Out of scope v1: claims adjudication, premium collection/payment,<br/>broker commission, risk pricing, embedded-insurance purchase"]
+
+    classDef block fill:#f8d7da,stroke:#a33,color:#000;
+    classDef exq fill:#fff3cd,stroke:#a80,color:#000;
+    classDef oos fill:#eee,stroke:#999,color:#555,stroke-dasharray:4 3;
+    class BLK block;
+    class EXQ exq;
+    class OOS oos;

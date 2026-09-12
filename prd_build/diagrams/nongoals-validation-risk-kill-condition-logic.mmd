@@ -1,0 +1,61 @@
+flowchart TB
+    G(["Gate 0 and Gate 1 have reported"])
+
+    subgraph C1["Condition 1 - the filing is not a felt pain"]
+        direction TB
+        C1A["V-16: buyers report near zero<br/>late or rejected filings with the bureau"]
+        C1B["V-01: the bureau bundles filing<br/>below our price floor"]
+        C1A --- AND1{"AND"}
+        C1B --- AND1
+    end
+
+    subgraph C2["Condition 2 - the floor is zero, submission included"]
+        direction TB
+        C2A["A capitalised incumbent publishes<br/>a PRICED attended submission offer<br/>at or near the value floor near Rs 50"]
+        C2B["Today: no vendor in the six claims<br/>to submit anything, EV-030.<br/>MYND slash Qandle is unpriced, EV-034"]
+        C2A --- OR2{"Trigger is a published priced offer,<br/>never a demo claim"}
+        C2B -.->|"baseline"| OR2
+    end
+
+    subgraph C3["Condition 3 - every channel is closed"]
+        direction TB
+        C3A["V-05: CAs read us as disintermediation"]
+        C3B["V-02: Tally payroll enablement negligible"]
+        C3C["No direct self serve motion converts"]
+        C3A --- AND3{"AND"}
+        C3B --- AND3
+        C3C --- AND3
+    end
+
+    subgraph C4["Condition 4 - unit economics do not close"]
+        direction TB
+        C4A["V-26: supervised filing minutes per<br/>registration times state times filing type<br/>exceed realised price from V-03"]
+        C4B["Neither a registration cap nor a<br/>multi registration line recovers it"]
+        C4A --- AND4{"AND"}
+        C4B --- AND4
+    end
+
+    G --> C1
+    G --> C2
+    G --> C3
+    G --> C4
+
+    AND1 --> ANY{"ANY ONE condition<br/>resolves against the thesis"}
+    OR2 --> ANY
+    AND3 --> ANY
+    AND4 --> ANY
+
+    ANY -->|"yes"| STOP["Stop or fundamentally re-scope.<br/>The instinct will be to iterate past it.<br/>This clause is the pre-commitment against that"]
+    ANY -->|"no"| REV{"Review trigger:<br/>one priced vendor both drops its<br/>50 seat block AND adds submission"}
+
+    REV -->|"fires"| RECHK["Re-examine the four conditions<br/>before any further spend"]
+    REV -->|"does not fire"| CONT["Continue. Amber alone never<br/>triggers a kill"]
+
+    RECHK --> ANY
+
+    classDef stop fill:#f8d7da,stroke:#c0392b,color:#611a15;
+    classDef ok fill:#d4edda,stroke:#27ae60,color:#14532d;
+    classDef gate fill:#fff3cd,stroke:#b7950b,color:#5c4408;
+    class STOP stop;
+    class CONT ok;
+    class ANY,REV,AND1,AND3,AND4,OR2 gate;

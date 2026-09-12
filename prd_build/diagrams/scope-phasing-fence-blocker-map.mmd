@@ -1,0 +1,61 @@
+flowchart LR
+    classDef party fill:#e2e3e5,stroke:#6c757d,color:#343a40;
+    classDef ours fill:#cfe2ff,stroke:#0a58ca,color:#052c65;
+    classDef fence fill:#f8d7da,stroke:#b02a37,color:#5c161c;
+    classDef rel fill:#d1e7dd,stroke:#146c43,color:#0a3622;
+
+    subgraph WHO["Who holds the key"]
+        direction TB
+        P1["CBDT and Protean<br/>publish a format"]:::party
+        P2["Income-tax e-filing portal<br/>enables a function"]:::party
+        P3["EPFO<br/>arrear layout behind the authenticated portal"]:::party
+        P4["ESIC, MoLE and the central Government<br/>notify a regime"]:::party
+        P5["State governments<br/>instruments our desk must source"]:::party
+        P6["Counsel<br/>attended-filing questions"]:::party
+        P7["Our desk alone<br/>capture or read"]:::ours
+    end
+
+    subgraph FEN["Fence"]
+        direction TB
+        F01["F-01 Form 138 Q4 formats"]:::fence
+        F02["F-02 Tax Year 2026-27 correction filing"]:::fence
+        F03["F-03 ECR arrear layout"]:::fence
+        F04["F-04 ESI after the saving lapses"]:::fence
+        F09["F-09 Code-era bonus return"]:::fence
+        F06["F-06, F-07 PT and LWF rows per state"]:::fence
+        F11["F-11 state register and letter forms"]:::fence
+        F08["F-08 operator-attended submission per portal"]:::fence
+        F05["F-05 ESIC upload template"]:::fence
+        F10["F-10 r.218 deposit dates"]:::fence
+        F12["F-12 Form 123 layout"]:::fence
+    end
+
+    subgraph ROWS["Blocked rows and where they land"]
+        direction TB
+        R3A["A-13, A-14 TY 2026-27 leg - R3"]:::rel
+        R1S["A-12 submission leg - on clearing"]:::rel
+        R3B["A-06 - R3, or v2 by change control"]:::rel
+        R2A["A-09 - R2 as a rule version"]:::rel
+        R3C["A-27 - R3 if cleared"]:::rel
+        R2B["A-15 return leg, A-16, A-17 - R2 per state"]:::rel
+        R1F["A-18 state forms, A-19 - per captured state"]:::rel
+        R2C["A-23 - R2 per portal"]:::rel
+        R1G["A-08 - R1 if captured, else R2"]:::rel
+        R1D["A-10 deposit timing - before the pre-launch gate"]:::rel
+        R3D["A-29 - R3"]:::rel
+    end
+
+    P1 --> F01 --> R3A
+    P2 --> F02 --> R1S
+    P3 --> F03 --> R3B
+    P4 --> F04 --> R2A
+    P4 --> F09 --> R3C
+    P5 --> F06 --> R2B
+    P5 --> F11 --> R1F
+    P6 --> F08 --> R2C
+    P7 --> F05 --> R1G
+    P7 --> F10 --> R1D
+    P7 --> F12 --> R3D
+    P7 -.->|"sources"| F06
+    P7 -.->|"captures"| F11
+    P7 -.->|"capture session with a design partner"| F03

@@ -1,0 +1,22 @@
+sequenceDiagram
+    autonumber
+    participant SRC as Benefits records
+    participant FEED as Perquisite feed
+    participant WB as Section 08 wage-base resolver
+    participant ENG as Section 08 TDS and payslip
+    participant APP as Approver
+    Note over SRC: OPEN - declarations, proofs, issues, gifts, coverage and acks recorded
+    ENG->>SRC: INPUTS_CLOSED fixes the as-of decision time
+    SRC->>WB: A changed declaration split signals a recompute, BEN-97
+    WB-->>ENG: PF, gratuity and wages bases for the period
+    SRC->>FEED: Ledgers, day statuses, confirmed coverage, approved proofs
+    FEED->>FEED: Evaluate meal, gift, FBP heads, premiums, retiral ledger
+    FEED->>ENG: Perquisite inputs, new or superseding, idempotent ids
+    ENG->>ENG: PROCESSED - projection and payslip lines
+    ENG->>APP: Pre-run benefits exceptions report
+    alt An open blocking task, BV-14
+        APP-->>ENG: Approval held until the task is done
+    else No blocking task
+        APP->>ENG: APPROVED then LOCKED
+    end
+    Note over FEED,ENG: After LOCKED a correction for the period is a superseding input for the next open run

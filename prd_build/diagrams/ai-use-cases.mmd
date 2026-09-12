@@ -1,0 +1,49 @@
+flowchart LR
+    ROOT(["AI use cases<br/><b>model explains, drafts, routes<br/>— never calculates statutory numbers</b>"])
+
+    ROOT --> QRY["<b>QUERY</b><br/>ground answers in tenant policy + statute"]
+    ROOT --> DFT["<b>DRAFT</b><br/>generate text a human signs off"]
+    ROOT --> RCN["<b>RECONCILE</b><br/>flag mismatches vs deterministic ledger"]
+    ROOT --> FPR["<b>FILE-PREP</b><br/>assemble + validate; a human uploads"]
+    ROOT --> SUP["<b>SUPPORT</b><br/>deflect tickets, guide self-serve"]
+    ROOT --> WCH["<b>WATCH / NOTIFY</b><br/>flag amendments + corrigenda"]
+
+    %% QUERY class -- low risk, read-only, RAG-grounded
+    QRY --> Q1["Leave-balance / payslip Q&amp;A<br/><i>Value: deflects L1 tickets</i><br/><b>Risk: LOW</b>"]
+    QRY --> Q2["'Explain my PF / TDS deduction'<br/><i>Value: cuts payroll-query load</i><br/><b>Risk: LOW</b>"]
+    QRY --> Q3["Policy lookup &#40;notice, PT slab, LWF&#41;<br/><i>Value: HR self-serve</i><br/><b>Risk: MED — must cite source</b>"]
+
+    %% DRAFT class -- medium risk, human-in-loop mandatory
+    DFT --> D1["Appointment letter &#40;state form, 10+ workers&#41;<br/>and offer letters<br/><i>Value: onboarding speed</i><br/><b>Risk: MED</b>"]
+    DFT --> D2["Policy & HR-email drafts<br/><i>Value: HR time saved</i><br/><b>Risk: MED</b>"]
+    DFT --> D3["Employee comms for statute change<br/><i>Value: change rollout</i><br/><b>Risk: MED — legal review</b>"]
+    DFT --> D4["Appraisal note &#40;named confirmer&#41;<br/>and FnF explanation text<br/><i>Value: blank-page time saved</i><br/><b>Risk: MED</b>"]
+
+    %% RECONCILE class -- high risk, advisory only, never authoritative
+    RCN --> R1["ECR vs ledger anomaly flag<br/><i>Value: pre-filing error catch</i><br/><b>Risk: HIGH — advisory only</b>"]
+    RCN --> R2["Headcount / wage drift alerts<br/><i>Value: catches missed UAN/ESI</i><br/><b>Risk: HIGH</b>"]
+    RCN --> R3["Attendance vs payroll mismatch<br/><i>Value: LOP accuracy prompt</i><br/><b>Risk: MED</b>"]
+
+    %% FILE-PREP class -- high risk, deterministic engine computes, AI assists
+    FPR --> F1["Invoke deterministic generators: ECR / ESI / PT /<br/>Form 138 Q1–Q3 &#40;ex-24Q&#41;; Q4 fenced<br/><i>Value: filing prep speed</i><br/><b>Risk: HIGH — engine bytes, agent explains</b>"]
+    FPR --> F3["Pre-upload checklist QA<br/><i>Value: rejection avoidance</i><br/><b>Risk: MED</b>"]
+
+    %% SUPPORT class -- low/medium risk, routing + guidance
+    SUP --> S1["Ticket triage & routing<br/><i>Value: faster resolution</i><br/><b>Risk: LOW</b>"]
+    SUP --> S2["Guided workflows &#40;how-to&#41;<br/><i>Value: reduces training cost</i><br/><b>Risk: LOW</b>"]
+    SUP --> S3["Escalate to CA console w/ context<br/><i>Value: expert loop-in</i><br/><b>Risk: MED</b>"]
+
+    %% WATCH class -- alerts only; a human confirms every rule change
+    WCH --> F2["Corrigendum / rule-change watch<br/><i>Value: rule store stays current</i><br/><b>Risk: HIGH — human verify, never edits a rule</b>"]
+
+    classDef root fill:#0d1b2a,stroke:#000,color:#fff
+    classDef cls fill:#1e3a5f,stroke:#0d1b2a,color:#fff
+    classDef low fill:#7fc4d6,stroke:#0d1b2a,color:#000
+    classDef med fill:#e8b04b,stroke:#0d1b2a,color:#000
+    classDef high fill:#c05a4d,stroke:#0d1b2a,color:#fff
+
+    class ROOT root
+    class QRY,DFT,RCN,FPR,SUP,WCH cls
+    class Q1,Q2,S1,S2 low
+    class Q3,D1,D2,D3,D4,R3,F3,S3 med
+    class R1,R2,F1,F2 high

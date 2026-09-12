@@ -1,0 +1,46 @@
+flowchart TD
+    classDef input fill:#3d3d3d,stroke:#6b6b6b,color:#ffffff,stroke-width:1px;
+    classDef out fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef ask fill:#5a3a1e,stroke:#8f5c2f,color:#fff3ea,stroke-width:1px;
+    classDef stop fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+
+    IN["Establishment and work location<br/>evaluated daily"]:::input
+    SEAS{"Seasonal factory?"}
+    NC1["Not covered<br/>row 1"]:::stop
+    HAZ{"Notified hazardous or life-threatening occupation?"}
+    L1["The line is 1 employee"]:::input
+    CLS{"Establishment class"}
+    L10["The line is 10 persons<br/>non-seasonal factory or a state-extended class"]:::input
+    L20["The line is 20 persons<br/>Central-sphere extended class such as an NBFC or insurance business"]:::input
+    CNT{"Two-bound count against the line"}
+    NT["Not triggered"]:::stop
+    AREA{"Area status of the work location"}
+    AREA2{"Area status of the work location"}
+    COV["Covered<br/>rows 2 to 4"]:::out
+    POS["POSSIBLE<br/>row 5 - names the unconfirmed members"]:::ask
+    POSA["POSSIBLE with an area-record task<br/>row 8"]:::ask
+    NC2["Not covered<br/>district not notified, or outside the notified part - rows 6 and 7"]:::stop
+    START["Contributions from the notified date<br/>esi.contribution_start_date on the ESIC record<br/>never the trigger date"]:::out
+    EMP["Employee-level decision<br/>ceiling at entry, period latch, the Rs 176 waiver"]:::input
+
+    IN --> SEAS
+    SEAS -->|"yes"| NC1
+    SEAS -->|"no"| HAZ
+    HAZ -->|"yes"| L1
+    HAZ -->|"no"| CLS
+    CLS -->|"factory or state-extended"| L10
+    CLS -->|"Central-sphere extended"| L20
+    L1 --> CNT
+    L10 --> CNT
+    L20 --> CNT
+    CNT -->|"upper bound below the line"| NT
+    CNT -->|"lower bound at or above the line"| AREA
+    CNT -->|"only the upper bound at or above"| AREA2
+    AREA -->|"notified, or inside the notified part of a partial district"| COV
+    AREA -->|"not notified, or outside the notified part"| NC2
+    AREA -->|"unknown"| POSA
+    AREA2 -->|"notified, or inside the notified part"| POS
+    AREA2 -->|"not notified, or outside the notified part"| NC2
+    AREA2 -->|"unknown"| POSA
+    COV --> START
+    START --> EMP

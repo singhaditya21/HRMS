@@ -1,0 +1,49 @@
+flowchart TB
+    subgraph REG["Effective-dated rule registry (I2)"]
+        direction TB
+        R1["12% PF · 50% add-back %"]
+        R2["PT / LWF slabs · bonus ceiling, legacy 7,000"]
+        R3["ESI 21,000 / PF 15,000 ceilings"]
+        R4["TDS regime params, both vocabularies"]
+    end
+
+    subgraph INP["Employee-period input snapshot"]
+        direction TB
+        I_A["Comp revisions (effective-dated, FR-PAY-103)"]
+        I_B["Attendance / LOP · variable pay"]
+        I_C["Declarations · reimbursements · joins/exits"]
+    end
+
+    CTX["Evaluation context (I6, FR-PAY-210)<br/>disbursal date · as-of decision time<br/>jurisdiction set · tax-regime election"]
+
+    SPINE{{"Single employee-period FACT SET<br/>each fact = input x rule-version x formula (I4)<br/>bounded fixed-point nodes allowed (I7)"}}
+
+    INP --> SPINE
+    REG -. "stamps rule version on every fact" .-> SPINE
+    CTX -. "closed, enumerated context" .-> SPINE
+
+    subgraph BASES["Concurrent wage bases per employee-period (I1)"]
+        direction TB
+        B1["PF / gratuity base (50% add-back)"]
+        B2["ESI gross base (incl. HRA/conv/OT)<br/>component list Hypothesis - TV5"]
+        B3["Bonus base (notified amount or min wage cap)"]
+        B4["Payment-of-wages base"]
+    end
+
+    SPINE --> B1
+    SPINE --> B2
+    SPINE --> B3
+    SPINE --> B4
+
+    REPLAY["REPLAY for audit<br/>same snapshot + rule versions + context =<br/>byte-identical figures (I4)"]
+    RECOMP["RECOMPUTE for retro / arrears<br/>uses the period's rule version,<br/>never today's (I3)"]
+
+    SPINE --> REPLAY
+    SPINE --> RECOMP
+    RECOMP -. "reads period-dated rules" .-> REG
+
+    AUDIT["Immutable audit trail on every monetary field (I5):<br/>who · when · from-value · authority · rule version · context"]
+
+    SPINE -. logs .-> AUDIT
+    B1 -. logs .-> AUDIT
+    RECOMP -. logs .-> AUDIT

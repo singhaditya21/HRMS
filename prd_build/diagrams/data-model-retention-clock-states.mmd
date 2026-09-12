@@ -1,0 +1,49 @@
+stateDiagram-v2
+    direction TB
+    [*] --> LIVE : record created and classified
+
+    LIVE --> LIVE : still serving a live processing purpose
+    LIVE --> ANCHORED : the class clock anchor is reached
+
+    note right of LIVE
+        Anchors differ by class.
+        Register instance: the date of last entry
+        after the instance closes.
+        Employment record: exit.
+        ICT log: creation.
+        An unanchored record has no running clock.
+    end note
+
+    ANCHORED --> FLOOR_ELAPSED : min_retention for the class has run
+    ANCHORED --> FLOOR_UNKNOWN : the floor is a counsel-set parameter with no value
+    FLOOR_UNKNOWN --> FLOOR_ELAPSED : counsel sets the parameter and the period has run
+    FLOOR_UNKNOWN --> ANCHORED : counsel sets a longer parameter
+
+    ANCHORED --> HELD : RetentionHold placed
+    FLOOR_ELAPSED --> HELD : RetentionHold placed
+    FLOOR_UNKNOWN --> HELD : RetentionHold placed
+    HELD --> ANCHORED : hold released, floor not yet run
+    HELD --> FLOOR_ELAPSED : hold released, floor already run
+
+    FLOOR_ELAPSED --> GATED : a conditional destruction gate applies to this class
+    GATED --> ERASABLE : the gate condition is recorded, for example a transfer to a successor instance
+    FLOOR_ELAPSED --> ERASABLE : no gate applies
+
+    ERASABLE --> ERASED : deletion engine executes crypto-shred or tombstone
+    ANCHORED --> CEILING_DUE : a ceiling class expires, purpose spent
+    CEILING_DUE --> ERASED : erasure is required, not requested
+
+    ERASED --> [*]
+
+    note right of FLOOR_UNKNOWN
+        An unset floor blocks automatic erasure
+        and raises an unresolved-retention flag.
+        It never defaults to zero.
+    end note
+
+    note right of CEILING_DUE
+        A ceiling can fall due before a floor runs.
+        Where they collide the record is retained
+        and the collision is a counsel item, never
+        a silent choice by the engine.
+    end note

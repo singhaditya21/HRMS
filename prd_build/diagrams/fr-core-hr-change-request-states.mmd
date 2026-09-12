@@ -1,0 +1,35 @@
+stateDiagram-v2
+    direction LR
+
+    [*] --> DRAFT: CR1 maker holds P on the object in scope
+    DRAFT --> DISCARDED: CR3 maker discards
+    DRAFT --> CHECK_PENDING: CR2 submit, validations and consent gate pass
+    CHECK_PENDING --> CHECK_PENDING: CR11 SLA breached, backup checker assigned
+    CHECK_PENDING --> APPROVED: CR4 distinct checker approves on a current base
+    CHECK_PENDING --> REJECTED: CR9 checker rejects with a reason
+    CHECK_PENDING --> WITHDRAWN: CR10 maker withdraws
+    CHECK_PENDING --> STALE: CR12 another change on the object took effect first
+    STALE --> DRAFT: CR13 maker rebases on the new base
+    APPROVED --> VERIFYING: CR5 external verification needed
+    APPROVED --> EFFECTIVE: CR8 no verification needed
+    VERIFYING --> EFFECTIVE: CR6 verification passes
+    VERIFYING --> VERIFICATION_FAILED: CR7 verification fails, prior value stays
+    EFFECTIVE --> [*]
+    DISCARDED --> [*]
+    REJECTED --> [*]
+    WITHDRAWN --> [*]
+    VERIFICATION_FAILED --> [*]
+
+    note right of CHECK_PENDING
+        The maker, the subject of the change and
+        anyone holding the maker's role on this
+        instance can never approve it. With no
+        eligible checker it waits under FOUR_EYES_GAP.
+    end note
+
+    note right of APPROVED
+        The object's value is unchanged until
+        EFFECTIVE. An effective date inside a
+        LOCKED month spawns a correction run
+        as a diff, never a mutation.
+    end note

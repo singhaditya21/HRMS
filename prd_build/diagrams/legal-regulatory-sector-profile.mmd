@@ -1,0 +1,26 @@
+flowchart TD
+    ON["Tenant onboarding - sector questionnaire<br/>FR-LEG-030"] --> Q{"Is the customer a regulated entity?"}
+    Q -->|"No"| STD["Standard profile<br/>India residency by default, AI per tenant choice,<br/>CERT-In and SPDI controls as for every tenant"]
+    Q -->|"RBI"| R{"Has the regulated entity recorded its own<br/>materiality determination for this arrangement?"}
+    R -->|"Material"| RM["RBI profile - material<br/>localisation, audit including by RBI,<br/>prior consent to sub-contractors, para 16 r,<br/>inspection reaching sub-contractors, para 16 o"]
+    R -->|"Not material, or undecided"| RN["RBI profile - determination pending or negative<br/>controls stay on, materiality is the RE's call, CR-14"]
+    Q -->|"SEBI"| S{"One of the eight cloud-circular RE categories?"}
+    S -->|"Yes"| SL["SEBI cloud profile<br/>public-cloud Lane B: MeitY-empanelled infrastructure in India,<br/>Principle 7 x contract terms, audit and search-and-seizure,<br/>India key management per FAQ Q26"]
+    S -->|"No, other CSCRF RE"| SC["SEBI CSCRF profile<br/>hosted-services evidence pack, segregation per FAQ Q27,<br/>vendor undertaking per PR.IP guideline 5"]
+    Q -->|"IRDAI"| I{"Managed payroll service,<br/>or a self-service licence?"}
+    I -->|"Managed service"| IM["IRDAI outsourcing profile<br/>reg 53 undertaking reaching sub-contractors,<br/>offshore only with Competent Authority permission"]
+    I -->|"Licence"| IL["IRDAI tool profile<br/>argued outside the reg 2 clause 14 outsourcing definition,<br/>not relied on until counsel confirms, CR-42<br/>CS Guidelines 2023 still cover the insurer's data"]
+
+    RM --> AIOFF["Every regulated profile:<br/>AI kill switch engaged by default,<br/>sub-processor gate on consent, India pinning"]
+    RN --> AIOFF
+    SL --> AIOFF
+    SC --> AIOFF
+    IM --> AIOFF
+    IL --> AIOFF
+
+    classDef std fill:#e8f5e9,stroke:#2e7d32,color:#0d2a12;
+    classDef reg fill:#e3f2fd,stroke:#1565c0,color:#0d1b2a;
+    classDef off fill:#fde2e2,stroke:#c0392b,color:#3a0d0d;
+    class STD std;
+    class RM,RN,SL,SC,IM,IL reg;
+    class AIOFF off;

@@ -1,0 +1,14 @@
+stateDiagram-v2
+    direction LR
+    [*] --> ACTIVE: E1 authored on a synthetic tenant, expectations produced by the engine, second-person review
+    ACTIVE --> REDERIVE_PENDING: E2 a pinned rule, ledger fixture or corpus version is superseded for the case period
+    REDERIVE_PENDING --> ACTIVE: E3 engine re-run and any changed expectation reviewed with a reason
+    ACTIVE --> RETIRED: E4 use case retired or case superseded
+    REDERIVE_PENDING --> RETIRED: E4 use case retired or case superseded
+    RETIRED --> [*]
+
+    note right of REDERIVE_PENDING
+      Blocks the release gate for its use case,
+      not live traffic. Live answers are still
+      checked against the engine at runtime.
+    end note

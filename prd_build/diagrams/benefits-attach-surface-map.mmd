@@ -1,0 +1,34 @@
+flowchart TB
+  subgraph CORE["HRMS Benefits Core — partner-agnostic (BEN-50)"]
+    DM["Enrollment / endorsement / contribution data<br/>append-only, effective-dated, tenant-scoped"]
+    AD["Partner adapter interface<br/>swap insurer/CRA/trustee = config, not code fork<br/>schema-validated, ack-tracked (BEN-51/55)"]
+    DM --> AD
+  end
+
+  subgraph SW["v1 SCOPE — SOFTWARE side of the Zaggle line (own margin unsized, EV-088): data artefacts only, no funds"]
+    direction TB
+    INS["Insurer / TPA / broker<br/>ICICI Lombard, Star Health; Plum, Onsurity, Loop, Nova"]
+    CRA["NPS CRA / POP<br/>Protean eGov, KFintech + POP intermediary"]
+    SUP["Superannuation trustee / insurer<br/>LIC, HDFC Life group superannuation"]
+    EPFO["EPFO Unified Portal — attended, no API<br/>EDLI / EPF"]
+    CARD["Card issuer / PPI — DEFERRED to v2<br/>Zaggle, Pluxee, Happay"]
+  end
+
+  AD -->|"endorsement batches add/del/modify + census reconcile (BEN-10/15)"| INS
+  AD -->|"SCF artefact for employer upload, fenced until B11 + PRAN status + ack ref (BEN-21/22)"| CRA
+  AD -->|"contribution instruction file + member roster (BEN-24)"| SUP
+  AD -->|"nomination data + ECR artefact from §08, attended submission under written authority (§22)"| EPFO
+  AD -. "wallet_config.provider_ref = null hook — nothing sent in v1" .-> CARD
+
+  EMP["Employer / tenant treasury"]
+
+  subgraph MM["OUT OF SCOPE v1 — MONEY-MOVEMENT side (Zaggle whole-company adj. EBITDA 9.9%): BEN-52 gate — no v1 code path debits, holds float, or books interchange"]
+    PREM["Premium collection/payment + claims adjudication + broker commission"]
+    FUNDS["NPS / superann / EPF contribution funds"]
+    FLOAT["Card issuance + float + interchange (v2, gated on §20)"]
+  end
+
+  EMP -. "premium paid employer to insurer directly (outside product)" .-> PREM
+  EMP -. "funds move employer to CRA / trustee / EPFO directly" .-> FUNDS
+  EMP -. "no card rail in v1" .-> FLOAT
+  CORE -. "BLOCKED: core initiates NO fund transfer (BEN-52 gate)" .-> MM

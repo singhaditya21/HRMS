@@ -1,0 +1,26 @@
+stateDiagram-v2
+    direction LR
+    [*] --> Unset
+
+    Unset: UNSET - no shipped value, behaviour taken from the unset class
+    Provisional: PROVISIONAL - a tenant policy or an operator choice recorded with its reason
+    Set: SET - a central value with a named setter and a stated basis, still unverified
+    Verified: VERIFIED - the value matches a primary source captured with URL and date
+    Promoted: PROMOTED - the value now lives as a rule row with its citation, the key kept as an alias
+    Superseded: SUPERSEDED - the instrument changed, the alias retired
+
+    Unset --> Provisional: P1 the operator records a choice for one tenant
+    Unset --> Set: P2 the statutory lead sets a central value with a basis
+    Provisional --> Set: P3 the central value lands and the tenant choice is reconciled
+    Set --> Verified: P4 two-person review against the primary source
+    Provisional --> Verified: P5 the tenant choice is confirmed by the primary source
+    Verified --> Promoted: P6 published as a rule row through the section 22 pipeline
+    Promoted --> Superseded: P7 an amendment or corrigendum lands
+    Superseded --> Unset: P8 the successor value is unknown, the class applies again
+    Set --> Unset: P9 the basis is withdrawn, every dependent artefact re-blocks
+
+    note right of Unset
+        no unset parameter may block a pay run for an employee
+        blocking is at the artefact or the field, never the person
+        counsel-gated keys stay dark even when a value exists
+    end note

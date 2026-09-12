@@ -1,0 +1,22 @@
+stateDiagram-v2
+    [*] --> REQUESTED: tenant onboards a bank with no published version
+    REQUESTED --> CAPTURED: sample template or specification supplied and stored
+    CAPTURED --> DRAFT: columns, widths and control totals mapped onto the schema object
+    CAPTURED --> WITHDRAWN: artefact cannot be validated and no tenant needs it
+    DRAFT --> PROVING: dry run diffed against the supplied sample
+    PROVING --> DRAFT: bank rejects the upload, reason kept verbatim as a template defect
+    PROVING --> PUBLISHED: bank accepts and the batch reconciles, proving artefact stored
+    PUBLISHED --> DRAFT: bank release changes the layout, a new version is minted
+    PUBLISHED --> DEPRECATED: successor version reaches published
+    DEPRECATED --> RETIRED: no open batch routes to this version
+    RETIRED --> [*]
+    WITHDRAWN --> [*]
+
+    note right of PROVING
+        Emission is permitted for one named tenant
+        and one batch only
+    end note
+    note right of PUBLISHED
+        Requires both a stored source artefact
+        and a stored proving artefact
+    end note

@@ -1,0 +1,39 @@
+flowchart TD
+    TRIG["Confirmation accepted, G4"]
+    TX["Commit transaction opens"]
+
+    C1["criteria<br/>requisition version, screening and knock-out rules,<br/>scorecard, stage advance conditions"]
+    C2["model_binding<br/>binding id, model and version, prompt template,<br/>config hash, allow-list version"]
+    C3["attribution<br/>features used with their values, score,<br/>knock-out fired, derivation names"]
+    C4["confirmation<br/>confirmer name and ref, time, reason,<br/>surface, delegate flag, standing flag"]
+    C5["context<br/>stage, tenant AI configuration, kill-switch state,<br/>threshold facts with counting units, disclosure version"]
+    C6["inputs_digest<br/>field names with digests, never values"]
+
+    COPY["Copied by value, S-2<br/>survives a retired binding,<br/>a deleted version, a deactivated user"]
+    REF["Personal data referenced or digested, S-3<br/>the snapshot is not a second candidate file"]
+    CHAIN["Append-only, hash-chained per tenant, S-4<br/>previous digest carried forward"]
+    OK{"All required blocks present<br/>per the completeness matrix?"}
+    COMMIT["Decision record plus snapshot commit<br/>with the state change"]
+    FAIL["G7: roll back, name the failed block,<br/>person's state unchanged"]
+
+    ERA{"Later: erasure request<br/>on the subject"}
+    HOLD["Hold in force: nothing erased,<br/>requester told it is held, E-2"]
+    SHELL["Default E-3: personal fields become the tombstone,<br/>non-personal shell survives, pack states the erasure date"]
+    SHRED["E-4 full crypto-shred, unavailable<br/>until counsel answers CR-39"]
+
+    TRIG --> TX
+    TX --> C1 --> COPY
+    TX --> C2 --> COPY
+    TX --> C3 --> COPY
+    TX --> C4 --> COPY
+    TX --> C5 --> COPY
+    TX --> C6 --> REF
+    COPY --> CHAIN
+    REF --> CHAIN
+    CHAIN --> OK
+    OK -->|Yes| COMMIT
+    OK -->|No| FAIL
+    COMMIT --> ERA
+    ERA -->|Case or proceeding hold| HOLD
+    ERA -->|No hold, default mode| SHELL
+    ERA -->|No hold, tenant selected full erasure| SHRED

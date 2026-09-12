@@ -1,0 +1,46 @@
+flowchart LR
+    subgraph WALL["Walled talent store - separate keyspace, own consent purposes"]
+        ACC["Accommodation records<br/>FR-T-D014"]
+        R9["Rule 9 sub-rule 1 particulars<br/>FR-T-D007"]
+        DECL["Monitoring self-declarations<br/>FR-T-D003"]
+    end
+
+    subgraph MASTER["Core HR and leave - owned by §07 and §09"]
+        HDS["HEALTH_DISABILITY_STATUS<br/>ESI wage ceiling only"]
+        GEN["Gender on the master<br/>registers such as Form I"]
+        MAT["Maternity leave records"]
+    end
+
+    subgraph SCORE["Scoring and decision surfaces"]
+        ORD["AI ordering FR-T-R37"]
+        KO["Knock-out rules FR-T-R23"]
+        SC["Scorecards and calibration"]
+        DRAFT["Review and summary drafting<br/>FR-T-X09"]
+    end
+
+    CHOKE{{"Model egress chokepoint §12.8.5<br/>restricted_redact for barred classes"}}
+    RPT["Adverse-impact report<br/>aggregate only, small cells suppressed"]
+    LOG["Interviewer logistics note<br/>for example scribe arranged"]
+    EXPORT["Rule 9 export for production<br/>on demand, not Form III"]
+    WIN["Excluded measurement window<br/>shown without its reason, FR-T-P06"]
+
+    ACC -- "logistics only" --> LOG --> SC
+    R9 --> EXPORT
+    DECL -- "counts only" --> RPT
+    MAT -- "absence window" --> WIN --> SC
+    DRAFT --> CHOKE
+
+    ACC -. "no read path" .-x ORD
+    R9 -. "no read path" .-x SC
+    DECL -. "no read path" .-x KO
+    HDS -. "no read path" .-x ORD
+    GEN -. "not in any ordering manifest" .-x ORD
+    MAT -. "reason never shown" .-x SC
+
+    HIV["HIV status<br/>no field anywhere<br/>HIV Act case pack only"]
+    HIV -. "never collected for scoring or monitoring" .-x SCORE
+
+    classDef wall fill:#dbeafe,stroke:#1e3a8a,color:#111;
+    classDef bar fill:#fee2e2,stroke:#991b1b,color:#111;
+    class ACC,R9,DECL wall;
+    class HIV bar;

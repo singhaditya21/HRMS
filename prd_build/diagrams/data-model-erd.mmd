@@ -1,0 +1,304 @@
+erDiagram
+    TENANT ||--|| CORPORATE_GROUP : "is one"
+    CORPORATE_GROUP ||--o{ LEGAL_ENTITY : holds
+    LEGAL_ENTITY ||--o{ ESTABLISHMENT : registers
+    LEGAL_ENTITY ||--o{ REGISTRATION : "owns TAN and PTEC"
+    ESTABLISHMENT ||--o{ REGISTRATION : "owns EPF ESIC PTRC LWF"
+    ESTABLISHMENT ||--o{ REGISTRATION_COVERAGE : "files under"
+    REGISTRATION ||--o{ REGISTRATION_COVERAGE : covers
+    ESTABLISHMENT }o--|| WORK_LOCATION : "premises at"
+    WORK_LOCATION }o--|| JURISDICTION : "sits in"
+    JURISDICTION ||--o{ EFFECTIVE_DATED_RULE : scopes
+
+    PERSON ||--o{ EMPLOYMENT : "employed as"
+    LEGAL_ENTITY ||--o{ EMPLOYMENT : employs
+    EMPLOYMENT ||--o{ ESTABLISHMENT_MAPPING : "files under"
+    ESTABLISHMENT ||--o{ ESTABLISHMENT_MAPPING : covers
+    EMPLOYMENT ||--o{ WORK_LOCATION_ASSIGNMENT : "works at"
+    WORK_LOCATION ||--o{ WORK_LOCATION_ASSIGNMENT : hosts
+    PERSON ||--o{ STATUTORY_IDENTIFIER : holds
+    PERSON ||--o{ SERVICE_RECORD : "accrues per legal entity"
+    LEGAL_ENTITY ||--o{ SERVICE_RECORD : "service with"
+    EMPLOYMENT ||--o{ ELIGIBILITY_STATE : derives
+    EMPLOYMENT ||--o{ COMPENSATION_ASSIGNMENT : "priced by"
+    COMPENSATION_STRUCTURE ||--o{ COMPENSATION_ASSIGNMENT : "bound in"
+
+    PERSON ||--o| AADHAAR_TOKEN_VAULT : "token only"
+    PERSON ||--o{ CONSENT_RECORD : grants
+    EMPLOYMENT ||--o{ BIOMETRIC_TEMPLATE : enrols
+    EMPLOYMENT ||--o{ PUNCH : records
+    EMPLOYMENT ||--o{ FORM_IX_ROW : "register rows"
+
+    ESTABLISHMENT ||--o{ PAY_RUN : runs
+    PAY_RUN ||--o{ PAYROLL_RESULT : produces
+    PAYROLL_RESULT ||--o| DOCUMENT : "payslip render"
+    PAY_RUN ||--o{ FILING : feeds
+    REGISTRATION ||--o{ FILING : "raised against"
+    FILING ||--o{ CHALLAN : "paid by"
+    FILING ||--o{ DOCUMENT : evidences
+    FILING }o--o{ PAYROLL_RESULT : "snapshot of"
+    PAYROLL_RESULT }o--o{ EFFECTIVE_DATED_RULE : lineage
+
+    TENANT {
+        uuid tenant_id PK
+    }
+
+    CORPORATE_GROUP {
+        uuid group_id PK
+        uuid tenant_id FK
+        date valid_from
+        timestamp recorded_at
+    }
+
+    LEGAL_ENTITY {
+        uuid legal_entity_id PK
+        uuid group_id FK
+        string pan
+        string cin_llpin
+        string gstin_by_state
+        date valid_from
+        date valid_to
+    }
+
+    REGISTRATION {
+        uuid registration_id PK
+        enum owner_level "legal entity or establishment"
+        enum scheme "EPF, ESIC, PTRC, PTEC, LWF, SE, LIN, TAN"
+        string number "mask per id_format rule"
+        string state_code
+        enum status "applied, active, suspended, surrendered, cancelled"
+        date valid_from
+        date valid_to
+        timestamp recorded_at
+    }
+
+    REGISTRATION_COVERAGE {
+        uuid establishment_id FK
+        uuid registration_id FK
+        enum scheme
+        date effective_from
+        date effective_to
+    }
+
+    ESTABLISHMENT {
+        uuid establishment_id PK
+        uuid legal_entity_id FK
+        uuid parent_establishment_id FK "sub-code and extension rows"
+        uuid premises_work_location_id FK
+        date opened_on
+        date closed_on
+        json headcount_by_counting_unit "latched per rule"
+    }
+
+    SERVICE_RECORD {
+        uuid service_record_id PK
+        uuid person_id FK
+        uuid legal_entity_id FK
+        date clock_start
+        json segments "one per employment"
+        json counted_days_by_window "frozen at lock"
+        json breaks "treatment, basis, decided_by"
+    }
+
+    WORK_LOCATION {
+        uuid work_location_id PK
+        uuid jurisdiction_id FK
+        string state_code
+        enum sphere "central or state"
+        json code_regime_commenced_on "per Code, rule-backed"
+    }
+
+    JURISDICTION {
+        uuid jurisdiction_id PK
+        string level "central, state or local body"
+    }
+
+    EFFECTIVE_DATED_RULE {
+        uuid rule_id PK "one per version"
+        string rule_key "stable across versions"
+        string rule_type
+        int version
+        uuid jurisdiction_id FK
+        enum applies_to_sphere "all, central or state"
+        enum regime "legacy or code"
+        date effective_from
+        date effective_to
+        timestamp recorded_at "when it became resolvable"
+        timestamp superseded_at
+        uuid corrigendum_of FK
+        json payload "typed per rule_type"
+        enum enforcement_mode "enforce or warn_only"
+        string source_ref "instrument, date, clause"
+        timestamp source_captured_at
+        enum evidence_status
+        string author
+        string reviewer "never the author"
+        enum publish_state "per 22 FR-RULE-003"
+    }
+
+    PERSON {
+        uuid person_id PK "immutable"
+        string aadhaar_token "opaque, never the number or a hash"
+        string name_as_per_uan
+        string name_as_per_pan
+    }
+
+    EMPLOYMENT {
+        uuid employment_id PK
+        uuid person_id FK
+        uuid legal_entity_id FK
+        date date_of_joining
+        date date_of_leaving
+        enum employment_type
+        boolean iw_flag
+    }
+
+    ESTABLISHMENT_MAPPING {
+        uuid employment_id FK
+        uuid establishment_id FK
+        string pf_member_id "establishment-code-scoped"
+        date effective_from
+        date effective_to
+        timestamp recorded_at
+    }
+
+    WORK_LOCATION_ASSIGNMENT {
+        uuid employment_id FK
+        uuid work_location_id FK
+        date effective_from
+        date effective_to
+        timestamp recorded_at
+        string remote_pt_policy
+    }
+
+    STATUTORY_IDENTIFIER {
+        uuid stat_id PK
+        uuid person_id FK
+        enum kind "UAN, PAN, ESI_IP, PRAN, BANK"
+        string value
+        string linkage_state
+        enum filing_role "active_for_filing or declared_additional"
+        date effective_from
+        timestamp recorded_at
+    }
+
+    ELIGIBILITY_STATE {
+        uuid eligibility_id PK
+        uuid employment_id FK
+        enum scheme "PF, ESI, PT, LWF, gratuity"
+        string state
+        date effective_from
+        timestamp recorded_at
+    }
+
+    COMPENSATION_STRUCTURE {
+        uuid structure_id PK
+        json component_order
+    }
+
+    COMPENSATION_ASSIGNMENT {
+        uuid comp_assign_id PK
+        uuid employment_id FK
+        uuid structure_id FK
+        date effective_from
+        date effective_to
+        timestamp recorded_at
+    }
+
+    AADHAAR_TOKEN_VAULT {
+        string aadhaar_token PK
+        bytes number_ciphertext "vault keys only"
+        uuid consent_id FK
+        timestamp purpose_spent_at
+        timestamp deleted_at
+    }
+
+    CONSENT_RECORD {
+        uuid consent_id PK
+        int version
+        enum regime "SPDI, Aadhaar Reg 5 or DPDP"
+        string purpose
+        string notice_text_version
+        enum artefact_owner "employer, vendor or both"
+        timestamp granted_at
+        timestamp withdrawn_at
+    }
+
+    BIOMETRIC_TEMPLATE {
+        uuid template_id PK
+        uuid employment_id FK
+        uuid consent_id FK
+        string key_ref "biometric keyspace"
+        timestamp erased_at
+    }
+
+    PUNCH {
+        uuid punch_id PK
+        uuid employment_id FK
+        timestamp ts_device
+        string device_sn
+        enum direction
+        string payload_hash "dedup with the device key"
+    }
+
+    FORM_IX_ROW {
+        uuid establishment_id FK
+        uuid employment_id FK
+        string month
+        json day_in_out "per-day IN and OUT"
+        int register_version
+    }
+
+    PAY_RUN {
+        uuid pay_run_id PK
+        uuid establishment_id FK
+        string period
+        enum run_type
+        enum state "OPEN to FILED, per 08"
+        json evaluation_context "disbursal date, as-of time, jurisdiction set, tax-regime election"
+    }
+
+    PAYROLL_RESULT {
+        uuid result_id PK
+        uuid pay_run_id FK
+        uuid employment_id FK
+        string applies_to_period
+        string run_in_period
+        decimal pf_wage
+        decimal esi_wage
+        decimal pow_wage
+        int ncp_days
+    }
+
+    FILING {
+        uuid filing_id PK
+        uuid pay_run_id FK
+        uuid registration_id FK
+        enum filing_type "ECR, ESI_CONTRIB, PT_RETURN, LWF, TDS_138, FORM_130, STAT_REGISTER"
+        enum return_type "regular, supplementary or revised"
+        enum state "per 08 FR-PAY-711"
+        string format_version
+        string input_snapshot_ref
+        string artefact_sha256
+        enum submission_mode "employer or operator under written authority"
+        string authority_to_act_ref
+        uuid corrects_filing_id FK
+    }
+
+    CHALLAN {
+        uuid challan_id PK
+        uuid filing_id FK
+        string trrn_or_crn
+        string utr
+        decimal amount
+        decimal interest_7q
+        enum recon_state
+    }
+
+    DOCUMENT {
+        uuid document_id PK
+        enum classification
+        string retention_class
+        string storage_region
+        string sha256
+    }

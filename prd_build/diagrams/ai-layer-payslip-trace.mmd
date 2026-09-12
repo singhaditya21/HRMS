@@ -1,0 +1,33 @@
+sequenceDiagram
+    autonumber
+    participant W as Worker on WhatsApp
+    participant AS as Assistant surface
+    participant KS as Tenant AI control
+    participant RT as Router
+    participant TL as Tool layer
+    participant EN as Engine ledger
+    participant CK as Chokepoint
+    participant MP as Model provider
+    participant GS as Interceptor and guardrails
+    participant AU as India log and disclosure store
+    W->>AS: Hindi message asking how much PF was deducted this month
+    AS->>W: Re-authenticates the person on the shared handset
+    AS->>KS: Reads the tenant switch and the UC-Q3 feature state
+    KS-->>AS: ON, UC-Q3 enabled
+    AS->>RT: Query class, cheap tier, eligible providers only
+    RT->>TL: get_payslip scoped to the authenticated worker
+    TL->>EN: Reads the computed ledger for the month
+    EN-->>TL: Gross 50,000, EPF wages 15,000, employee PF 1,800
+    TL-->>RT: Typed fields plus the member UAN
+    RT->>CK: Envelope with typed fields and the worker message
+    CK->>CK: UAN dropped by the UC-Q3 manifest, name tokenised, message clean
+    CK->>MP: Tokenised prompt with the engine figures as grounded facts
+    MP-->>CK: Draft says PF is 12 percent of 50,000, which is 6,000
+    CK->>CK: Response scanned, name token rehydrated for this worker only
+    CK->>GS: Draft handed to the post-generation checks
+    GS->>EN: Cross-checks 50,000 and 12 percent and 6,000 against ledger and store
+    GS-->>AS: 6,000 blocked, engine value 1,800 substituted with its basis line
+    AS->>W: Hindi answer, 1,800 in Western Arabic digits, rule citation attached
+    CK->>AU: Tokenised prompt and blocked draft logged in India
+    GS->>AU: Interceptor block recorded as a quality event
+    CK->>AU: One disclosure record for this worker

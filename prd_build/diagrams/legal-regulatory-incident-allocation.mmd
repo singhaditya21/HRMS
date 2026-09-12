@@ -1,0 +1,36 @@
+flowchart TD
+    N["Incident noticed<br/>the six-hour CERT-In clock starts here, EV-062<br/>classification is owned by §17.6"] --> C{"Annexure I class engaged<br/>for our own systems?"}
+    C -->|"Yes, or uncertain"| OWN["We report through our registered point of contact<br/>uncertainty never decides against notifying"]
+    C -->|"No"| NOTE["Recorded, with the reason<br/>no report filed, decision kept for review"]
+
+    OWN --> T{"Which tenants are affected?"}
+    T -->|"One"| P1["One pack: incident class, time noticed,<br/>affected data classes and record counts,<br/>containment, the log extracts that tenant is entitled to"]
+    T -->|"Many"| P2["One pack per tenant, disjoint content<br/>canary-tested for cross-tenant leakage<br/>no tenant learns another exists"]
+
+    P1 --> PROF{"Tenant's sector profile"}
+    P2 --> PROF
+    PROF -->|"SEBI"| S["Pack adds the segregation statement<br/>current at the incident time"]
+    PROF -->|"RBI"| R["Pack adds the sub-processor register extract<br/>supply-chain information, para 16 sub-clause n"]
+    PROF -->|"IRDAI"| I["Pack adds the reg 53 artefacts for a managed service"]
+    PROF -->|"Standard"| ST["Base pack"]
+
+    S --> BAN
+    R --> BAN
+    I --> BAN
+    ST --> BAN["Every pack: facts only<br/>no admission or denial of negligence under IT Act s.43A<br/>no statement of any party's statutory duty<br/>no 72-hour clock, no DPDP r.7 while it is not in force"]
+
+    BAN --> LINT{"Banned-claim lint passes?"}
+    LINT -->|"No"| FIX["Blocked - the sentence is removed before dispatch<br/>FR-LEG-044 AC1"]
+    LINT -->|"Yes"| SEND["Dispatched and recorded:<br/>tenant list, classes, dispatch times<br/>who filed which report, CR-24 open"]
+    FIX --> LINT
+
+    SEND --> DPDP["From on or about 13 May 2027:<br/>r.7 intimations to the Board and to each affected person,<br/>in addition to this report, from the same incident record"]
+
+    classDef start fill:#e3f2fd,stroke:#1565c0,color:#0d1b2a;
+    classDef block fill:#fde2e2,stroke:#c0392b,color:#3a0d0d;
+    classDef caution fill:#fff3cd,stroke:#b8860b,color:#3a2f00;
+    classDef ok fill:#e8f5e9,stroke:#2e7d32,color:#0d2a12;
+    class N,OWN start;
+    class FIX,BAN block;
+    class NOTE,S,R,I,ST caution;
+    class SEND,DPDP,P1,P2 ok;

@@ -1,0 +1,35 @@
+flowchart TD
+    START([Employee exit triggers F&F computation]):::trig
+
+    subgraph EARN["Earnings and payouts (+)"]
+        direction TB
+        E1["+ Prorated final-month salary<br/>(FR-PAY-104 basis)"]
+        E2["+ Unpaid arrears<br/>(retro recompute per period rules, FR-PAY-401)"]
+        E3["+ Leave encashment<br/>exempt up to the lifetime ceiling<br/>tax.leave_encashment_exemption_ceiling<br/>(1961-Act s.10(10AA), carried value, Hypothesis)"]
+        E4["+ Gratuity payout if qualified<br/>(15/26 x last wages x years, CoSS s.53)<br/>capped at gratuity.payable_ceiling<br/>exempt up to tax.gratuity_exemption_ceiling (FR-PAY-206)"]
+        E5["+ Statutory bonus accrued to date<br/>(FR-PAY-208)"]
+        E6["+ Pending reimbursements<br/>(FR-PAY-502)"]
+        E1 --> E2 --> E3 --> E4 --> E5 --> E6
+    end
+
+    GROSS{{"Gross settlement subtotal"}}:::sub
+
+    subgraph REC["Recoveries and deductions (-)"]
+        direction TB
+        R1["+/- Notice-pay: recovery or payment<br/>(per policy)"]
+        R2["- Advance / loan recovery<br/>(post-tax, tracks balance to zero)"]
+        R3["- Asset / canteen recovery<br/>(Code on Wages s.18(3) 50% cap)"]
+        R4["- Final TDS true-up<br/>on ACTUAL YTD income, proof-verified<br/>(can be a refund adjustment, AC-801.3)"]
+        R1 --> R2 --> R3 --> R4
+    end
+
+    NET([F&F Net Payable<br/>reconciles to the rupee, AC-801.1<br/>final wages within two working days, AC-803.2]):::net
+
+    START --> EARN
+    EARN --> GROSS
+    GROSS --> REC
+    REC --> NET
+
+    classDef trig fill:#e8eef7,stroke:#41618c,color:#1b2a44;
+    classDef sub fill:#fff4d6,stroke:#b8891f,color:#5a4208;
+    classDef net fill:#dff2e1,stroke:#3d8c4b,color:#173d1f;

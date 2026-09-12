@@ -1,0 +1,69 @@
+flowchart TB
+    subgraph Callers["Entry points"]
+        P["Personas: Employee / Manager /<br/>HR admin / CA (4 scopes)"]
+        X["External assistants<br/>Copilot / Glean / CA tooling"]
+    end
+
+    subgraph AI["AI layer &mdash; SIDECAR (switch-off-safe)"]
+        direction TB
+        KS["Per-tenant kill switch + per-feature opt-out<br/>default OFF for RBI / SEBI / IRDAI tenants"]
+        AS["1. Assistant surface<br/>web / mobile / WhatsApp &middot; v1&ndash;v2"]
+        RT["2. Router &middot; v1<br/>task class &rarr; model per cost + residency + consented set"]
+        TL["3. Tool layer (MCP) &middot; v1&ndash;v2<br/>typed, ACL-inheriting, audited"]
+        RG["4. Retrieval / grounding &middot; v1<br/>policy corpus + effective-dated rule store"]
+        GS["5. Guardrail stack &middot; v1<br/>PII / injection / P1 figure interceptor"]
+        CK["6. Redaction / tokenisation chokepoint &middot; v1<br/>ONLY egress to model providers &middot; token map in India"]
+        AA["7. Audit &amp; attribution &middot; v1<br/>stored in India &middot; tokenised prompts, tools, model, cost, decision"]
+    end
+
+    MP["Model providers<br/>(&ge;3 interchangeable backends)"]
+
+    subgraph Core["Deterministic core &mdash; system of record (critical path)"]
+        RE["Rules engine: PF / ESI / PT / gratuity / TDS<br/>(computes all statutory + monetary figures)"]
+        LG["Computed payroll ledger"]
+        SS["Effective-dated statutory rule store"]
+    end
+
+    subgraph Ext["Irreversible external side-effects"]
+        HIL{"Human-in-loop<br/>approval gate (P2)"}
+        GOV["Gov portals: ECR / ESI / PT / Form 138<br/>attended upload by a human"]
+        NEFT["Bank / NEFT salary file"]
+    end
+
+    P --> AS
+    P -.->|"also reachable without AI (AC-DEG-1)"| DET["Deterministic UI: compute &rarr; approve &rarr; generate &rarr; attended upload"]
+    X --> TL
+    KS -.->|"off = no model calls"| RT
+    AS --> RT --> TL
+    RT --> CK
+    CK -->|"tokenised, default-deny"| MP
+    TL -->|"MCP results pass the same deny list"| CK
+    TL --> RG
+    TL --> GS
+    RT --> AA
+    TL --> AA
+    GS --> AA
+    CK --> AA
+
+    RG -->|"cite-or-abstain (P4)"| SS
+    GS -->|"cross-check figures (P1), never compute"| RE
+    TL -->|"reads only"| LG
+
+    RE --> LG
+    DET --> RE
+
+    TL -->|"assemble + validate, never submits"| HIL
+    DET --> HIL
+    HIL -->|"human approves, then attended upload"| GOV
+    HIL -->|"dual-control above threshold (AC-HIL-3)"| NEFT
+
+    classDef core fill:#e6f2ff,stroke:#1b6ca8,color:#083b5c;
+    classDef ai fill:#f3e9ff,stroke:#7b3fbf,color:#2e0d54;
+    classDef ext fill:#ffece6,stroke:#c0392b,color:#5b160d;
+    classDef det fill:#e9f7ef,stroke:#1e8449,color:#0b3d22;
+    classDef rail fill:#fff8e1,stroke:#f9a825,color:#6d4c00;
+    class RE,LG,SS core;
+    class AS,RT,TL,RG,GS,AA ai;
+    class CK,KS rail;
+    class GOV,NEFT,MP ext;
+    class DET det;

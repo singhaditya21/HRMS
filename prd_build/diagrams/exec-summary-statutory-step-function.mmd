@@ -1,0 +1,23 @@
+flowchart LR
+    classDef step fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef state fill:#4a3a10,stroke:#8a6d1f,color:#fff2cf,stroke-width:1px;
+    classDef note fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+
+    H1["From employee one<br/>TDS under s.392, ex-s.192<br/>Form 138 quarterly, ex-24Q<br/>Form 130 annual, ex-Form 16, TRACES-generated<br/>S&amp;E registration, minimum wages<br/>POSH Internal Committee, s.4(1)"]:::step
+    H10["10<br/>+ ESI, gratuity accrual, maternity benefit<br/>+ appointment letter at an establishment<br/>form prescribed by the state"]:::step
+    H20["20<br/>+ EPF and the monthly ECR<br/>+ Grievance Redressal Committee<br/>counted in workers, IR Code s.4"]:::step
+    H50["50<br/>+ creche<br/>+ contract labour, raised from 20"]:::step
+    H100["100<br/>+ canteen<br/>+ works committee"]:::step
+    H300["300<br/>+ standing orders<br/>+ retrenchment and closure approval, raised from 100"]:::step
+
+    H1 -->|"cross 10"| H10
+    H10 -->|"cross 20 = beachhead floor"| H20
+    H20 -->|"cross 50"| H50
+    H50 -->|"cross 100"| H100
+    H100 -->|"cross 300"| H300
+
+    PT["Per state, not per headcount<br/>Professional Tax slabs and returns<br/>Labour Welfare Fund<br/>neither Frappe nor Tally ships them, EV-031, EV-032"]:::state
+    UNIT["Central-sphere thresholds, EV-057<br/>counting unit worker or employee<br/>and sphere central or state<br/>are schema fields on every row"]:::note
+
+    PT -.-> H1
+    UNIT -.-> H20

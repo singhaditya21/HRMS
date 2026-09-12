@@ -1,0 +1,42 @@
+flowchart TD
+    D["T+0 · NFR-OBS-1105 fires<br/>Assistant tool-call attempts payroll<br/>mutation outside its ACL (tool-abuse)<br/>AI/ML class: injection, poisoning, extraction, pipeline access"]
+    ACK["T+4 min · On-call ACK<br/>MTTA target &le; 5 min (NFR-OBS-1104)<br/>Triage: approval-gate held, no monetary field changed (&sect;08)"]
+    SCOPE{"T+45 min · Scope assessed<br/>Was any Restricted-class data<br/>(&sect;17.4: Aadhaar token, bank, PAN, biometric template, health)<br/>exposed?"}
+    AWARE["INCIDENT NOTICED<br/>CERT-In six-hour clock starts here"]
+
+    D --> ACK --> AWARE --> SCOPE
+
+    subgraph CLOCK_A["Clock A · CERT-In (NFR-CERT-601) — LIVE TODAY, always runs"]
+        A1["Fires regardless of whether data leaked<br/>Attack on an AI/ML system is itself<br/>reportable (Annexure I item xx of 20)"]
+        A2["Report to CERT-In<br/>via the registered point of contact<br/>(pre-first-customer gate)"]
+        A3(["DEADLINE: &le; 6 hours<br/>from noticing the incident"])
+        A1 --> A2 --> A3
+    end
+
+    subgraph CLOCK_B["Clock B · DPDP r.7 (NFR-DPDP-505) — NOT IN FORCE until ~13 May 2027, pre-staged"]
+        B1["After commencement: any personal data breach<br/>no materiality threshold"]
+        B2["Intimate each affected employee<br/>and the Board without delay"]
+        B3(["Detailed Board report within 72 h<br/>in addition to CERT-In, never instead"])
+        B1 --> B2 --> B3
+    end
+
+    AWARE --> CLOCK_A
+    SCOPE -->|"Personal data breached, after commencement"| CLOCK_B
+    SCOPE -->|"Today, or no personal data exposed"| NB["Clock B does not fire<br/>(CERT-In report still mandatory)"]
+
+    RUNBOOK["Single incident runbook (NFR-DR-1405)<br/>six-hour CERT-In clock binds today;<br/>DPDP r.7 fields pre-staged, armed at commencement;<br/>triage never decides not to notify"]
+    CLOCK_A --> RUNBOOK
+    CLOCK_B --> RUNBOOK
+    RUNBOOK --> DRILL["Tabletop drills (NFR-CERT-601, NFR-DR-1405)<br/>measure elapsed time against 6 hours"]
+
+    classDef event fill:#e3f2fd,stroke:#1565c0,color:#0d1b2a;
+    classDef awareness fill:#fff3cd,stroke:#b8860b,color:#3a2f00;
+    classDef certin fill:#fde2e2,stroke:#c0392b,color:#3a0d0d;
+    classDef dpdp fill:#e8f5e9,stroke:#2e7d32,color:#0d2a12;
+    classDef runbook fill:#ede7f6,stroke:#5e35b1,color:#1a0d3a;
+
+    class D,ACK event;
+    class AWARE,SCOPE awareness;
+    class A1,A2,A3 certin;
+    class B1,B2,B3,NB dpdp;
+    class RUNBOOK,DRILL runbook;

@@ -1,0 +1,37 @@
+flowchart TD
+    classDef ask fill:#3d3d3d,stroke:#6b6b6b,color:#ffffff,stroke-width:1px;
+    classDef fence fill:#5a3a1e,stroke:#8f5c2f,color:#fff3ea,stroke-width:1px;
+    classDef stop fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+    classDef warn fill:#4a4520,stroke:#8a7f2f,color:#fffbe6,stroke-width:1px;
+    classDef out fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+
+    ASK["A request reaches the spine<br/>generate, compute, block or assert"]:::ask
+
+    Q1{"Does the artefact depend on a layout<br/>or instrument that is not published?"}
+    F1["Class A - FENCED<br/>no generation, no proxy layout<br/>release conditions named"]:::fence
+
+    Q2{"Would the authority itself<br/>refuse or forbid the step?"}
+    F2["Class B - GUARDED<br/>refused with the authority's reason<br/>remaining routes listed"]:::stop
+
+    Q3{"Does the step need a value<br/>the spine holds as an unset parameter?"}
+    F3["Class C - UNSET<br/>configuration task at the artefact or the field<br/>the pay run proceeds"]:::fence
+
+    Q4{"Is the step behind a named<br/>Part D counsel item?"}
+    F4["Class D - COUNSEL-GATED<br/>ships dark per tenant until sign-off is recorded"]:::fence
+
+    Q5{"Is the rule behind the step<br/>marked Hypothesis?"}
+    F5["Class E - WARN-ONLY<br/>a warning, never a block on a punch,<br/>a roster, a pay run or a filing"]:::warn
+
+    OK["Proceed<br/>the step runs and is logged"]:::out
+
+    ASK --> Q1
+    Q1 -->|"yes"| F1
+    Q1 -->|"no"| Q2
+    Q2 -->|"yes"| F2
+    Q2 -->|"no"| Q3
+    Q3 -->|"yes"| F3
+    Q3 -->|"no"| Q4
+    Q4 -->|"yes"| F4
+    Q4 -->|"no"| Q5
+    Q5 -->|"yes"| F5
+    Q5 -->|"no"| OK

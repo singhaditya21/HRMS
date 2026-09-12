@@ -1,0 +1,59 @@
+flowchart TB
+    classDef task fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef route fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef model fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+    classDef guard fill:#4a3a0b,stroke:#8a6d14,color:#fff6da,stroke-width:1px;
+    classDef human fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+    classDef audit fill:#2a2a2a,stroke:#555,color:#f0f0f0,stroke-width:1px;
+
+    subgraph TASKS["Task classes (intent)"]
+        T1["Bulk extract / classify from text<br/>(policy text, proof status)<br/>no image or file bytes cross the chokepoint"]:::task
+        T2["Vernacular chat / HR Q&A<br/>(Hindi + regional, code-mixed)"]:::task
+        T3["Statutory explanation + file-prep<br/>(Form 138 ex-24Q, ECR, PT)<br/>engine figures only"]:::task
+        T4["Anomaly / variance explain<br/>(payroll swings)"]:::task
+    end
+
+    KS["Per-tenant kill switch<br/>default OFF for RBI / SEBI / IRDAI tenants"]:::guard
+    ROUTER{{"AI Router<br/>classify → task class → tier<br/>residency + consented-provider filter first"}}:::route
+
+    T1 --> ROUTER
+    T2 --> ROUTER
+    T3 --> ROUTER
+    T4 --> ROUTER
+    KS -.->|"AI off = deterministic UI only"| ROUTER
+
+    CHOKE["Redaction / tokenisation chokepoint<br/>the ONLY egress to model providers<br/>default-deny: Aadhaar · PAN · bank a/c + IFSC · biometric templates<br/>token map held in India · ambiguous = block"]:::guard
+    ROUTER --> CHOKE
+
+    subgraph PROV["Provider abstraction (swappable, no vendor lock)"]
+        M1["Gemini Flash<br/>cheap high-volume<br/>extract/classify"]:::model
+        M2["Sarvam (INR-billed)<br/>Indic languages<br/>residency unverified"]:::model
+        M3["Premium tier<br/>hard reasoning, low volume<br/>escalation logged"]:::model
+    end
+
+    CHOKE -->|"low stakes, high volume"| M1
+    CHOKE -->|"vernacular / INR hedge"| M2
+    CHOKE -->|"high stakes / low conf."| M3
+    M1 -.->|"low confidence → escalate"| M3
+
+    GUARD["Guardrails<br/>statutory-figure interceptor · cite-or-abstain<br/>statute-version pin · scope / PII · cost cap"]:::guard
+    M1 --> GUARD
+    M2 --> GUARD
+    M3 --> GUARD
+
+    DEC{"Statutory, money or<br/>people-decision output?"}:::route
+    GUARD --> DEC
+
+    DEC -->|"No: draft / insight"| DELIVER["Deliver as a draft<br/>human uses or discards<br/>never auto-applied"]:::task
+    DEC -->|"Yes"| HITL["Human-in-loop approval gate<br/>maker-checker for filings and money<br/>named confirmer for people decisions"]:::human
+
+    HITL -->|approved| ACT["Attended portal upload by a human<br/>(EPFO / ESIC / TDS via FVU / state PT)<br/>verification gate before payment initiation"]:::human
+    HITL -->|rejected| ROUTER
+
+    AUDIT[("Audit log — stored in India<br/>tokenised prompt · model · version · cost<br/>redactions · disclosure record · approver · outcome")]:::audit
+    ROUTER --> AUDIT
+    CHOKE --> AUDIT
+    GUARD --> AUDIT
+    DELIVER --> AUDIT
+    HITL --> AUDIT
+    ACT --> AUDIT

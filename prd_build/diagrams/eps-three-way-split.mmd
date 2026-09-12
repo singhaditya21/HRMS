@@ -1,0 +1,23 @@
+flowchart TD
+    START["Employer statutory cost per member (worked example, PF wage ₹15,000)"]
+    START --> C12["Provident-fund 12% share = ₹1,800"]
+    START --> EDLI["EDLI 0.50% = ₹75 (employer only)"]
+    START --> ADMIN["EPF admin 0.50% = ₹75 (employer only)<br/>rate is a Hypothesis, establishment minimum is a parameter"]
+
+    C12 --> Q1{"Is the member an EPS member?"}
+    Q1 -->|"First joined on or after 01.09.2014 with PF wage over ₹15,000 - boundary day is a parameter"| NOEPS["EPS = ₹0 - full 12% goes to EPF<br/>EPFO flags this case, it does not reject it"]
+    Q1 -->|"Eligible EPS member"| Q2{"Employer PF election"}
+
+    Q2 -->|"On ceiling: base = min of wage and ₹15,000"| CEIL["EPS = 8.33% x 15,000 = ₹1,250 (capped)<br/>EPF = ₹1,800 - ₹1,250 = ₹550"]
+    Q2 -->|"On actual wage over ₹15,000"| ACT["EPS 8.33% but STILL CAPPED at ₹1,250<br/>EPF = 12% of actual wage - ₹1,250<br/>all excess lands in EPF, never EPS"]
+
+    NOEPS --> EPFACC[["EPF account (member PF)"]]
+    CEIL --> EPFACC
+    ACT --> EPFACC
+    CEIL --> EPSACC[["EPS 1995 pension (hard cap ₹1,250)"]]
+    ACT --> EPSACC
+
+    EPFACC --> NOTE["Split is driven by TWO independent elections, not one:<br/>1) ceiling vs actual wage  2) EPS-cap at ₹1,250<br/>Worked total remitted per employee = ₹3,750 while the admin rate holds<br/>EE 12% ₹1,800 + ER EPS ₹1,250 + ER EPF ₹550 + EDLI ₹75 + admin ₹75"]
+    EPSACC --> NOTE
+    EDLI --> NOTE
+    ADMIN --> NOTE

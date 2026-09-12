@@ -1,0 +1,26 @@
+flowchart TB
+    CARD["Price card<br/>per-head fee, no seat floor (§18.2 P6)<br/>allowance and multi-registration line (§18.3)"]
+
+    subgraph ADM["Profiles the card admits for supervised delivery · R_inst at ₹80 PEPM"]
+        direction TB
+        A1["Profile 1 · 150 employees · PF + ESI + TAN<br/>29 instances a year · ₹4,966 per instance"]
+        A2["Profile 2 · 60 employees · 2 entities · 3 states<br/>70 instances a year · ₹823 per instance"]
+        A3["Floor · 20 employees · PF + ESI + TAN<br/>29 instances a year · ₹662 per instance"]
+        A4["10 employees · ESI + TAN<br/>17 instances a year · ₹565 per instance"]
+        A5["1 employee · TAN only<br/>5 instances a year · ₹192 per instance"]
+    end
+
+    CARD --> ADM
+    ADM --> MIN{"R_inst binding =<br/>lowest revenue per supervised instance<br/>in the admitted set"}
+    PT["State PT cadence<br/>pt.state.return_frequency<br/>can move the bind between profiles (§13.19.2)"] -.-> MIN
+
+    MIN --> OPT{"§18 fixes the admitted set"}
+    OPT --> S1["S1 · Mode A below a headcount<br/>no recurring staff minutes · SLA narrows"]
+    OPT --> S2["S2 · line from the first registration<br/>below a headcount"]
+    OPT --> S3["S3 · File-tier monthly minimum<br/>rejected while P6 stands"]
+    OPT --> S4["S4 · accept and bound<br/>target on binding_profile_floor · flag the rest"]
+
+    S1 --> TGT["Target version (§13.19.4)<br/>max_supervised_minutes_per_filing_cycle =<br/>target_supervised_cogs_share × R_inst binding ÷ c_min<br/>names the option and the admitted set"]
+    S2 --> TGT
+    S4 --> TGT
+    TGT --> FLAG["Tenants below R_inst binding:<br/>F-RINST flag to §18 review · never a service block"]

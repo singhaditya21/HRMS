@@ -1,0 +1,97 @@
+erDiagram
+    employee ||--o{ dependant : "declares facts about"
+    employee ||--o{ benefit_enrollment : "enrolled in"
+    benefit_scheme ||--o{ benefit_enrollment : "has members"
+    dependant ||--o{ dependant_life_event : "dated facts"
+    dependant ||--o{ dependant_coverage : "covered in windows"
+    benefit_enrollment ||--o{ dependant_coverage : "carries dependants"
+    benefit_scheme ||--o{ endorsement_batch : "batched per cycle"
+    endorsement_batch ||--o{ benefit_endorsement : "carries lines"
+    benefit_endorsement ||--o| dependant_coverage : "requests or ends"
+    benefit_endorsement |o--o| benefit_endorsement : "corrects"
+    benefit_scheme ||--o{ census_reconciliation : "insurer census imported"
+    census_reconciliation ||--o{ census_diff_line : "differences"
+    dependant |o--o| consent_record : "disability flag needs written consent"
+
+    dependant {
+        string dependant_id PK "B class"
+        string employee_id FK
+        string relation "spouse child parent parent_in_law"
+        date dob "C2 encrypted"
+        date relation_start_date "opens addition window"
+        date relation_end_date "death or relation ended"
+        string aadhaar_token "optional opaque token only"
+        bool disability_flag "E class C1 SPDI r3"
+        string disability_consent_ref FK
+        date valid_from "valid time"
+        datetime recorded_at "transaction time"
+    }
+    dependant_life_event {
+        string event_id PK "R class append only"
+        string event_type "birth adoption marriage death correction"
+        date event_date
+        json window_evaluation "frozen at record time"
+        string evidence_ref "E class document"
+    }
+    dependant_coverage {
+        string coverage_id PK "B class"
+        string dependant_id FK
+        string enrollment_id FK
+        date valid_from
+        date valid_to
+        string coverage_state "requested confirmed rejected ended"
+        string requested_by_line FK
+        string confirmed_by_ack
+        string insurer_member_ref "primary match key"
+        string premium_basis_ref "feeds BEN-13"
+    }
+    benefit_enrollment {
+        string enrollment_id PK
+        string scheme_id FK
+        string employee_id FK
+        string status "proposed active suspended terminated"
+    }
+    benefit_scheme {
+        string scheme_id PK
+        json coverage_config "family definition no product default"
+    }
+    endorsement_batch {
+        string batch_id PK "R class stable across resends"
+        string adapter_version
+        string cycle_key
+        string state "assembling sealed sent acknowledged closed"
+        string payload_sha256 "set at seal"
+        string file_document_ref "E class rerenders from lines"
+        string ack_ref
+    }
+    benefit_endorsement {
+        string endorsement_id PK "R class line"
+        string batch_id FK
+        string endorsement_type "add delete modify correction"
+        string reason_code
+        string source_event_ref "no line without a cause"
+        string corrects_line FK
+        json census_payload "frozen at validated"
+        string state "drafted to premium_adjusted"
+        int attempt_count
+        decimal premium_delta "informational no money moves"
+    }
+    census_reconciliation {
+        string recon_id PK "R class"
+        date as_of_date
+        int unexplained_count "counts toward tolerance"
+        bool exceeds_tolerance
+    }
+    census_diff_line {
+        string diff_id PK
+        string category "ours_only theirs_only mismatch timing"
+        string explained_by "in-flight line if any"
+        string resolution
+    }
+    consent_record {
+        string consent_id PK "FR-CHR-100"
+        string regime "SPDI written today"
+    }
+    employee {
+        string employee_id PK
+    }

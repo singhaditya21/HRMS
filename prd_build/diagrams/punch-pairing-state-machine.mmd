@@ -1,0 +1,44 @@
+stateDiagram-v2
+    [*] --> RawPunch: punch ingested from any channel, FR-ATT-010
+
+    RawPunch --> SkewCorrected: apply per-device clock offset FR-DEV-003, raw retained
+    SkewCorrected --> Deduped: drop re-deliveries on device_sn, user, ts, dir plus payload_hash, FR-DEV-001 AC4
+    Deduped --> DirectionResolved: order by time, AUTO alternates IN/OUT/IN/OUT
+
+    DirectionResolved --> Pairing: match IN to next OUT within shift-day
+
+    state Pairing {
+        [*] --> MatchINtoOUT
+        MatchINtoOUT --> BreakSplit: extra IN/OUT pairs from break punching
+        BreakSplit --> MatchINtoOUT: sum sessions
+        MatchINtoOUT --> [*]
+    }
+
+    Pairing --> ExceptionMissingOut: IN with no OUT, case 2
+    Pairing --> ExceptionMissingIn: OUT with no IN, case 3
+    Pairing --> SessionPaired: one or more valid IN/OUT pairs
+
+    ExceptionMissingOut --> Regularization: never auto-full-day, never silent zero, FR-ATT-020 AC2
+    ExceptionMissingIn --> Regularization
+    Regularization --> DirectionResolved: approved edit recomputes day, FR-ATT-001 and FR-REG-001
+
+    SessionPaired --> WorkedHours: deduct unpaid break, grace absorbs late-in, FR-SHF-001
+    note right of WorkedHours
+        Overnight 22:00 to 06:15: worked hours
+        anchored to shift-START pay date, not
+        split at midnight, AC1
+        Pre-shift early-in excluded unless OT
+        pre-approved, late-out is OT candidate
+        Day IN and OUT kept for Form IX
+    end note
+
+    WorkedHours --> SpreadOverCheck: rest-interval and spread-over limits raise warnings only
+    SpreadOverCheck --> DayStatus: derive status plus LOP and paid-days, FR-ATT-021
+
+    DayStatus --> [*]: Present / Half-day / Absent / On-leave / Weekly-off / Holiday / OD / LOP
+    note right of DayStatus
+        Deterministic: identical input yields
+        identical output, AC4. Recomputable
+        against rule version in force for the date
+        while the punches are held.
+    end note

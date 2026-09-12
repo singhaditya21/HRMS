@@ -1,0 +1,19 @@
+flowchart TD
+    classDef q fill:#fff4d6,stroke:#b8891f,color:#5a4208;
+    classDef sum fill:#d5f5e3,stroke:#1e8449,color:#145a32;
+    classDef cal fill:#e8eef7,stroke:#41618c,color:#1b2a44;
+    classDef ex fill:#f7dede,stroke:#a83232,color:#4d1414;
+    classDef note fill:#f7f7f7,stroke:#999999,color:#333333;
+
+    A["An entity earning HR software revenue in India"] --> Q1{"Filed operating revenue in an<br/>MCA/ROC filing or audited annual report?"}:::q
+    Q1 -->|no| X1["Excluded - nothing numeric<br/>SAP SuccessFactors, Oracle, Workday, Zoho People<br/>stood in for by the 35-65 pct share band"]:::ex
+    Q1 -->|yes| Q2{"Revenue extractable from<br/>a parent's filing?"}:::q
+    Q2 -->|no| X2["Excluded - Qandle inside MYND"]:::ex
+    Q2 -->|yes| Q3{"HR revenue reported only as a global<br/>business unit with no India split?"}:::q
+    Q3 -->|yes| C["Calibration row - bounds and ratios only<br/>Ramco: single Ind AS 108 segment<br/>India across all units Rs 133.0 Cr"]:::cal
+    Q3 -->|no| S["In the sum - eleven entities, Rs 1,374.12 Cr<br/>irregularities flagged, not smoothed:<br/>FY24 year, standalone figure, GCC revenue, ERP distribution"]:::sum
+    S --> G["Gross-up to Rs 2,100-3,900 Cr - EV-005"]:::sum
+    C -.->|"at most 6.3 pct of Rs 2,100 Cr"| G
+
+    CS["A separate test: the competitive set<br/>ZingHR is in the sum and outside the set<br/>MYND/Qandle is in the set and outside the sum"]:::note
+    S -.- CS

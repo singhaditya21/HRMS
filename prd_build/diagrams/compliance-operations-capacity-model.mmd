@@ -1,0 +1,46 @@
+flowchart LR
+    classDef inp fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef calc fill:#2a2a2a,stroke:#777,color:#f0f0f0,stroke-width:1px;
+    classDef out fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:2px;
+    classDef lever fill:#4a3a10,stroke:#a08020,color:#fff6dc,stroke-width:1px;
+
+    REG["Registrations: PF codes, ESI codes,<br/>PT registrations, TANs"]:::inp
+    CAD["Verified cadences: ECR and ESI monthly,<br/>Form 138 quarterly, Form 130 annual,<br/>PT and LWF per state"]:::inp
+    INST["Filing instances<br/>per registration per cycle"]:::calc
+    REG --> INST
+    CAD --> INST
+
+    PS["m_session, n_sessions, m_prep"]:::inp
+    PE["p_exception times m_exception"]:::inp
+    PW["f_wait for blocking waits"]:::inp
+    MI["Minutes per instance M_i"]:::calc
+    PS --> MI
+    PE --> MI
+    PW --> MI
+
+    MT["Minutes per tenant M_t"]:::calc
+    INST --> MT
+    MI --> MT
+
+    CW["C_window = operator window minutes<br/>over one tenant's window minutes"]:::calc
+    CM["C_month = productive minutes over M_t"]:::calc
+    MT --> CW
+    MT --> CM
+    CO["Customers per operator:<br/>the smaller one binds"]:::out
+    CW --> CO
+    CM --> CO
+
+    LC["Operator loaded cost and<br/>productive minutes"]:::inp
+    CPM["c_min: cost per operator minute"]:::calc
+    LC --> CPM
+    REV["R_inst: revenue per supervised instance,<br/>binding profile - sections 13.19 and 18"]:::inp
+    SH["target_supervised_cogs_share"]:::inp
+    TGT["max_supervised_minutes_per_filing_cycle"]:::out
+    CPM --> TGT
+    REV --> TGT
+    SH --> TGT
+    MT -->|"measured against"| TGT
+
+    LV["Levers: pre-validation, product reconciliation,<br/>batching, in-session assistance, OTP roster, mode mix"]:::lever
+    TGT --> LV
+    LV -.-> MI

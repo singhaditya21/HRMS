@@ -1,0 +1,45 @@
+stateDiagram-v2
+    direction TB
+    [*] --> NORMAL
+
+    NORMAL --> SHED_AI : shared-capacity saturation, or the per-tenant AI budget breached
+    SHED_AI --> SHED_ANALYTICS : saturation persists
+    SHED_ANALYTICS --> SHED_NONCRITICAL_WRITES : saturation persists
+    SHED_NONCRITICAL_WRITES --> PROTECT_STATUTORY : saturation persists, or a dependency failure confined to non-statutory services
+    PROTECT_STATUTORY --> READ_ONLY : data-layer failure, or an integrity signal from NFR-SEC-405 BROKEN
+    READ_ONLY --> EXPORT_ONLY : primary region failure before failover completes
+
+    SHED_AI --> NORMAL : signal clear for a sustained interval
+    SHED_ANALYTICS --> SHED_AI : signal clear for a sustained interval
+    SHED_NONCRITICAL_WRITES --> SHED_ANALYTICS : signal clear for a sustained interval
+    PROTECT_STATUTORY --> SHED_NONCRITICAL_WRITES : signal clear, and a reliability review is scheduled regardless
+    READ_ONLY --> PROTECT_STATUTORY : root cause addressed
+    EXPORT_ONLY --> READ_ONLY : failover complete
+
+    state NORMAL {
+        [*] --> everything_available
+    }
+    state PROTECT_STATUTORY {
+        [*] --> pay_run_compute
+        pay_run_compute --> approval_and_lock
+        approval_and_lock --> bank_file
+        bank_file --> statutory_artefact_generation_and_export
+    }
+    state EXPORT_ONLY {
+        [*] --> download_of_already_generated_artefacts_and_registers
+    }
+
+    note right of NORMAL
+      Four invariants, each a test in 17.18.
+      1. Descent may be automatic. Ascent needs the signal clear for a sustained
+         interval, so a flapping dependency cannot oscillate the estate.
+      2. No rung drops a committed payroll transaction. The section 08 payroll-month
+         states are the checkpoint boundaries - a run interrupted at PROCESSED
+         resumes at PROCESSED.
+      3. At PROTECT_STATUTORY and below no number changes. Degradation removes
+         features. It never substitutes an approximate, cached or model-generated
+         figure. The determinism invariant holds at every rung.
+      4. Every rung is visible - a tenant banner and, at P1, the status page.
+         A degraded system that looks healthy destroys trust faster than an outage
+         that says so.
+    end note

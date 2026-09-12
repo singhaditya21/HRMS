@@ -1,0 +1,40 @@
+stateDiagram-v2
+    direction TB
+
+    [*] --> OPEN: period opened, rule-set versions resolved
+    OPEN --> INPUTS_CLOSED: close inputs, input snapshot frozen
+    INPUTS_CLOSED --> OPEN: reopen, superseded snapshot kept
+    INPUTS_CLOSED --> PROCESSED: results stamped with rule versions and evaluation context
+    PROCESSED --> PROCESSED: reprocess, new result version, prior kept for diff
+    PROCESSED --> APPROVED: checker approves, never the maker
+    APPROVED --> PROCESSED: return for correction, approval voided
+    APPROVED --> LOCKED: lock, every result immutable
+    LOCKED --> DISBURSED: salaries released, actual disbursal date recorded
+    DISBURSED --> PAYMENT_INITIATED: verification gate passed, challan with TRRN
+    PAYMENT_INITIATED --> FILED: every monthly filing FILED
+    FILED --> [*]
+
+    LOCKED --> CORRECTION_RUN: change needed
+    DISBURSED --> CORRECTION_RUN: change needed
+    PAYMENT_INITIATED --> CORRECTION_RUN: change needed
+    FILED --> CORRECTION_RUN: change needed
+    CORRECTION_RUN --> OPEN: a new run that diffs against the locked snapshot
+
+    state "Correction run - arrears, off-cycle or FnF" as CORRECTION_RUN
+
+    note left of OPEN
+        Specified as a transition table in 08 FR-PAY-301.
+        This view shows what each state freezes in the data model.
+        Every transition emits exactly one AuditEvent.
+    end note
+
+    note right of LOCKED
+        Reversible before LOCKED.
+        From LOCKED onward nothing is edited in place.
+        A correction is a diff, never a mutation.
+    end note
+
+    note right of PAYMENT_INITIATED
+        The statutory verification gate sits immediately before this state.
+        After it a Revised ECR is impossible - EV-037.
+    end note

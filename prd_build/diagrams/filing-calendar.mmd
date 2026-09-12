@@ -1,0 +1,29 @@
+gantt
+    title India Statutory Filing Calendar (FY Apr 2025 - Mar 2026)
+    dateFormat YYYY-MM-DD
+    axisFormat %b
+    excludes weekends
+
+    section Monthly (recurring)
+    TDS deposit - by 7th of next month        :active, tds7, 2025-04-01, 365d
+    EPF ECR + challan - by 15th               :active, epf15, 2025-04-01, 365d
+    ESI contribution - by 15th                :active, esi15, 2025-04-01, 365d
+    PT Maharashtra - by month end             :active, ptmh, 2025-04-01, 365d
+    PT Karnataka - by 20th                    :active, ptka, 2025-04-01, 365d
+
+    section TDS 24Q (quarterly)
+    Q1 24Q statement - 31 Jul                 :milestone, q1, 2025-07-31, 0d
+    Q2 24Q statement - 31 Oct                 :milestone, q2, 2025-10-31, 0d
+    Q3 24Q statement - 31 Jan                 :milestone, q3, 2026-01-31, 0d
+    Q4 24Q statement - 31 May                 :milestone, q4, 2026-05-31, 0d
+
+    section PT / LWF (state cadence)
+    PT annual return (KA) - 30 Apr            :milestone, ptann, 2025-04-30, 0d
+    LWF half-year (MH) - 15 Jul               :milestone, lwf1, 2025-07-15, 0d
+    LWF half-year (MH) - 15 Jan               :milestone, lwf2, 2026-01-15, 0d
+    LWF annual (KA) - 15 Jan                  :milestone, lwfka, 2026-01-15, 0d
+
+    section Annual
+    Form 16 to employees - 15 Jun            :milestone, f16, 2025-06-15, 0d
+    EPF annual reconciliation                :milestone, epfann, 2025-04-30, 0d
+    Gratuity - event-driven on exit (no fixed date) :done, grat, 2025-04-01, 365d

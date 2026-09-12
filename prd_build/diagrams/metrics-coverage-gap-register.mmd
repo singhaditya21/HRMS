@@ -1,0 +1,22 @@
+stateDiagram-v2
+    direction LR
+    [*] --> OPEN_EXTERNAL: instance blocked by a fence or an unpublished format
+    [*] --> OPEN_PARAMETER: due date or slab is an uncaptured parameter
+    [*] --> OPEN_AUTHORITY: portal or regime unresolved for the period
+
+    OPEN_EXTERNAL --> WATCHED: watch key registered against the blocker
+    OPEN_PARAMETER --> WATCHED: capture task raised with the statutory desk
+    OPEN_AUTHORITY --> WATCHED: successor instrument watch registered
+
+    WATCHED --> READY: blocker resolved and the rule or format is published
+    WATCHED --> WATCHED: monthly ageing review with no change
+    READY --> CLOSED: line re-versioned on the coverage statement and instances re-enter the denominator
+    CLOSED --> REOPENED: blocker returns, for example a corrigendum withdraws the format
+    REOPENED --> WATCHED: entry re-ages from the reopening date
+    CLOSED --> [*]
+
+    note right of WATCHED
+        Entries never expire silently.
+        Ageing above the review threshold
+        escalates to the statutory desk lead.
+    end note

@@ -1,0 +1,36 @@
+flowchart TB
+    classDef input fill:#3d3d3d,stroke:#6b6b6b,color:#ffffff,stroke-width:1px;
+    classDef rule fill:#123a52,stroke:#1f5f85,color:#e6f5ff,stroke-width:1px;
+    classDef out fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef hold fill:#5a3a1e,stroke:#8f5c2f,color:#fff3ea,stroke-width:1px;
+
+    SVC["Service record - section 07<br/>X = days outside employment"]:::input
+    DS["Day-status counts - section 09<br/>P paid, L LOP, W weekly offs, H holidays"]:::input
+    INV{"P + L + W + H = D - X<br/>for every employee?"}
+    STOP["Month cannot close inputs<br/>FR-PAY-310 hard guard HG-2"]:::hold
+    CONV{"Pay-group convention<br/>effective for the period<br/>FR-PAY-109"}
+    C1["C1 Fixed 30<br/>m x 30 minus U, over 30<br/>floor at zero, U = L + X"]:::rule
+    C2["C2 Calendar days<br/>m x D minus U, over D"]:::rule
+    C3["C3 Actual attendance<br/>lower of m and m x B over the divisor<br/>B = P, plus W and H where payable"]:::rule
+    FRAC["Paid fraction kept as an exact ratio<br/>never a stored day rate - RP1"]:::rule
+    COMP["Each component prorated once<br/>rounding code R0"]:::out
+    BASES["Five wage bases formed from<br/>the prorated components<br/>never prorated again - FR-PAY-201"]:::out
+    NCP["NCP days from the day-status counts<br/>ECR field 10, the same under every convention"]:::out
+    SLIP["Payslip and wage register print<br/>the convention, D, paid, LOP and NCP days"]:::out
+    LATER["A later change to a locked month<br/>LOP reversal, catch-up, lagged LOP<br/>recomputed under that month's convention"]:::hold
+
+    SVC --> INV
+    DS --> INV
+    INV -->|"no"| STOP
+    INV -->|"yes"| CONV
+    CONV --> C1
+    CONV --> C2
+    CONV --> C3
+    C1 --> FRAC
+    C2 --> FRAC
+    C3 --> FRAC
+    FRAC --> COMP --> BASES
+    DS --> NCP
+    BASES --> SLIP
+    NCP --> SLIP
+    COMP -. "correction run, FR-PAY-307" .-> LATER

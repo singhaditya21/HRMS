@@ -28,5 +28,5 @@ __pycache__/
 .venv/
 venv/
 
-# PRD build staging (not committed)
-prd_build/
+# PRD build sources ARE committed; only installed dependencies are not
+prd_build/tools/node_modules/

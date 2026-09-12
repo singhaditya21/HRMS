@@ -1,0 +1,33 @@
+flowchart TB
+    subgraph AXES["Two independent time axes on every BITEMPORAL-class fact: rules, salary structures, assignments, statutory attributes"]
+        direction LR
+        VT["VALID TIME<br/>period the fact is true in the real world<br/>= the effective date<br/>closed-open range [from, to)"]
+        TT["TRANSACTION TIME<br/>when the system learned the fact<br/>= makes late / back-dated changes auditable"]
+    end
+
+    ERASE["NOT bitemporal - ERASABLE classes:<br/>punches, rendered documents, biometric templates,<br/>consent artefacts, Aadhaar token-store entries<br/>erased by crypto-shred of the subject key or tombstone<br/>replay after erasure returns the TOMBSTONE, never a reconstruction"]
+    AXES -. "scope boundary (Part E-2)" .- ERASE
+
+    EX["Worked example: gross = Rs 23,000 from 1 Aug,<br/>keyed on 12 Nov<br/>valid-time-from = 1 Aug &nbsp;|&nbsp; transaction-time = 12 Nov"]
+    AXES --> EX
+
+    subgraph LAYERS["wage_structure (employment_id, effective-range): append-only transaction-time layers"]
+        direction TB
+        L1["TT layer 1 - filed Nov<br/>valid [1 Aug, ...) gross Rs 23,000<br/>ECR / Form 138 filed on this belief"]
+        L2["TT layer 2 - corrected Jan<br/>retro revision to same valid range<br/>rebased, NOT last-write-wins (optimistic lock)"]
+        L3["TT layer 3 - re-corrected Mar<br/>fix of the correction = new layer,<br/>never an in-place edit"]
+        L1 --> L2 --> L3
+    end
+    EX --> LAYERS
+
+    RETRO["Retro-recompute rule (FR-CHR-093):<br/>recompute the period from facts whose VALID time<br/>covers it, as they stand NOW"]
+    AUDIT["Audit and inspection evidence:<br/>what did we file in Nov, correct in Jan, re-correct in Mar<br/>answered via TRANSACTION time - 3 legible states<br/>replay supports evidence production, it does not discharge audit obligations"]
+
+    LAYERS -->|"read latest valid-time facts"| RETRO
+    LAYERS -->|"preserve every prior belief"| AUDIT
+
+    DERIVED["eligibility is DERIVED, never hand-edited:<br/>a mid-period statutory crossing yields a NEW range,<br/>recompute is deterministic + idempotent"]
+    RETRO --> DERIVED
+
+    NOTE["A single-time model (effective dates only) cannot answer<br/>'what did we file, why, and what changed since'<br/>- exactly what a filing correction and audit require"]
+    AUDIT --> NOTE

@@ -1,0 +1,23 @@
+flowchart TD
+    classDef inp fill:#e8eef7,stroke:#41618c,color:#1b2a44;
+    classDef rule fill:#fff4d6,stroke:#b8891f,color:#5a4208;
+    classDef out fill:#d5f5e3,stroke:#1e8449,color:#145a32;
+    classDef ref fill:#f7dede,stroke:#a83232,color:#4d1414;
+
+    F["Fixture A<br/>two legal entities, two PF codes, two ESIC codes<br/>90 own-roll, PT registrations in three states"]:::inp
+
+    F --> U["Units of account<br/>U-4: codes, not entities<br/>each code banded by its own members"]:::rule
+    U --> U1["2 PF codes in the share numerator<br/>if each reaches FILED - AC-19"]:::out
+    U --> U2["One logo, one tenant<br/>commercial band 50-199 - U-12"]:::out
+
+    F --> Q["Qualification - first matching rule<br/>PF codes held, own-roll 20-199<br/>PT in three states"]:::rule
+    Q --> Q6["Q-6 priority A<br/>maintained multi-state rules and attended submission<br/>never claimed against greytHR for state PT"]:::out
+
+    F --> BS["Burden statement<br/>obligations from the obligation engine<br/>filings from the section 22.7 counting rule"]:::rule
+    BS --> BS1["58 central instances a year<br/>29 per TAN, one TAN per legal entity"]:::out
+    BS --> BS2["Karnataka PT at its registration frequency<br/>Karnataka LWF once, due 15 January"]:::out
+    BS --> BS3["Telangana PT slab not captured<br/>Maharashtra and Telangana LWF not captured"]:::ref
+
+    F --> C["Price comparison - AC-25"]:::rule
+    C --> C1["Refused as PC-15 unless the register records<br/>whether the card prices each legal entity separately"]:::ref
+    C --> C2["Composed annual cost view<br/>both branches, internal until the card is published"]:::out

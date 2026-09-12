@@ -1,0 +1,26 @@
+flowchart TB
+    T0["Record created<br/>classified and assigned a retention_class"] --> T1["Clock anchor<br/>register: date of last entry after close<br/>employment record: exit<br/>log: creation"]
+
+    T1 --> FLOOR["FLOOR window<br/>min_retention has not run"]
+    FLOOR --> WIN["ERASURE WINDOW<br/>floor elapsed and ceiling not reached"]
+    WIN --> CEIL["CEILING reached<br/>purpose spent or a ceiling class expires"]
+
+    FLOOR -.->|"erasure request arrives"| D1["RETAIN and DEFER<br/>reasoned response names the basis<br/>and the erasable date, or says under confirmation"]
+    WIN -.->|"erasure request arrives"| D2["ERASE or ANONYMISE<br/>crypto-shred or tombstone"]
+    CEIL -.->|"no request needed"| D3["ERASE is REQUIRED<br/>scheduled sweep, not a request"]
+
+    HOLD["Active RetentionHold<br/>litigation, investigation, dispute, tax scrutiny"] ==>|"beats every floor and every ceiling"| RET["RETAIN, log the hold as the basis,<br/>re-evaluate at released_at"]
+    HOLD -.-> FLOOR
+    HOLD -.-> WIN
+    HOLD -.-> CEIL
+
+    UNSET["Floor parameter not yet set by counsel"] ==> BLOCK["Automatic erasure BLOCKED for the class<br/>unresolved-retention flag raised<br/>never defaults to zero"]
+
+    OVER["Two floors overlap on one field<br/>e.g. a wage figure that is both<br/>register data and TDS evidence"] ==> LONG["The LONGER floor wins"]
+
+    classDef stop fill:#fde2e2,stroke:#c0392b,color:#000
+    classDef go fill:#e2f0d9,stroke:#2e7d32,color:#000
+    classDef warn fill:#fff3cd,stroke:#b8860b,color:#000
+    class D1,RET,BLOCK stop
+    class D2,D3 go
+    class LONG,UNSET,OVER warn

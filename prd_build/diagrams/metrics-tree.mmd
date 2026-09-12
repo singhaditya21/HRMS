@@ -1,0 +1,45 @@
+flowchart TB
+    classDef north fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:2px;
+    classDef driver fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef lead fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef lag fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+    classDef cost fill:#4a3a0b,stroke:#8a6d14,color:#fff6da,stroke-width:1px;
+    classDef guard fill:#2a2a2a,stroke:#555,color:#f0f0f0,stroke-width:1px;
+
+    NS["<b>NORTH STAR (lagging)</b><br/>On-time statutory filings executed / mo<br/>filed before due date, accepted by portal<br/><i>the unit of delivery</i>"]:::north
+
+    NS --> ACT["<b>ACTIVATION</b><br/>first successful filing"]:::driver
+    NS --> RET["<b>RETENTION</b><br/>keep filing every cycle"]:::driver
+    NS --> ACC["<b>FILING ACCURACY</b><br/>filings that clear clean"]:::driver
+    NS --> COGS["<b>AI COST / ACCOUNT</b><br/>cost-of-goods, not revenue"]:::cost
+    NS --> EXP["<b>EXPANSION</b><br/>net revenue retention"]:::driver
+
+    %% ACTIVATION branch
+    ACT --> A1["Time-to-first-filing<br/>signup -> 1st accepted return<br/><b>[LEAD]</b> target &lt;30d"]:::lead
+    ACT --> A2["Onboarding completion<br/>estab IDs + UAN/ESIC/PAN<br/>mapped &gt;=95pct<br/><b>[LEAD]</b>"]:::lead
+    ACT --> A3["Activated accounts / mo<br/>ran 1 full payroll + filing<br/><b>[LAG]</b>"]:::lag
+
+    %% RETENTION branch
+    RET --> R1["Filing streak<br/>consecutive on-time cycles<br/><b>[LEAD]</b>"]:::lead
+    RET --> R2["Logo / revenue churn<br/>monthly + annual<br/><b>[LAG]</b> target &lt;1.5pct/mo"]:::lag
+    RET --> R3["Cycle re-run rate<br/>payrolls reopened post-lock<br/><b>[LEAD]</b> friction signal"]:::lead
+
+    %% ACCURACY branch
+    ACC --> C1["First-pass acceptance<br/>ECR/24Q/PT accepted<br/>no portal rejection<br/><b>[LEAD]</b> target &gt;98pct"]:::lead
+    ACC --> C2["Notice / penalty events<br/>per 100 filings<br/><b>[LAG]</b> the trust metric"]:::lag
+    ACC --> C3["Exception-queue clear time<br/>validation fail -> fixed<br/><b>[LEAD]</b>"]:::lead
+
+    %% AI COGS branch
+    COGS --> M1["AI $ / account / mo<br/>route-tier weighted<br/><b>[LEAD]</b> must trend down"]:::cost
+    COGS --> M2["Gross margin / account<br/>after AI + infra + support<br/><b>[LAG]</b> target &gt;70pct"]:::cost
+    COGS --> M3["Human-in-loop rate<br/>filings needing manual review<br/><b>[LEAD]</b> deflection proxy"]:::cost
+
+    %% EXPANSION branch
+    EXP --> E1["Seat / headcount growth<br/>employees billed per account<br/><b>[LEAD]</b> lands with hiring"]:::lead
+    EXP --> E2["Module attach<br/>attendance, TDS, talent add-ons<br/><b>[LEAD]</b>"]:::lead
+    EXP --> E3["Net revenue retention<br/>expansion - churn - contraction<br/><b>[LAG]</b> target &gt;110pct"]:::lag
+
+    %% guardrails feeding the tree
+    G1["GUARDRAIL: CAC payback &lt;12 mo<br/>& CSAT / NPS floor"]:::guard
+    G1 -.governs.-> EXP
+    G1 -.governs.-> RET

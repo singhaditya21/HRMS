@@ -1,0 +1,32 @@
+sequenceDiagram
+    autonumber
+    participant EA as External assistant
+    participant MCP as MCP endpoint
+    participant TL as Tool layer
+    participant TC as Tenant AI control
+    participant GS as Interceptor and guardrails
+    participant DS as Draft store
+    participant H as Named human in the product
+    participant TW as Target write path
+    participant AU as India audit log
+    EA->>MCP: Write tool call with an idempotency key, under a user grant
+    MCP->>TL: Resolves the human principal behind the grant
+    TL->>TC: Reads external write access and per-tool disablement for this client
+    TC-->>TL: Write tier on for this client, tool not disabled
+    TL->>TL: Maps the tool to its registered use case, checks the principal scope and the key
+    alt Same key and same arguments inside the window
+        TL-->>MCP: Returns the first call's draft id, nothing new staged
+    else Same key with different arguments
+        TL-->>MCP: Conflict, nothing staged
+    else New key
+        TL->>GS: Staged content runs the same checks as a model-written draft
+        GS-->>TL: Pass only if every figure is a bound engine value
+        TL->>DS: Draft created in PRESENTED with the principal as requester
+        TL-->>MCP: Draft id and PRESENTED, no sign-off affordance
+        MCP-->>EA: A named person must sign this off in the product
+        DS->>H: In-product notification showing the whole draft
+        H->>DS: Signs off from an interactive session
+        DS->>TW: Applied through the target's own write path, after any checker
+        TW->>AU: One audit event joining the draft id and the tool call id
+    end
+    TL->>AU: Every tool call row, allowed or refused

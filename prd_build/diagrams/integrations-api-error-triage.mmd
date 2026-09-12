@@ -1,0 +1,32 @@
+flowchart TD
+    classDef step fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef gate fill:#4a3a0b,stroke:#8a6d14,color:#fff6da,stroke-width:1px;
+    classDef bad fill:#5a1a1a,stroke:#a33,color:#ffecec,stroke-width:1px;
+    classDef done fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:2px;
+
+    IN["An integration exchange fails"]:::step --> T1{"Was our credential or identity refused"}:::gate
+    T1 -->|"proof failed"| SEC["class Permanent, disposition security event"]:::bad
+    T1 -->|"merely expired"| STALE["class Unavailable, disposition block state<br/>actor tenant admin"]:::bad
+    T1 -->|"no"| T2{"Did the counterparty reject the content"}:::gate
+    T2 -->|"yes"| CONT["class Permanent, disposition block emission<br/>a missing pre-flight rule is logged as a defect"]:::bad
+    T2 -->|"no"| T3{"Did it reject the layout"}:::gate
+    T3 -->|"yes"| DRIFT["class Drift, disposition block emission<br/>watcher hit raised against the owning schema"]:::bad
+    T3 -->|"no"| T4{"Did some items succeed and others fail"}:::gate
+    T4 -->|"yes"| PART["class Partial, disposition worklist per item<br/>re-queue only failures under their own keys"]:::bad
+    T4 -->|"no"| T5{"No answer, or a 5xx"}:::gate
+    T5 -->|"yes"| TRANS["class Transient, auto retry within bounds"]:::step
+    T5 -->|"no"| T6{"Capability unavailable to us<br/>unpublished layout, unresolved regime, closed window"}:::gate
+    T6 -->|"yes"| BLOCK["class Unavailable, disposition block state<br/>reason rendered, never guessed"]:::bad
+    T6 -->|"no"| UNCL["class Permanent, specific UNCLASSIFIED<br/>alertable, reviewed next release"]:::bad
+
+    TRANS -->|"bounds exhausted"| BLOCK
+    SEC --> ATTR["Attach the seven attributes:<br/>class, disposition, actor, retryable,<br/>SA family code or none, fallback leg, message key"]:::step
+    STALE --> ATTR
+    CONT --> ATTR
+    DRIFT --> ATTR
+    PART --> ATTR
+    TRANS --> ATTR
+    BLOCK --> ATTR
+    UNCL --> ATTR
+    ATTR --> OUT["One canonical code drives the worklist,<br/>the API envelope, the webhook, the metric and the alert"]:::done
+    ATTR --> CLK["Deadline clock is surfaced and escalates<br/>on days remaining, not on failure age"]:::done

@@ -1,0 +1,26 @@
+stateDiagram-v2
+    direction TB
+    [*] --> SIGNAL: IN1 a detector fires on the event backbone, gateway, egress gateway, device receiver or AI edge
+    SIGNAL --> CANDIDATE: IN2 candidate opened automatically, evidence attached from India-resident logs, on-call paged
+    CANDIDATE --> DISMISSED: IN3 named owner records a false positive with a reason
+    CANDIDATE --> TRIAGED: IN4 named owner confirms a real event and sets a class
+    TRIAGED --> REPORTABLE: IN5 owner decides the event is reportable under the runbook in section 17.6
+    TRIAGED --> NOT_REPORTABLE: IN6 owner records the reasoning and the evidence
+    REPORTABLE --> REPORT_STAGED: IN7 report fields pre-staged from system state
+    REPORT_STAGED --> REPORTED: IN8 named point of contact files inside the six-hour window
+    REPORTED --> FANNED_OUT: IN9 customer notices raised, DPDP breach track opened only once DPDP commences
+    FANNED_OUT --> CLOSED: IN10 remediation done and post-incident record written
+    NOT_REPORTABLE --> CLOSED: IN11 closure requires the recorded reasoning
+    DISMISSED --> [*]
+    CLOSED --> [*]
+
+    note right of CANDIDATE
+      The six-hour clock starts at awareness,
+      not at candidate creation. Every timestamp
+      is NTP-synced to NIC or NPL.
+    end note
+
+    note right of TRIAGED
+      Only a named human classifies. No detector
+      and no AI component decides reportability.
+    end note

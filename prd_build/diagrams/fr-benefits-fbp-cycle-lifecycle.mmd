@@ -1,0 +1,47 @@
+stateDiagram-v2
+    state "fbp_cycle, per tenant, pay group and tax year" as CYCLE {
+        [*] --> DRAFT
+        DRAFT --> DECLARATION_OPEN : CY1, every required date set, menu published
+        DECLARATION_OPEN --> DECLARATION_LOCKED : CY2, declaration_close_at
+        DECLARATION_LOCKED --> PROOF_OPEN : CY3, proof_window_open_at
+        PROOF_OPEN --> PROOF_LOCKED : CY4, proof_lock_at, undecided proofs lapse
+        PROOF_LOCKED --> TRUED_UP : CY5, true_up_month run approved
+        TRUED_UP --> CLOSED : CY6, last run of the tax year locked
+        CLOSED --> [*]
+    }
+
+    state "Declaration line, one head, one tax year" as DECL {
+        [*] --> draft
+        draft --> submitted : D2, within cap and budget, regime treatment shown
+        submitted --> submitted : D3, revised as a new version
+        submitted --> locked : D4, cycle lock or joiner window closes
+        locked --> locked : D5, reopen with a distinct checker
+        draft --> discarded : D7
+        locked --> locked : D6, regime switch, new version taxable by regime
+        locked --> closed_at_exit : D8, F and F recognises the balance
+    }
+
+    state "Proof line, pay_then_prove or claim_then_pay" as PROOF {
+        [*] --> pending : P1, declaration line exists
+        pending --> approved : P2, verifier is not the claimant
+        pending --> partially_approved : P3, reason for the disallowed part
+        pending --> rejected : P4, typed reason
+        pending --> query : P5
+        query --> pending : P6, employee answers
+        pending --> withdrawn : P7, while undecided
+        query --> withdrawn : P7
+        approved --> pending : P8, reopen before lock with a checker
+        partially_approved --> pending : P8
+        rejected --> pending : P8
+        pending --> lapsed_pending_decision : P9, proof lock reached
+        query --> lapsed_pending_decision : P9
+        lapsed_pending_decision --> approved : P10, decided before true-up
+        lapsed_pending_decision --> rejected : P10
+    }
+
+    note right of PROOF
+        Exempt to date is the least of paid, basis and cap.
+        Basis is the declared amount before proof lock
+        under the declared policy, else the approved amount.
+        Each run books only the change, BEN-85.
+    end note

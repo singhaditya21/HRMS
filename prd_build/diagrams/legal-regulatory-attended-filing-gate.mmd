@@ -1,0 +1,24 @@
+flowchart TD
+    START["Per portal and per filing type<br/>EPFO ECR, ESIC contribution, TDS Form 138, each state PT portal<br/>modes as lettered in section 22, FR-OPS-001"] --> G1{"Counsel opinion received on CR-17,<br/>scoped to this surface?"}
+    G1 -->|No| A["MODES A and B only<br/>A - employer-attended: portal-accepted artefact and checklist,<br/>the employer or deductor submits<br/>B - co-attended: our operator guides, never operates the portal<br/>the product records the receipt"]
+    G1 -->|Yes| G2{"Acting under the employer's credentials<br/>lawful for this surface as designed?"}
+    G2 -->|No| A
+    G2 -->|Yes| G3{"Portal terms of use permit<br/>third-party credential use?"}
+    G3 -->|No| A
+    G3 -->|Yes| G4{"TDS only - does filing for a deductor<br/>engage the e-Return Intermediary route?"}
+    G4 -->|"Yes, and the route is not held"| A
+    G4 -->|"No, route held, or not TDS"| G5{"Does a signing step need the authorised<br/>signatory's personal DSC?"}
+    G5 -->|Yes| AB["The DSC-bound step stays the signatory's own act at their end<br/>we never hold, copy or operate a DSC"]
+    G5 -->|No| G6
+    AB --> G6{"Liability allocation clause executed<br/>and insurance position settled?"}
+    G6 -->|No| A
+    G6 -->|Yes| B["MODE C enabled - operator-attended submission<br/>under a written authority to act, fence F-08 cleared<br/>runbook and credential vault in section 22<br/>also governs Mode D on credentials we hold"]
+    A --> LOG["Filing ledger records the mode used<br/>FR-LEG-034"]
+    B --> LOG
+
+    classDef safe fill:#e8f5e9,stroke:#2e7d32,color:#0d2a12;
+    classDef gated fill:#fff3cd,stroke:#b8860b,color:#3a2f00;
+    classDef live fill:#e3f2fd,stroke:#1565c0,color:#0d1b2a;
+    class A safe;
+    class AB gated;
+    class B,LOG live;

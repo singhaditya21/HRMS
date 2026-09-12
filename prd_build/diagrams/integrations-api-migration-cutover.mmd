@@ -1,0 +1,24 @@
+stateDiagram-v2
+    [*] --> PROFILING: migration opened, isolated staging tenant created
+    PROFILING --> MAPPING: artefacts profiled, out-of-range periods rejected early
+    MAPPING --> STAGED: map confirmed, unmapped columns reported and never dropped
+    STAGED --> STAGED: migration consent flow run, consent never imported or synthesised
+    STAGED --> TIE_OUT_FAILED: any blocking head outside its tolerance, default zero
+    TIE_OUT_FAILED --> STAGED: corrected at source, or overridden with a reason and an approver
+    STAGED --> TIED_OUT: every blocking head ties to an independent record
+    TIED_OUT --> PARALLEL_RUN: the source system's last closed month re-run in staging
+    PARALLEL_RUN --> TIE_OUT_FAILED: diff is not zero on a blocking head
+    PARALLEL_RUN --> READY_TO_CUT: diff reconciles to the rupee
+    READY_TO_CUT --> TIE_OUT_FAILED: an EPF chronology gap is open on the establishment ledger
+    READY_TO_CUT --> LIVE: promoted, source system stays readable
+    LIVE --> LIVE: post-cutover changes are correction diffs, never re-imports
+    PROFILING --> ABANDONED: abandoned before promotion
+    MAPPING --> ABANDONED: abandoned before promotion
+    STAGED --> ABANDONED: abandoned before promotion
+    LIVE --> [*]
+    ABANDONED --> [*]
+
+    note right of READY_TO_CUT
+        Rollback is free up to promotion
+        and impossible after it
+    end note

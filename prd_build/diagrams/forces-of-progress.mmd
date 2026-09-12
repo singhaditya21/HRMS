@@ -1,0 +1,26 @@
+flowchart LR
+    SQ["STATUS QUO<br/>Two incumbents, two jobs:<br/>Tally + CA (statutory artefacts),<br/>greytHR (the HRMS job);<br/>Kredily / Zoho free (Sec 04, Sec 21)"]
+    DEC{"Vikram's switch decision<br/>holds the wallet below ~120"}
+    NEW["FILING-FIRST HRMS<br/>portal-accepted artefact + attended filing<br/>= unit of delivery"]
+
+    SQ --> DEC
+    DEC ==>|clears the bar only on a Push event| NEW
+
+    PUSH["PUSH of the situation<br/>EPFO interest / damages notice or near-miss<br/>botched mid-year cutover<br/>employee escalation on wrong PF<br/>diligence flag: unfunded gratuity at a raise"]
+    PULL["PULL of the new solution<br/>compliance handled, off my desk<br/>(SLA of Sec 18, specified in Sec 19)<br/>one status screen (JTBD-V2)<br/>scales to 200, no re-platform (JTBD-V4)"]
+    ANX["ANXIETY of the new<br/>will migration break my YTD TDS? (Suresh's scar)<br/>portal-accepted filings, or parity dressed up?<br/>residency / data-protection questions (nervous CFO)"]
+    HAB["HABIT of the present<br/>Tally + CA already works<br/>Kredily / Zoho are free<br/>switch cost feels bigger than the pain"]
+
+    PUSH ==>|toward switching| DEC
+    PULL ==>|toward switching| DEC
+    ANX -.->|against switching| DEC
+    HAB -.->|against switching| DEC
+
+    classDef toward fill:#d4edda,stroke:#28a745,color:#155724;
+    classDef against fill:#f8d7da,stroke:#dc3545,color:#721c24;
+    classDef anchor fill:#e2e3e5,stroke:#6c757d,color:#212529;
+    classDef target fill:#cce5ff,stroke:#004085,color:#004085;
+    class PUSH,PULL toward;
+    class ANX,HAB against;
+    class SQ anchor;
+    class NEW target;

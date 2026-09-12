@@ -1,0 +1,67 @@
+stateDiagram-v2
+    direction LR
+
+    state "UAN seeding" as UAN {
+        [*] --> UAN_pending
+        UAN_pending --> UAN_seeded : employee seeds via UMANG, KYC name-match OK
+        UAN_pending --> UAN_mismatch : name or DOB mismatch
+        UAN_mismatch --> UAN_pending : identifier corrected, retry
+        UAN_seeded --> UAN_transfer : inter-establishment transfer
+        UAN_transfer --> UAN_seeded : transfer settled, UAN portable
+        UAN_seeded : GATE member line enters the ECR
+        UAN_pending : GATE exclude-and-flag, payroll not blocked
+        UAN_mismatch : GATE exclude-and-flag, Supplementary once fixed
+    }
+
+    state "PAN, TDS rate driver" as PAN {
+        [*] --> PAN_notAvailable
+        PAN_notAvailable --> PAN_present : PAN captured
+        PAN_present --> PAN_verified : verification OK
+        PAN_present --> PAN_invalid : verification failed
+        PAN_invalid --> PAN_present : re-captured
+        PAN_notAvailable : GATE higher-rate TDS floor parameter
+        PAN_verified : GATE normal TDS, Form 138 data
+    }
+
+    state "ESI IP" as ESI {
+        [*] --> ESI_pending
+        ESI_pending --> ESI_registered : IP number allotted
+        ESI_registered : GATE ESI contribution line
+    }
+
+    state "Aadhaar vault token, optional" as AAD {
+        [*] --> AAD_none
+        AAD_none --> AAD_held : employee chooses to provide, Reg 5 consent recorded, Verhoeff OK
+        AAD_held --> AAD_deleted : consented purpose spent, purpose ceiling EV-068
+        AAD_none : normal state, never an error, nothing gates on it
+        AAD_held : number only in the vault, business row holds the token
+        AAD_deleted : token resolves to a tombstone
+    }
+
+    state "Bank and IFSC, disbursal" as BANK {
+        [*] --> BANK_unverified : captured after written consent
+        BANK_unverified --> BANK_verified : penny-drop and name-match OK
+        BANK_unverified --> BANK_failed : penny-drop or name mismatch
+        BANK_failed --> BANK_unverified : account corrected
+        BANK_unverified : GATE disbursal blocked
+        BANK_verified : GATE salary and FnF payout released
+    }
+
+    state "PF Member ID, establishment-scoped" as PFM {
+        [*] --> PFM_issued
+        PFM_issued --> PFM_reissued : move to another establishment, same UAN
+        PFM_reissued : lives on the establishment mapping, not Person
+    }
+
+    state "PRAN, corporate NPS" as PRAN {
+        [*] --> PRAN_inactive
+        PRAN_inactive --> PRAN_active : NPS subscription live
+        PRAN_active : GATE employer NPS contribution treatment
+    }
+
+    note right of UAN
+        Each StatutoryIdentifier carries an explicit linkage
+        lifecycle, not a boolean flag. Seeding is the employee's
+        own UMANG action. The product never needs the Aadhaar
+        number for it, and an unseeded UAN never blocks payroll.
+    end note

@@ -1,0 +1,20 @@
+timeline
+    title Integration phasing (SS16.13) against the closed R1 list (SS05.17)
+    section P0 - R1 - first correct filing + first correct payslip
+        Filing path, portal-ready artefacts the employer submits in Mode A or B : EPFO ECR Regular, Supplementary, Revised and the establishment ledger : ESIC computation, upload file only if the template capture finishes before the gate : Form 138 Q1-Q3 generation and validation, correction submission held on F-02 : Form 130 distribution : PT computation per sourced state, Maharashtra at R1 entry
+        Pay path : Per-bank salary file for design-partner banks + generic template : Separate-approver release and credit reconciliation : ADMS device-push receiver
+        Onboarding + infra : Excel and CSV onboarding import with the YTD tie-out : Email + DLT-SMS as infrastructure : Per-tenant + per-user rate limits
+    section R2 fenced legs - a release and a blocker, not a priority
+        Counsel-gated : Operator-attended submission Mode C, per portal, on F-08
+        State-data-gated : PT return legs incl. Maharashtra, per state on F-06 : LWF remittance, per state on F-07
+        Other : ECR part-payment file : ESIC upload file if its capture slipped
+    section P1 - reach, breadth, platform
+        Accounting + migration : Tally GL journal export, first in the queue, R2 : Named-source importers, Tally first, gated by the YTD tie-out : Zoho Books journal API and ERP GL files
+        Devices + comms : Device pull-path via third-party connectors : Public device compatibility matrix : WhatsApp Business via BSP : e-sign with a non-Aadhaar path always available
+        Platform open : Public REST API + webhooks : Payout aggregator API Cashfree or RazorpayX : Direct connected banking as a BD track : Recruiting job-board posting LinkedIn certified first
+    section R3 fenced - authority format
+        Form 138 Q4 : Q4 with Annexures II and III and the Tax Year 2026-27 Form 130 leg, on F-01
+    section P2 - v2 surface (after SS20 validation reports)
+        Deferred : SSO SAML SCIM : All-states PT and LWF dataset : Attended-session automation, conditional on SS16.5 kill criterion and counsel : Deeper ERP connectors : Benefits insurer endorsement APIs, data model in v1
+    section P3 - vision
+        External assistants : MCP server for external assistants, read-write-admin split, never on the critical path

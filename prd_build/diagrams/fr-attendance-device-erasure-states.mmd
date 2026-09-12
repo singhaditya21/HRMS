@@ -1,0 +1,19 @@
+stateDiagram-v2
+    [*] --> QUEUED: erasure requested and model supports remote delete
+    [*] --> ONSITE_TASK: erasure requested and model has no remote delete
+    QUEUED --> SENT: device command poll, device authenticated
+    SENT --> ERASED_CONFIRMED: command result success
+    SENT --> RETRYING: failure or no result within retry interval
+    RETRYING --> QUEUED: retry interval elapses, retries below ceiling
+    RETRYING --> EXHAUSTED: retry ceiling reached, HR admin alerted
+    EXHAUSTED --> CLOSED_BY_ATTESTATION: admin attests decommissioned, lost, wiped or replaced
+    ONSITE_TASK --> CLOSED_BY_ATTESTATION: admin attests deleted on site
+    QUEUED --> CLOSED_BY_ATTESTATION: admin attests device gone
+    CLOSED_BY_ATTESTATION --> QUEUED: same serial authenticates again, item reopened, security event
+    ERASED_CONFIRMED --> [*]
+    CLOSED_BY_ATTESTATION --> [*]
+    note right of CLOSED_BY_ATTESTATION
+        Never shown as erased-confirmed.
+        Punch and Form IX rows untouched,
+        they never referenced the template.
+    end note

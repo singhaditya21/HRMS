@@ -1,0 +1,33 @@
+flowchart TD
+    SRC["Three employer contribution sources for one employee and one tax year<br/>EPF employer share read from the approved ECR returns, BEN-43<br/>employer NPS from the contribution instructions, BEN-23<br/>employer superannuation from its instructions, BEN-24"]
+    SCOPE{"retiral_cap_scope<br/>default this_employer, B9"}
+    SRC --> SCOPE
+    SCOPE -->|"this_employer"| LEDGER["retiral_contribution_ledger accumulates the aggregate per tax year<br/>Tier II and VPF never enter it"]
+    SCOPE -->|"all_employers_in_tax_year"| PRIOR["A prior employer figure the product cannot verify<br/>operator entered with its source, or the period goes to review"]
+    PRIOR --> LEDGER
+
+    LEDGER --> PART{"Part year employee?"}
+    PART -->|"yes"| NOPRO["The cap is not prorated<br/>no proration provision was captured and inventing one is barred<br/>retiral_cap_part_year_proration routed to B9"]
+    PART -->|"no"| MODE
+    NOPRO --> MODE{"retiral_cap_recognition<br/>default projected"}
+
+    MODE -->|"projected"| PROJ["Projected annual aggregate against the cap<br/>excess recognised as elapsed months over twelve<br/>re-based whenever a rate, a wage or an enrollment changes"]
+    MODE -->|"actual_to_date"| ACT["Excess recognised only once the aggregate to date passes the cap<br/>a late crossing lands in one payslip"]
+    MODE -->|"year_end"| YE["Excess recognised in the tax year's last run<br/>cannot be the default: it defers withholding"]
+
+    PROJ --> FEED["Perquisite input per period, superseding on every re-base<br/>section 11.9.5"]
+    ACT --> FEED
+    YE --> FEED
+
+    FEED --> EXIT{"Exit before the year ends?"}
+    EXIT -->|"yes"| REV["The F and F run reverses recognition the actual aggregate does not support<br/>a negative superseding input, never an edit of a locked period"]
+    EXIT -->|"no"| ACCR["Rule 3B accretion on the cumulative excess<br/>PC1 and TP1 persisted across tax years, section 11.10.2"]
+    REV --> ACCR
+    ACCR --> F123["Form 123 perquisite rows and the annual tax computation<br/>totals tie to the sum of inputs, section 11.17"]
+
+    classDef warn fill:#fff3cd,stroke:#a80,color:#000;
+    classDef bad fill:#f8d7da,stroke:#a33,color:#000;
+    classDef ok fill:#d4edda,stroke:#2a7,color:#000;
+    class NOPRO,PRIOR,REV warn;
+    class YE bad;
+    class PROJ,FEED ok;

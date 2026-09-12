@@ -1,0 +1,36 @@
+stateDiagram-v2
+    [*] --> Ungraded: new assertion enters register
+    Ungraded --> Hypothesis: default on entry - unmarked is a defect
+
+    Hypothesis --> Verified: primary source captured and survives hostile re-check incl. corrigendum step
+    Hypothesis --> Killed: §20 kill criterion fires or primary source contradicts
+    Hypothesis --> Hypothesis: refined - range tightens, still unvalidated
+
+    Ungraded --> Verified: blocked capture resolved by a different method - EV-009
+    Verified --> Verified: re-verified - date arrives, source still holds
+    Verified --> Hypothesis: auto-demote - re-verify date passed with no re-check
+    Verified --> Killed: amendment, corrigendum or superseding instrument - EPF Act 1952 repeal 21 Nov 2025
+
+    Killed --> [*]: terminal - stays on §20 blocklist
+
+    note right of Verified
+        Verified as of a date only.
+        Carries a re-verify trigger.
+        Dated forced checks include
+        EPF/ESI savings expiry ~21.11.2026,
+        DPDP commencement ~13.05.2027,
+        Form 138 Q4 format and due date.
+        Mirror-read rows are Verified - mirror
+        until pulled from the primary source.
+    end note
+
+    note right of Killed
+        Does not revive. A resurrected
+        quantity re-enters as a NEW claim
+        with a NEW ID and its own grading,
+        e.g. EPF Scheme 2026 as EV-003.
+        A conclusion drawn from a killed
+        claim is marked Reversed.
+        Rule version archived, not erased,
+        for retrospective recompute.
+    end note

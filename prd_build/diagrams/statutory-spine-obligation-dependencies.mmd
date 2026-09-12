@@ -1,0 +1,52 @@
+flowchart LR
+    classDef count fill:#3d3d3d,stroke:#6b6b6b,color:#ffffff,stroke-width:1px;
+    classDef test fill:#1d3a5a,stroke:#2f5c8f,color:#eaf3ff,stroke-width:1px;
+    classDef obl fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef nested fill:#3a2a5a,stroke:#5c438f,color:#f1ebff,stroke-width:1px;
+    classDef open fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+
+    EMP["Employees<br/>daily count, lower and upper bound"]:::count
+    PER["Persons"]:::count
+    WRK["Workers"]:::count
+    CL["Contract labour"]:::count
+    CLASS["Establishment class<br/>factory, mine, plantation, shop or establishment"]:::test
+    AREA["ESI area status of the work location<br/>notified, partial, not notified, unknown"]:::test
+    ESIDATE["Notified contribution date<br/>on the establishment's ESIC record"]:::test
+
+    EPF["EPF - 20 employees<br/>voluntary below 20 by agreement"]:::obl
+    ESI["ESI - 10 persons<br/>20 for Central-sphere extended classes<br/>1 in a notified hazardous occupation"]:::obl
+    GRAT["Gratuity<br/>class limb, or 10 employees with a look-back latch"]:::obl
+    MAT["Maternity benefit<br/>class limb, or 10 employees with a look-back latch"]:::obl
+    GRC["Grievance Redressal Committee - 20 workers"]:::obl
+    APPT["Appointment letter<br/>establishment of 10 workers, state-prescribed form"]:::obl
+    CLP["Contract-labour provisions - 50 contract labour"]:::obl
+    POSH["POSH Internal Committee<br/>every employer, per administrative unit or office"]:::obl
+
+    CRECHE["Creche - 50 employees or a prescribed number"]:::nested
+    XXIII["SS Form XXIII unified annual return"]:::nested
+    PIV["FORM-XVII Part IV self-declaration"]:::nested
+    PIII["FORM-XVII Part III principal-employer return"]:::nested
+
+    EMP --> EPF
+    EMP --> GRAT
+    EMP --> MAT
+    PER --> ESI
+    WRK --> GRC
+    WRK --> APPT
+    CL --> CLP
+    CLASS --> GRAT
+    CLASS --> MAT
+    CLASS --> ESI
+    AREA --> ESI
+    ESIDATE --> ESI
+    MAT --> CRECHE
+    EMP --> CRECHE
+    GRAT --> XXIII
+    MAT --> XXIII
+    EPF --> PIV
+    ESI --> PIV
+    CLP -. "nesting is a Hypothesis" .-> PIII
+
+    OPEN["Apprentices, salaried directors, contractor-supplied staff, supervisory roles<br/>membership held unconfirmed per statute<br/>the gap between the two bounds is the POSSIBLE state"]:::open
+    OPEN -.-> EMP
+    OPEN -.-> WRK

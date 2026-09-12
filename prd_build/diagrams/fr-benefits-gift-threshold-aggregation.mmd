@@ -1,0 +1,25 @@
+flowchart TD
+    ISSUE["Gift recorded in the R-class gift ledger<br/>gift_issue or gift_reversal with evidence<br/>BEN-79, BEN-81"]
+    CLASS{"gift_instrument_class<br/>attested?"}
+    ISSUE --> CLASS
+    CLASS -->|"cash or cash_equivalent,<br/>or voucher or token unattested"| CASH["Taxable in full in the period given<br/>outside the aggregate G<br/>unattested raises BV-16"]
+    CLASS -->|"in_kind, or attested voucher or token"| AGG["Add to G for this employee and tax year<br/>value per gift_value_basis, default face value<br/>scope per gift_threshold_scope, default this employer"]
+
+    AGG --> TEST{"G below threshold T?<br/>T is Rs 5,000 to 31 Mar 2026, Rs 15,000 from 1 Apr 2026<br/>EV-019 Hypothesis<br/>boundary per gift_threshold_boundary, default strict below"}
+    TEST -->|"yes"| NIL["Perquisite to date = 0"]
+    TEST -->|"no"| MODE{"gift_threshold_mode<br/>default whole"}
+    MODE -->|"whole"| WHOLE["Perquisite to date = G"]
+    MODE -->|"excess"| EXCESS["Perquisite to date = G minus T"]
+
+    NIL --> DELTA["Period perquisite = to-date figure<br/>minus gift perquisite already recognised this tax year<br/>negative after a reversal, locked periods never reopened"]
+    WHOLE --> DELTA
+    EXCESS --> DELTA
+
+    DELTA --> FEED["Perquisite input, section 11.9.5"]
+    CASH --> FEED
+    FEED --> TDS["Section 08 projection spreads TDS over remaining runs<br/>leaver: remainder recognised in the F&F run"]
+
+    classDef tax fill:#f8d7da,stroke:#a33,color:#000;
+    classDef ok fill:#d4edda,stroke:#2a7,color:#000;
+    class CASH,WHOLE,EXCESS tax;
+    class NIL ok;

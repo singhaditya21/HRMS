@@ -1,0 +1,21 @@
+flowchart TD
+    P["Contract workman punch<br/>same capture layer: ADMS / kiosk / app (FR-ATT-010)"]
+    P --> ET{"Worker employment_type?"}
+    ET -->|direct| DIR["Direct-labour path<br/>principal's own register + ECR/ESI"]
+    ET -->|contract| CL["ContractorLink (FR-CL-001)<br/>contractor_entity_id, license_ref,<br/>pf_code, esi_code, effective_from"]
+
+    CL --> ENG["Attendance engine derives<br/>paid-days + NCP days (FR-ATT-021)"]
+    DIR --> ENG
+
+    ENG --> REG["Form IX view (FR-CL-001 AC1)<br/>tags direct vs contract,<br/>rolls up contractor-wise<br/>no separate contractor register"]
+
+    REG --> ROUTE{"Route paid-days to correct<br/>EPF/ESI code (FR-CL-003)<br/>driven by ContractorLink.pf_code / esi_code"}
+    ROUTE -->|contractor's own code| CFILE["Contractor's ECR / ESI filing (§06, §09.10-A)"]
+    ROUTE -->|principal's code| PFILE["Principal's ECR / ESI filing"]
+    ROUTE -->|unresolved / misrouted| EXC["Hard reconciliation exception (FR-CL-003 AC2)<br/>blocks payroll lock (FR-ATT-022)<br/>would corrupt two establishments' challans"]
+
+    REG --> PEV["Principal-employer read-visibility (FR-CL-002)<br/>attendance-vs-wage verification report:<br/>present workmen paid at least minimum wage,<br/>within 7 days of wage-period end?"]
+    PEV --> PECOMP["OSH r.98(8) wage guarantee: principal pays<br/>within 15 days if contractor has not<br/>+ FORM-XVII Part III annual return, r.98(9)"]
+
+    THR["Applicability: 50 or more contract labour,<br/>latching, central sphere (EV-057)<br/>state values Hypothesis (§09.14-A9)"]
+    THR -.governs whether chapter applies.-> CL

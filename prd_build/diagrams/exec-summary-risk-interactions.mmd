@@ -1,0 +1,35 @@
+flowchart LR
+    classDef stat fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+    classDef thesis fill:#4a3a10,stroke:#8a6d1f,color:#fff2cf,stroke-width:1px;
+    classDef plan fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+    classDef ext fill:#3a3a3a,stroke:#6b6b6b,color:#f0f0f0,stroke-width:1px,stroke-dasharray: 4 3;
+    classDef kill fill:#0b5c3e,stroke:#17b37a,color:#eafff5,stroke-width:2px;
+
+    subgraph TEN["The ten, ranked view over section 20.8"]
+        direction TB
+        R1["1 ESI regime at the November 2026 cliff"]:::stat
+        R2["2 attended submission unlawful or uninsurable"]:::stat
+        R3["3 a wrong statutory number ships"]:::stat
+        R4["4 live data-protection regime breached"]:::stat
+        R5["5 Form 138 Q4 format still unreleased"]:::stat
+        R6["6 dominant cost does not fit the per-head price"]:::thesis
+        R7["7 mid-year migration cannot tie out"]:::thesis
+        R8["8 CA channel inverts"]:::thesis
+        R10["10 ISO 27001 clock not started"]:::plan
+    end
+
+    R9["9 money committed ahead of validation"]:::plan
+    W["The no-seat-floor price lead"]:::ext
+    TA["Negligible Tally payroll adoption<br/>and no self-serve conversion"]:::ext
+    K["Section 20.11 whole-thesis kill condition"]:::kill
+
+    R1 <-->|"compound: same first quarter"| R7
+    R5 <-->|"compound: Annexure II needs the tie-out"| R7
+    R3 <-->|"compound: a change close to a due date"| R1
+    R3 <-->|"compound: a change close to a due date"| R5
+    R2 <-->|"compound: the credential vault"| R4
+    R2 -.->|"offset: minutes leave with Mode C"| R6
+    R6 <-->|"compound: lands on the same tenant"| W
+    R8 -->|"together with"| K
+    TA -->|"together with"| K
+    R9 ==>|"turns each into a sunk cost"| TEN

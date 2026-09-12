@@ -1,0 +1,33 @@
+stateDiagram-v2
+    direction LR
+    [*] --> OPEN: FL1 fence registered with owner, interim posture and SLA treatment
+    OPEN --> SIGNALLED: FL2 watch key fires or a capture attempt yields a candidate
+    SIGNALLED --> OPEN: FL3 not the awaited source, or a draft only
+    SIGNALLED --> VERIFYING: FL4 candidate captured raw and rendered, hash archived
+    VERIFYING --> OPEN: FL5 negative or partial answer, residual instance stays open
+    VERIFYING --> CLEARED: FL6 version certified and published through the pipeline
+    CLEARED --> IMPLEMENTING: FL7 on-clear work packages start
+    IMPLEMENTING --> SHIPPED: FL8 blocked artefacts pass their release gate evidence
+    CLEARED --> REOPENED: FL9 corrigendum, withdrawal or retraction
+    IMPLEMENTING --> REOPENED: FL9 corrigendum, withdrawal or retraction
+    SHIPPED --> REOPENED: FL9 corrigendum, withdrawal or retraction
+    REOPENED --> OPEN: FL10 rollback published and instances re-blocked
+    OPEN --> DEFERRED: FL11 change control moves the artefact out of v1
+    DEFERRED --> OPEN: FL12 re-entry trigger fires and change control re-admits
+    SHIPPED --> [*]
+
+    note right of OPEN
+      Dependent filing instances sit in BLOCKED
+      with this fence as the reason - FR-PAY-711 F2.
+      Affected coverage lines read CARVED_OUT_FENCE.
+    end note
+
+    note right of SIGNALLED
+      A signal changes no product behaviour.
+      Only a published version releases instances.
+    end note
+
+    note right of SHIPPED
+      Instances re-queue - FR-PAY-711 F3.
+      Coverage statements re-versioned and notices sent.
+    end note

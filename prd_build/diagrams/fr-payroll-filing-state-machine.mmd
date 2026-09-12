@@ -1,0 +1,42 @@
+stateDiagram-v2
+    direction TB
+    [*] --> SCHEDULED: F1 month opened or instance rolled
+    SCHEDULED --> BLOCKED: F2 guard fails
+    BLOCKED --> SCHEDULED: F3 guard clears
+    SCHEDULED --> GENERATED: F4 source month LOCKED, period format resolved
+    GENERATED --> VALIDATED: F5 format and EPFO severity checks pass
+    VALIDATED --> SUBMITTED: F6 attended upload by the employer, or our operator once the counsel fence clears
+    SUBMITTED --> REJECTED: F7 portal rejects, or the employer rejects the ECR return statement
+    REJECTED --> GENERATED: F8 fix and regenerate
+    SUBMITTED --> ACCEPTED: F9 portal accepts, ECR return approved
+    ACCEPTED --> REVISED: F10 ECR Revised return, no payment initiated
+    FILED --> REVISED: F10 Form 138 correction statement
+    REVISED --> ACCEPTED: F11 ECR revision accepted
+    REVISED --> FILED: F11 correction statement accepted, held until the portal enables it
+    ACCEPTED --> SUPPLEMENTARY: F12 Supplementary ECR for absent members
+    FILED --> SUPPLEMENTARY: F12 Supplementary ECR for absent members
+    SUPPLEMENTARY --> FILED: F13 accepted and receipted
+    ACCEPTED --> PAYMENT_INITIATED: F14 month verification gate passed
+    PAYMENT_INITIATED --> FILED: F15 payment receipt captured
+    ACCEPTED --> FILED: F16 no payment leg
+    VALIDATED --> PAYMENT_INITIATED: F17 payment-only instance, TDS deposit or Direct Challan Entry
+    FILED --> [*]
+
+    note left of BLOCKED
+      Reasons - unpublished format for
+      Form 138 Q4, Form 130 and the ECR
+      arrear return, unresolved post-cliff
+      ESI regime, an M-4 chronology gap,
+      a pending joint declaration.
+    end note
+
+    note right of PAYMENT_INITIATED
+      From here a Revised ECR
+      is impossible - EV-037.
+    end note
+
+    note right of FILED
+      Only FILED counts as on time.
+      REJECTED, REVISED and SUPPLEMENTARY
+      feed the rejection and correction counts.
+    end note

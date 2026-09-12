@@ -1,0 +1,34 @@
+flowchart TD
+  T["Tenant created (regulated NBFC, 900 emp)<br/>sector_profile = RBI<br/>data_residency = india_pinned<br/>inference_residency = india_only<br/>set once, propagates deterministically"]
+
+  T --> L1
+  T --> AIK
+  T --> L3
+
+  AIK{"AI features<br/>default OFF for RBI / SEBI / IRDAI profiles<br/>tenant opts in?"}
+  AIK -->|"no"| AIOFF["AI-off configuration<br/>supported product mode, not an error"]
+  AIK -->|"yes"| L2
+
+  subgraph Layer1["Layer 1 - Data at rest (Postgres, object store, search index, ALL backups)"]
+    L1["Swappable per tenant:<br/>region of primary + replicas"]
+    L1 --> R1["Provision ap-south-1 Mumbai,<br/>DR ap-south-2 Hyderabad -<br/>never a foreign region"]
+    L1 --> D1["Drivers: every tenant - CERT-In ICT logs in India, SPDI r.7;<br/>RBI - materiality-gated, entity-by-entity, not turnover-gated;<br/>SEBI - in India, MeitY-empanelled infra reaches SaaS;<br/>IRDAI - policy records only; SBI RFP all processing in India"]
+  end
+
+  subgraph Layer2["Layer 2 - LLM inference (a DIFFERENT guarantee from data-at-rest)"]
+    L2["Swappable per tenant:<br/>which of 3 backends per task class,<br/>and in which region it runs"]
+    L2 --> M{"Task class marked<br/>india_inference_required"}
+    M --> PA["Anthropic first-party:<br/>us / global inference geo only, US-only immutable workspace<br/>= REFUSED, typed error (NFR-RES-701),<br/>never silently sent abroad"]
+    M --> PO["OpenAI:<br/>India data-at-rest; in-country inference<br/>via OpenAI models on Amazon Bedrock<br/>= allowed"]
+    M --> PV["Vertex:<br/>has an India region<br/>= allowed"]
+  end
+
+  subgraph Layer3["Layer 3 - Egress / sub-processors (email, SMS, WhatsApp BSP, e-sign, payment rails, model providers)"]
+    L3["Swappable per tenant:<br/>list of third parties the data touches"]
+    L3 --> R3["Manifest generated + frozen;<br/>new sub-processor blocked until<br/>tenant consent is recorded<br/>+ attestation update"]
+    L3 --> D3["Drivers: SPDI r.7 transfer conditions;<br/>RBI para 16(r) consent + 16(o) inspection where material;<br/>SEBI Principle 7(x) terms; IRDAI reg 53 access"]
+  end
+
+  Layer1 --> ATT["Residency attestation PDF<br/>generated from LIVE config, cannot drift;<br/>reconciles to a network-policy dump -<br/>supports evidence production for RBI inspection,<br/>does not discharge audit, access or inspection duties"]
+  Layer2 --> ATT
+  Layer3 --> ATT

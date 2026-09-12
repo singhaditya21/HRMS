@@ -1,0 +1,28 @@
+flowchart LR
+    SRC["One employee-period<br/>pay components"]
+    FLAGS{{"Each component carries one flag per wage base<br/>pf · esi · gratuity · bonus · payment-of-wages<br/>a single 'wage' field is a design error"}}
+    SRC --> FLAGS
+
+    FLAGS --> B1
+    FLAGS --> B2
+    FLAGS --> B3
+    FLAGS --> B4
+    FLAGS --> B5
+
+    subgraph RES["Separately stored bases per employee-period, each stamped with its rule version"]
+        direction TB
+        B1["PF base<br/>s.2(88) wages - excluded heads a to i,<br/>50% add-back when they exceed half<br/>then the ₹15,000 ceiling unless actual-wage election"]
+        B2["ESI gross base<br/>separate coverage and contribution bases, verified<br/>component list and the overtime split carried, not re-captured<br/>overtime out of the ₹21,000 coverage test, in the base once covered"]
+        B3["Gratuity base<br/>s.2(88) wages with the add-back, last drawn<br/>15/26 x wages x completed years"]
+        B4["Bonus base<br/>min of actual wage and the higher of<br/>the notified amount or the minimum wage<br/>legacy ₹7,000 and ₹21,000 - Code-era values unconfirmed"]
+        B5["Payment-of-wages base<br/>all earnings, gross view<br/>total deductions capped at 50% of wages"]
+    end
+
+    B1 --> F1["ECR return file<br/>EPS capped at ₹1,250, EDLI"]
+    B2 --> F2["ESI contribution<br/>held to the Apr-Sep or Oct-Mar boundary"]
+    B3 --> F3["Gratuity payout within 30 days of becoming payable<br/>plus the running accrual ledger"]
+    B4 --> F4["Bonus payout and the period's annual return<br/>deadline configurable, legacy 30 Nov"]
+    B5 --> F5["Wage register Form IV<br/>and wage slip Form V"]
+
+    NOTE["Same rupee routes differently per return<br/>statutory bonus is invisible to ECR and ESI<br/>but visible to Form 138"]
+    B4 -. "routing, not amount" .-> NOTE

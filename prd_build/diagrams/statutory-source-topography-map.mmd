@@ -1,0 +1,46 @@
+flowchart LR
+    RUN["One 100-person multi-state payroll run<br/>touches >= 6 authorities at once<br/>Register keys claims by<br/>(authority, jurisdiction, effective-date-range)<br/>-- NOT by topic --"]
+
+    RUN --> CENTRAL
+    RUN --> STATE
+    RUN --> TAX
+    RUN --> MARKET
+
+    subgraph CENTRAL["Central labour / social-security"]
+        direction LR
+        A1["Central Acts, Codes,<br/>S.O./G.S.R. notifications"] --> S1["Gazette of India<br/>egazette.gov.in<br/>(published PDF = authoritative)"]
+        S1 --> T1["TRAP: corrigendum is a SEPARATE dated entry;<br/>indiacode.nic.in consolidated view lags &<br/>reproduces superseded S.O. 5319(E). Never grade from indiacode alone"]
+
+        A2["EPF: Scheme 2026,<br/>EPS, EDLI, rates"] --> S2["EPFO Unified Portal circulars<br/>+ enabling gazette S.O."]
+        S2 --> T2["TRAP: circular can precede or lag gazette;<br/>S.O. 3582(E) re-notified 12% -> publication date != effective date (21.11.2025).<br/>Grade against gazette, circular for detail only"]
+
+        A3["ESI: rates,<br/>wage ceiling, schemes"] --> S3["ESIC notifications + MoLE gazette"]
+        S3 --> T3["TRAP: post-22.11.2026 regime UNRESOLVED (EV-004);<br/>no successor instrument -> Ungraded/open by construction, not Hypothesis"]
+
+        A7["Gratuity, maternity,<br/>min wages, OT, registers"] --> S7["4 Labour Codes + Central Rules<br/>(notified 08 May 2026) + STATE rules"]
+        S7 --> T7["TRAP: state rules rolling out unevenly;<br/>central & state positions can conflict.<br/>Grade central rule and state rule as SEPARATE claims"]
+    end
+
+    subgraph STATE["Per-state levies (no central source)"]
+        direction LR
+        A4["Professional Tax<br/>(~16-20 levying states/UTs, count unverified)"] --> S4["Each state's Finance /<br/>Commercial-Taxes department or gazette;<br/>a local body in TN and Kerala"]
+        S4 --> T4["TRAP: slab base, slabs, gender, true-up month, periodicity differ per state;<br/>a March 2026 aggregator table shows Karnataka's pre-2023 slab.<br/>Verified only MH and OD, plus KA effect - EV-014; no incumbent ships a state slab table"]
+
+        A5["Labour Welfare Fund<br/>(~16 levying states/UTs, count unverified)"] --> S5["State LWF board notifications"]
+        S5 --> T5["TRAP: amounts/split/periodicity per-state, revised by board circular;<br/>no LWF figure verifiable from any government source, r2.<br/>REVERSED: 'Frappe ships LWF across 14 states' is false at source;<br/>Tally has no LWF engine either - greenfield, EV-031/EV-032"]
+    end
+
+    subgraph TAX["Direct tax / return formats"]
+        direction LR
+        A6["TDS: 24Q -> Form 138,<br/>Form 16 -> Form 130"] --> S6["Income Tax / CBDT notifications;<br/>TRACES + Protean (NSDL) for RPU/FVU formats"]
+        S6 --> T6["TRAP: record layout is a breaking change in versioned RPU/FVU releases,<br/>separate from the notification; two version stacks chosen by period.<br/>Q1-Q3 v1.2 shipped 22.07.2026; Q4 format unreleased as of Sep 2026<br/>-> Form 130 Part B generation FENCED, EV-046"]
+    end
+
+    subgraph MARKET["Market / competitive evidence"]
+        direction LR
+        A8["Company financials<br/>(competitor revenue)"] --> S8["MCA21 / ROC filed statements (by CIN)"]
+        S8 --> T8["TRAP: filing lag up to ~18 months; 'latest filed' != current.<br/>Rs 1,374 Cr aggregate Verified per-filing; gross-up is modelled"]
+
+        A9["Vendor pricing / AI posture"] --> S9["Vendor's own page:<br/>raw fetch AND rendered read,<br/>config file, archive for withdrawn cards"]
+        S9 --> T9["TRAP: raw and rendered fail in opposite directions -<br/>Keka's card hides in HTML comments, Qandle's is JS-injected.<br/>The old 'TLS block' was a tool failure - REVERSED.<br/>Competitor-quoted and review-site pricing is never primary"]
+    end

@@ -1,0 +1,60 @@
+erDiagram
+    CLAIM ||--o{ CAPTURE : "is supported by"
+    CLAIM ||--o{ MARKER_COMPONENT : "is graded in parts as"
+    CLAIM ||--o| DERIVATION : "is computed by"
+    DERIVATION }o--|{ CLAIM : "takes inputs from"
+    CLAIM ||--o{ REVERIFY_TRIGGER : "is re-checked by"
+    REVERIFY_TRIGGER ||--o{ REVERIFY_TASK : "spawns"
+    REVERIFY_TASK |o--o| GRADING_EVENT : "ends in"
+    CLAIM ||--o{ GRADING_EVENT : "moves by"
+    CLAIM ||--o{ CITATION : "is cited as"
+    CAPTURE }o--|| INSTRUMENT : "reads"
+    INSTRUMENT ||--o{ AMENDMENT_LINK : "is the from side of"
+    INSTRUMENT ||--o{ AMENDMENT_LINK : "is the to side of"
+    CLAIM ||--o| KILL_RECORD : "dies as"
+    KILL_RECORD ||--o{ REVERSAL : "reverses"
+    REVERSAL }o--|{ CLAIM : "cites"
+    CLAIM ||--o{ MIRROR_PULL : "owes"
+    MIRROR_PULL }o--|| INSTRUMENT : "pulls"
+    MIRROR_PULL |o--o| CAPTURE : "is closed by"
+
+    CLAIM {
+        string claim_id PK "EV-### or EV-K##, never reused"
+        string grade "weakest component"
+        string qualifiers "mirror, not_in_force, dated and so on"
+        string ungraded_state "open, blocked or undone"
+        string sphere "central, state or n/a"
+        date effective_from
+        date effective_to
+        string date_precision "exact or on_or_about"
+        string last_source_contact "r1 to r5 or a date"
+    }
+    CAPTURE {
+        string capture_id PK
+        string source_class
+        string methods "raw fetch, rendered read, config file"
+        boolean host_is_primary
+        string archive_hash
+        string corrigendum_search "found, none_found, owed, not_applicable"
+        string grader
+        string rechecker "never the grader"
+    }
+    INSTRUMENT {
+        string instrument_id PK "S.O. 5936(E), RPU 1.2"
+        date publication_date
+        date effective_date
+        string force_status
+    }
+    AMENDMENT_LINK {
+        string link_type "corrigendum_of, amends, supersedes"
+        string detected_by "watcher or human_search"
+    }
+    KILL_RECORD {
+        string claim_id PK "EV-K##"
+        string replacement "a claim_id or none - unsized"
+        string blocklist_key "a claim key, never a bare value"
+    }
+    REVERIFY_TRIGGER {
+        string trigger_type "dated, event, periodic, on_use"
+        int arm_lead_days "register.reverify_arm_lead_days"
+    }

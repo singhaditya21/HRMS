@@ -1,0 +1,24 @@
+flowchart TD
+    classDef q fill:#fff4d6,stroke:#b8891f,color:#5a4208;
+    classDef a fill:#d5f5e3,stroke:#1e8449,color:#145a32;
+    classDef b fill:#e8eef7,stroke:#41618c,color:#1b2a44;
+    classDef other fill:#f7f7f7,stroke:#999999,color:#333333;
+
+    P["Prospect record<br/>declared, verified at onboarding"] --> H1{"Own-roll 1-9?"}:::q
+    H1 -->|yes| Q1["Q-1 decline commercially - section 05.1"]:::other
+    H1 -->|no| H2{"Own-roll 200 or more?"}:::q
+    H2 -->|yes| Q2["Q-2 deferred to v2<br/>unless a retained tenant"]:::other
+    H2 -->|no| H3{"PF code held?"}:::q
+    H3 -->|no| H3E{"Obligation engine finds<br/>EPF applicable?"}:::q
+    H3E -->|no| Q3["Q-3 funnel<br/>lead: the EPF trigger at 20"]:::other
+    H3E -->|yes| Q4["Q-4 A<br/>ST-1: registration, then the first ECR"]:::a
+    H3 -->|yes| H4{"Own-roll 10-19?"}:::q
+    H4 -->|yes| Q5["Q-5 B<br/>attended submission of the ECRs it owes"]:::b
+    H4 -->|no| H5{"PT or LWF registrations<br/>in two or more states?"}:::q
+    H5 -->|yes| Q6["Q-6 A<br/>maintained multi-state rules"]:::a
+    H5 -->|no| H6{"20-49 on a block-priced card and<br/>the AC-25 bill is strictly smaller?"}:::q
+    H6 -->|yes| Q7["Q-7 A<br/>both bills side by side"]:::a
+    H6 -->|no| H7{"On a bureau whose scope-matched<br/>per-head fee is at or above ours?"}:::q
+    H7 -->|yes| Q8["Q-8 A<br/>redirect the retainer, AC-18"]:::a
+    H7 -->|no| Q9["Q-9 B<br/>attended submission and the SLA<br/>parity on computation, no saving claim"]:::b
+    T["A dated trigger inside trigger_window_days"]:::other -.->|raises B to A while in the window| Q9

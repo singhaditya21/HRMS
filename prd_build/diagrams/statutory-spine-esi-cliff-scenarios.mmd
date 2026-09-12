@@ -1,0 +1,25 @@
+flowchart TD
+    classDef date fill:#5a3a1e,stroke:#8f5c2f,color:#fff3ea,stroke-width:1px;
+    classDef ok fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef block fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+    classDef note fill:#1d3a5a,stroke:#2f5c8f,color:#eaf3ff,stroke-width:1px;
+
+    START["On or about 21 November 2026<br/>the one-year saving of the ESI rules, regulations and schemes lapses<br/>CoSS s.164(2)(b), read with corrigendum S.O. 5936(E)"]:::date
+    Q1{"Successor instrument or extension<br/>published before the date?"}
+    S1["S1 - successor<br/>new rule versions from its effective date<br/>earlier periods stay on the saved rules"]:::ok
+    S2["S2 - extension<br/>effective_to moved on the saved versions<br/>no computation change"]:::ok
+    S3["S3 - nothing published<br/>ESI filing instances BLOCKED-pending-regime<br/>computation per esi.post_cliff_mode, set by the tenant with counsel"]:::block
+    Q2{"Instrument later published<br/>with retrospective effect?"}
+    S4["S4 - retro recompute of every affected month<br/>diffs recorded against anything already filed"]:::ok
+    STRADDLE["Wage month November 2026 straddles the date<br/>split per esi.cliff_month_split unless the instrument says how<br/>its contribution is due by 15 December 2026"]:::note
+    EPS["The same four scenarios apply to EPS 1995 and EDLI 1976<br/>ECR fields 5, 6 and 8 - epf.post_cliff_eps_edli_mode<br/>named approver confirms before payment initiation"]:::note
+
+    START --> Q1
+    Q1 -->|"successor"| S1
+    Q1 -->|"extension"| S2
+    Q1 -->|"neither"| S3
+    S3 --> Q2
+    Q2 -->|"yes"| S4
+    Q2 -->|"not yet"| S3
+    START -.-> STRADDLE
+    START -.-> EPS

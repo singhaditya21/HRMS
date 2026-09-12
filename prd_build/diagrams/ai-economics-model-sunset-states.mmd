@@ -1,0 +1,27 @@
+stateDiagram-v2
+    [*] --> IN_SERVICE
+    IN_SERVICE --> NOTICED: M1 provider publishes a deprecation notice and the dates are captured
+    IN_SERVICE --> SUSPENDED: M7 provider suspends the configuration with no notice
+    NOTICED --> CANDIDATE_EVAL: M2 successor candidates listed from the cohort eligible set
+    CANDIDATE_EVAL --> MIGRATION_SCHEDULED: M3 a candidate passes parity and has a published price row
+    CANDIDATE_EVAL --> BLOCKED: M4 no candidate passes parity or none is in the consented set
+    BLOCKED --> CANDIDATE_EVAL: M5 eligibility, consent or parity record changes
+    MIGRATION_SCHEDULED --> MIGRATED: M6 tier map re-pointed before the retirement date
+    MIGRATION_SCHEDULED --> RETIRED_UNMIGRATED: M8 retirement date reached with the migration incomplete
+    BLOCKED --> RETIRED_UNMIGRATED: M8 retirement date reached with no successor
+    SUSPENDED --> MIGRATED: M9 the in-tier fallback becomes the default once parity is current
+    RETIRED_UNMIGRATED --> MIGRATED: M10 a successor clears parity and eligibility later
+    MIGRATED --> [*]
+
+    note right of RETIRED_UNMIGRATED
+        The class takes its degraded path.
+        Never a cross-tier promotion, never a
+        provider outside the tenant eligible set.
+    end note
+
+    note left of CANDIDATE_EVAL
+        Quality first for any class whose output
+        feeds a statutory artefact. Cost deltas
+        come from the per-event matrix at the
+        rate in force.
+    end note

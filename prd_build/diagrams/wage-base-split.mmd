@@ -1,0 +1,27 @@
+flowchart TD
+    GROSS["Gross remuneration ₹50,000/mo<br/>Basic 15,000 + HRA 7,500<br/>+ Conveyance 5,000 + Commission 22,500"]
+
+    GROSS --> BASIC["Included: Basic<br/>₹15,000"]
+    GROSS --> EXCL["Excluded components<br/>HRA + Conveyance + Commission<br/>= ₹35,000 = 70% of remuneration<br/>special allowance is NOT an excluded head - §06.10"]
+
+    EXCL --> TEST{"CoW s.2(y) / CoSS s.2(88)<br/>excluded &gt; 50%?<br/>('or such % as notified'<br/>= standing variable)"}
+    TEST -->|"70% &gt; 50%, so add back the excess"| DEEM["Deemed wages<br/>excess = 20% x 50,000<br/>= ₹10,000 added back"]
+
+    BASIC --> ABASE
+    DEEM --> ABASE["Add-back base<br/>15,000 + 10,000 = ₹25,000"]
+
+    ABASE --> GRAT["Gratuity base - no wage ceiling<br/>rises ₹15,000 to ₹25,000<br/>(the add-back's real bite here)"]
+    ABASE --> CAP{"Employer contributes PF<br/>above the ₹15,000 ceiling?"}
+
+    CAP -->|"No - ceiling-restricted"| PFC["PF 12% of ₹15,000 = ₹1,800<br/>unchanged: Basic already<br/>reaches the ceiling"]
+    CAP -->|"Yes - full-wage election"| PF12["PF 12% of ₹25,000 = ₹3,000<br/>(+67% only in this case)"]
+
+    PF12 --> SPLIT{"Split AFTER add-back,<br/>against ₹15,000 EPS ceiling"}
+    SPLIT --> EPS["EPS 8.33% x 15,000 (ceiling)<br/>= ₹1,250"]
+    SPLIT --> EPF["EPF balance<br/>= ₹1,750"]
+    SPLIT -.-> FLAG["Joined after 1 Sep 2014 with<br/>wages above ₹15,000:<br/>EPFO pre-filing FLAG, not a block<br/>(EV-040)"]
+
+    GROSS --> POW["Concurrent base:<br/>Payment-of-Wages /<br/>Equal-Remuneration base<br/>= full ₹50,000"]
+
+    ABASE -.-> NOTE["Several wage bases on ONE payslip.<br/>Engine must show deemed-wages excess<br/>as a named line and the ceiling election,<br/>effective-dated to rule version<br/>(AC: derivation drill-down)"]
+    POW -.-> NOTE

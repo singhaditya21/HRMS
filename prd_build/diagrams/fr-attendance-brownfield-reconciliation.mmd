@@ -1,0 +1,19 @@
+flowchart TB
+    reg["Existing terminal registered - FR-DEV-010<br/>admin declares templates present: yes, no or unknown"] --> decl{"Declared yes or unknown?"}
+    decl -->|"No"| normal["No reconciliation<br/>any later biometric punch is M5 as usual"]
+    decl -->|"Yes or unknown"| inv{"Model can list users<br/>matrix.user_store_query"}
+    inv -->|"Yes"| full["Complete inventory at registration<br/>DeviceEnrolment rows, origin brownfield,<br/>no BiometricTemplate row"]
+    inv -->|"No or unknown"| partial["Partial inventory<br/>filled by biometric-verify punches<br/>and the tenant's declaration"]
+    full & partial --> del{"Model deletes on command?"}
+    del -->|"No or unknown"| onsite["BF-5: non-biometric modes only<br/>ONSITE_TASK per worker, admin attests"]
+    del -->|"Yes"| ask["Choice flow to each worker found<br/>in their language, within<br/>brownfield_response_window_days"]
+    ask -->|"elects card, PIN or other"| bf2["BF-2: erase old template<br/>card or PIN provisioned"]
+    ask -->|"elects biometric with written consent"| bf3["BF-3: erase old template first,<br/>then ticket and fresh enrolment"]
+    ask -->|"no answer by window end"| bf4["BF-4: as BF-2,<br/>elected_by migration_default"]
+    ask -.->|"counsel option, ships off"| bf7["BF-7: keep template,<br/>adopt_existing ticket,<br/>consent labelled post_collection"]
+    bf2 & bf3 & bf4 & onsite --> er["Erasure request, trigger brownfield_unconsented<br/>items tracked per FR-DEV-007"]
+    er --> done{"Every worker accounted for?"}
+    partial -.-> clear["Tenant attests device clear,<br/>or bulk clear result - matrix.bulk_template_clear"]
+    clear --> done
+    done -->|"Yes"| out["Device leaves reconciliation<br/>report joins the evidence pack - FR-DEV-016"]
+    reg -.->|"from registration onward"| punches["Every punch during reconciliation is counted<br/>one reconciliation item per worker per device"]

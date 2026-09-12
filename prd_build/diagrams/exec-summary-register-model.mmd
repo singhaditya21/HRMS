@@ -1,0 +1,54 @@
+erDiagram
+    REGISTER_ITEM {
+        string item_id PK "T, RV, DEC, FEN, OPN or PC"
+        string statement "one proposition"
+        string status "moved only by its own transitions"
+        string owner_role "a role, never a person"
+        string owning_section
+    }
+    STATUS_EVENT {
+        string item_id FK
+        string from_status
+        string to_status
+        string event_ref "a registered trigger or result"
+        datetime recorded_at
+    }
+    DEPENDENCY_EDGE {
+        string from_item FK "DEC, FEN, OPN or PC"
+        string to_claim FK "a T claim"
+    }
+    EVIDENCE_ROW {
+        string ev_id PK "EV or EV-K row, section 02.7"
+    }
+    WATCH_TRIGGER {
+        string trigger_id PK "R, CRS, LW, V, CR or a watch key"
+    }
+    FENCE_RECORD {
+        string fence_id PK "F row, section 05.18"
+        string state "OPEN to SHIPPED, FL1 to FL12"
+    }
+    COUNSEL_ITEM {
+        string cr_id PK "CR row, section 23.16"
+    }
+    CLAIM_ENTRY {
+        string claim_id PK "FR-LEG-001 entry"
+        string status "draft, cleared, suspended, withdrawn"
+    }
+    GUARD {
+        string guard_ref PK "banned row, lint entry, test or config key"
+    }
+    FILING_INSTANCE {
+        string filing_id PK
+        string blocked_reason "the fence_id, FR-PAY-711 F2"
+    }
+
+    REGISTER_ITEM ||--o{ STATUS_EVENT : "history, append-only"
+    REGISTER_ITEM ||--o{ DEPENDENCY_EDGE : "rests on"
+    DEPENDENCY_EDGE }o--|| REGISTER_ITEM : "points at a claim"
+    REGISTER_ITEM }o--o{ EVIDENCE_ROW : "cites"
+    REGISTER_ITEM }o--o{ WATCH_TRIGGER : "reopened only by"
+    REGISTER_ITEM }o--o| FENCE_RECORD : "FEN status derived from"
+    REGISTER_ITEM }o--o| COUNSEL_ITEM : "FEN or OPN waits on"
+    REGISTER_ITEM |o--o| CLAIM_ENTRY : "PC external form"
+    REGISTER_ITEM ||--o{ GUARD : "RV kept reversed by"
+    FENCE_RECORD ||--o{ FILING_INSTANCE : "holds in BLOCKED"

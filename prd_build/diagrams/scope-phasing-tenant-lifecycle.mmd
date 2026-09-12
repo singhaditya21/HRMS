@@ -1,0 +1,31 @@
+stateDiagram-v2
+    direction LR
+    [*] --> PROSPECT: TO1 signup or design-partner contact
+    PROSPECT --> FREE: TO2 AD-01, headcount 1 to 19
+    PROSPECT --> WAITLISTED: TO3 AD-04, AD-06 or AD-18 fails
+    WAITLISTED --> PROSPECT: TO4 the blocking hold or gate clears
+    PROSPECT --> CONTRACTED: TO5 contract signed with SLA clause and DPA
+    FREE --> CONTRACTED: TO6 crosses 20 and takes the File tier
+    CONTRACTED --> CONSENT_RUN: TO7 consent flow run for every employee
+    CONSENT_RUN --> LOADED: TO8 import gated by consent status
+    LOADED --> TIED_OUT: TO9 tie-out at zero variance, or an April cutover
+    TIED_OUT --> ADMITTED: TO10 coverage statement v1 issued
+    ADMITTED --> LIVE_HYPERCARE: TO11 first live wage month opened
+    LIVE_HYPERCARE --> LIVE: TO12 hypercare exit rule H-6 met
+    LIVE --> NOTICE_GIVEN: TO13 contract end or revocation
+    LIVE_HYPERCARE --> NOTICE_GIVEN: TO13 contract end or revocation
+    NOTICE_GIVEN --> EXPORTED: TO14 C-52 export delivered, hand-back packages done
+    EXPORTED --> REVOKED: TO15 authorities revoked, vault entries shredded
+    REVOKED --> RETAINED: TO16 records held while a retention period runs
+    RETAINED --> CLOSED: TO17 every retention clock expired
+    CLOSED --> [*]
+
+    note right of ADMITTED
+      Requires AD-18, desk capacity in every
+      affected window and PH-18 set.
+    end note
+
+    note right of RETAINED
+      Retention and production on request only.
+      No erasure while any rule-set period runs.
+    end note

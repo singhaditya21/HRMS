@@ -1,0 +1,19 @@
+stateDiagram-v2
+    direction LR
+    [*] --> RAISED: C1 a DET rule fires with no open candidate for the same rule and scope key
+    RAISED --> RAISED: C2 the same rule fires again inside the dedupe window
+    RAISED --> CONTAINED: C3 automatic containment taken, narrowing only
+    RAISED --> HANDED_OFF: C4 hand-off record written, complete or with unknowns named
+    CONTAINED --> HANDED_OFF: C4 hand-off record written, complete or with unknowns named
+    HANDED_OFF --> HANDED_OFF: C5 further evidence appended
+    HANDED_OFF --> ACKNOWLEDGED: C6 incident owner acknowledges
+    ACKNOWLEDGED --> CLOSED: C7 owner records the outcome and decides each containment
+    CLOSED --> [*]
+
+    note right of HANDED_OFF
+      The reportability decision and the
+      six-hour CERT-In report belong to the
+      incident owner under the section 17 runbook.
+      The layer never holds a candidate back
+      to complete its evidence.
+    end note

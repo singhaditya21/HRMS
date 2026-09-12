@@ -1,0 +1,22 @@
+sequenceDiagram
+    autonumber
+    participant C as Candidate or employee
+    participant E as Employer with 20 or more persons
+    participant P as Product
+    participant K as Chief or State Commissioner
+
+    C->>E: Complaint of discrimination on the ground of disability
+    E->>P: Open an RPwD Rule 3 sub-rule 2 case, FR-T-D008
+    P->>P: Legal hold on the decision snapshots and records, FR-LEG-026
+    P->>E: Case file from the snapshot, criteria, model version, confirmer and reason
+    alt Employer initiates action under the Act
+        E->>C: Action initiated and recorded against the case
+    else Employer maintains the decision
+        E->>C: Written response on how the act was a proportionate means of achieving a legitimate aim
+    end
+    C->>K: The complainant may approach the Commissioner
+    K->>E: Discovery and production of documents under civil-court powers
+    E->>P: Export the case file, the Rule 9 records and the due-diligence dossier
+    P->>E: Export complete, hold stays until counsel releases it
+    Note over K: Disposal within 60 days, or 30 days in exceptional cases, Rule 3 sub-rule 3
+    Note over E,P: Failure to produce records is punishable under s.93, per offence and per day

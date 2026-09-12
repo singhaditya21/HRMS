@@ -1,0 +1,40 @@
+flowchart TD
+    classDef q fill:#fff3cd,stroke:#997404,color:#5c4708;
+    classDef ok fill:#d1e7dd,stroke:#146c43,color:#0a3622;
+    classDef no fill:#f8d7da,stroke:#b02a37,color:#5c161c;
+    classDef line fill:#cfe2ff,stroke:#0a58ca,color:#052c65;
+
+    START(["Prospect or existing tenant event<br/>signup, new establishment, band crossing,<br/>fence change, parameter set"])
+    HC{"Own-roll headcount band<br/>AD-01 to AD-04"}:::q
+    FREE["Free tier - artefacts in Mode A<br/>every line TENANT_SELF_FILES"]:::ok
+    V2Q["Not sold before the v2 gate<br/>recorded as a v2 lead - AD-04"]:::no
+    KEEP["Existing tenant past 200 retained<br/>coverage unchanged - AD-03"]:::ok
+    IW{"Any International Worker while<br/>iw_contribution_base_rule is unset?<br/>AD-06"}:::q
+    WAIT["That establishment's EPF not admitted<br/>waitlist, demand recorded on PH-05"]:::no
+    CUT{"First live wage month is not April?<br/>AD-07"}:::q
+    TIE["Go-live gated on the section 16.7 tie-out<br/>V-15 heads at zero variance"]:::line
+    ESI{"ESI periods after the saving lapses?<br/>AD-08"}:::q
+    POST["Platform posture must be set - PH-12, PL-04<br/>tenant acknowledgement recorded"]:::line
+    REG{"Regulated tenant or biometric fleet?<br/>AD-10, AD-11"}:::q
+    PROF["Sectoral profile, AI off by default,<br/>written consent before enrolment"]:::line
+    LINES["Compute every coverage line per registration x obligation<br/>IN_SLA, SLA_PENDING_FIRST_SUBMISSION,<br/>CARVED_OUT_FENCE, CARVED_OUT_PARAMETER,<br/>TENANT_SELF_FILES, NOT_APPLICABLE, NOT_OFFERED"]:::line
+    EPF{"Every EPF establishment line is IN_SLA<br/>or SLA_PENDING_FIRST_SUBMISSION?"}:::q
+    PAID["Admitted to File - coverage statement v1 issued<br/>SLA clause cites this version"]:::ok
+    HOLD["Not admitted to File<br/>Free tier offered, blocker named"]:::no
+
+    START --> HC
+    HC -->|"1-19"| FREE
+    HC -->|"200+ new prospect"| V2Q
+    HC -->|"200+ existing"| KEEP
+    HC -->|"20-199"| IW
+    IW -->|"yes"| WAIT
+    IW -->|"no"| CUT
+    CUT -->|"yes"| TIE --> ESI
+    CUT -->|"no"| ESI
+    ESI -->|"yes"| POST --> REG
+    ESI -->|"no"| REG
+    REG -->|"yes"| PROF --> LINES
+    REG -->|"no"| LINES
+    LINES --> EPF
+    EPF -->|"yes"| PAID
+    EPF -->|"no"| HOLD

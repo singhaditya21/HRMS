@@ -1,0 +1,29 @@
+sequenceDiagram
+    autonumber
+    participant ENG as Deletion engine
+    participant HOLD as RetentionHold index
+    participant CLS as Retention class registry
+    participant KEY as Subject key custodian
+    participant STORE as Business and document stores
+    participant DEV as Attendance devices
+    participant AUD as AuditEvent log
+
+    ENG->>HOLD: any active hold on this subject or scope
+    HOLD-->>ENG: none active
+    ENG->>CLS: floors and ceilings for every class the subject touches
+    CLS-->>ENG: floors elapsed for classes A and B, class C floor unset
+    Note over ENG,CLS: an unset floor blocks erasure of that class and raises an unresolved-retention flag
+
+    ENG->>STORE: tombstone the multi-subject records in classes A and B
+    STORE-->>ENG: tombstones written, payload replaced
+    ENG->>DEV: queue biometric erase command per enrolled device
+    DEV-->>ENG: acknowledgement per device, or exception state pending
+    Note over ENG,DEV: erasure shows complete only on every acknowledgement or an admin attestation of decommission or loss
+
+    ENG->>KEY: destroy the subject data key
+    KEY-->>ENG: key destroyed, custodian attests it is outside every backed-up store
+    ENG->>STORE: verify sample reads
+    STORE-->>ENG: ciphertext only, surrogate-keyed figures still readable
+    ENG->>AUD: write decision, basis, mechanism, actor and NTP timestamp
+    Note over AUD: the audit record never carries the erased content
+    ENG->>ENG: schedule re-evaluation for class C at floor confirmation

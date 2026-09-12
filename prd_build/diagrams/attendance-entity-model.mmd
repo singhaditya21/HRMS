@@ -1,0 +1,137 @@
+erDiagram
+    employee ||--o{ punch : "raw capture events"
+    device ||--o{ punch : "emits (device_sn)"
+    device ||--o{ device_user_map : "enrolls device_user_id"
+    device_user_map }o--|| employee : "eff-dated resolve to"
+    shift_definition ||--o{ roster_assignment : "eff-dated, versioned"
+    employee ||--o{ roster_assignment : "rostered per site/date"
+    leave_type ||--o{ leave_ledger_txn : "typed by type_code"
+    employee ||--o{ leave_ledger_txn : "double-entry ledger"
+    leave_ledger_txn |o--o| leave_ledger_txn : "reverses_txn (compensating)"
+    employee ||--o{ regularization : "raises (self or supervisor)"
+    employee ||--o{ consent_artefact : "grants, versioned, revocable-forward"
+    employee ||--o{ attendance_method_election : "elects own method"
+    employee ||--o{ biometric_template : "enrolled only with consent"
+    consent_artefact ||--o{ biometric_template : "written consent precedes"
+    employee ||--o{ device_enrolment : "template copy per device"
+    device ||--o{ device_enrolment : "holds template in flash"
+    employee ||--o{ form_ix_row : "monthly statutory record"
+    day_status }o--|| form_ix_row : "materialised at lock"
+    employee ||--o{ contractor_link : "eff-dated contractor link, OSH Code"
+    employee ||--o{ day_status : "DERIVED projection per date"
+    punch }o--o{ day_status : "projected from (recompute)"
+    roster_assignment }o--o{ day_status : "shift + weekly-off input"
+    holiday_calendar }o--o{ day_status : "present/absent/holiday class"
+    leave_ledger_txn }o--o{ day_status : "on-leave / LOP input"
+    regularization }o--o{ day_status : "corrections re-project"
+    audit_entry }o--|| employee : "append-only, every mutation"
+
+    punch {
+        uuid punch_id PK "append-only, erasable class"
+        string device_sn_or_user_id "device_user_id resolved"
+        timestamp ts_device_ts_utc_tz "device-local + UTC, no rewrite"
+        enum direction "IN / OUT / AUTO"
+        enum verify_mode "card/PIN/fingerprint/face, FR-DEV-008"
+        string source_channel "adms/mobile/kiosk/web/import"
+        string payload_hash "tamper-evident dedup key"
+        json geo_facematch_skew "geo? face_match_outcome? skew? never an image"
+    }
+    biometric_template {
+        uuid template_id PK "separate keyspace, no image column"
+        uuid employee_id FK
+        uuid consent_id FK "written consent first"
+        string key_ref "destroyed on erasure"
+        timestamp erased_at "never referenced by punch"
+    }
+    device_enrolment {
+        uuid employee_id FK
+        string device_sn FK
+        string erase_cmd_id "phase 1 queued"
+        timestamp ack_at "phase 2 per-device ack"
+        enum exception_state "closed-by-attestation"
+    }
+    attendance_method_election {
+        uuid employee_id FK
+        enum method "card/PIN/geo/web/supervisor/biometric"
+        date effective_from "set by employee"
+    }
+    form_ix_row {
+        uuid employee_id FK
+        string month "per establishment"
+        json day_in_out "days 1-31, IN and OUT timestamps"
+        int days_worked_ot_hours "+ tour details"
+        string register_version "retained per EV-054"
+    }
+    device {
+        string device_sn PK "eSSL/ZKTeco terminal"
+        string endpoint_secret "per-device push auth"
+        int clock_offset "measured skew (FR-DEV-003)"
+        timestamp last_seen "health / delivery gaps"
+    }
+    device_user_map {
+        string device_sn FK
+        string device_user_id "device-local enrol no."
+        uuid employee_id FK "eff-dated (badge reuse)"
+    }
+    shift_definition {
+        uuid shift_id PK
+        json start_end_breaks "grace_in/out, breaks[]"
+        int spread_over_cap "state-devolved, eff-dated"
+        int version "eff-dated, versioned"
+    }
+    roster_assignment {
+        uuid employee_id FK
+        date date "per site_id"
+        uuid shift_id FK
+        timestamp published_at "notifies worker"
+    }
+    holiday_calendar {
+        uuid establishment_id FK
+        date date
+        enum type "national/festival/optional"
+        string source_gazette_ref "eff-dated"
+    }
+    day_status {
+        uuid employee_id FK "DERIVED, never authored"
+        date date
+        enum status "Present/Absent/Half/Off/Hol/Leave/OD/LOP"
+        int worked_min_ot_by_band "+ paid_flag"
+        string rule_version "in force for the date"
+    }
+    leave_type {
+        string type_code PK "EL/CL/SL/ML/CompOff/LWP"
+        json accrual_cap_encash "unit, eligibility, doc_req"
+        boolean paid_flag
+        string statutory_floor_ref "floor, not silent accept"
+    }
+    leave_ledger_txn {
+        uuid txn_id PK "immutable, double-entry"
+        uuid employee_id FK
+        string type_code FK
+        decimal delta "accrue/apply/cancel/encash/lapse"
+        date effective_date "eff-dated, recomputable"
+    }
+    regularization {
+        uuid reg_id PK "append + decision"
+        uuid employee_id FK
+        json before_after "date(s), reason, evidence_ref"
+        enum decision "approver_chain, decided_at"
+    }
+    consent_artefact {
+        uuid consent_id PK "versioned, revocable-forward"
+        uuid employee_id FK
+        enum purpose "biometric/night-shift/location"
+        enum regime "SPDI written / DPDP / OSH s.43"
+        string given_to_entity "whose artefact"
+        timestamp granted_withdrawn "effective_from, withdrawn_at?"
+    }
+    contractor_link {
+        uuid employee_id FK
+        uuid contractor_entity_id "license_ref"
+        string pf_code_esi_code "eff-dated"
+    }
+    audit_entry {
+        string actor "immutable (CC-5)"
+        timestamp ts
+        json before_after "+ rule_version, tenant_id"
+    }

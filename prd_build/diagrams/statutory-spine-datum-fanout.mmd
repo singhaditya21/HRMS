@@ -1,0 +1,48 @@
+flowchart TD
+    classDef writer fill:#3d3d3d,stroke:#6b6b6b,color:#ffffff,stroke-width:1px;
+    classDef datum fill:#1e3a5a,stroke:#2f5c8f,color:#eaf3ff,stroke-width:1px;
+    classDef art fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef gate fill:#5a3a1e,stroke:#8f5c2f,color:#fff3ea,stroke-width:1px;
+    classDef stop fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+
+    W1["Writer - attendance close<br/>section 09"]:::writer
+    W2["Writer - payroll run<br/>section 08"]:::writer
+
+    D1["Canonical datum<br/>per-day IN and OUT pairs<br/>grain employee-day"]:::datum
+    D2["Canonical datum<br/>NCP days for the wage month<br/>derived, never keyed"]:::datum
+    D3["Canonical datum<br/>PF wage base after the add-back<br/>grain employee-month"]:::datum
+
+    A1["Form IX column 7<br/>register render"]:::art
+    A2["Form IX columns 8 and 9<br/>derived totals"]:::art
+    A3["ECR field 10<br/>NCP days"]:::art
+    A4["ECR fields 4 to 9<br/>wages and contributions"]:::art
+    A5["Form IV columns 18 to 27<br/>deductions register"]:::art
+    A6["ESI contribution upload<br/>template fields not captured"]:::art
+    A7["Form V wage slip"]:::art
+
+    G1{"Has the datum changed<br/>after the month reached LOCKED?"}
+    R1["Re-derive every consumer<br/>inside the same run<br/>no artefact holds its own copy"]:::art
+    G2{"Has payment been initiated<br/>for the filing that carries it?"}
+    R2["Correction run<br/>route resolved by the ten-row table<br/>section 06.2"]:::gate
+    R3["No mutation of the approved return<br/>diff recorded against it<br/>runbook in section 22"]:::stop
+
+    W1 --> D1
+    D1 --> D2
+    W2 --> D3
+    D2 --> D3
+
+    D1 --> A1
+    D1 --> A2
+    D2 --> A3
+    D2 --> A4
+    D3 --> A4
+    D3 --> A5
+    D3 --> A6
+    D3 --> A7
+
+    A3 --> G1
+    A4 --> G1
+    G1 -->|"no"| R1
+    G1 -->|"yes"| G2
+    G2 -->|"no"| R2
+    G2 -->|"yes"| R3

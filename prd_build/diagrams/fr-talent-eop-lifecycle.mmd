@@ -1,0 +1,40 @@
+stateDiagram-v2
+    direction TB
+
+    state "DRAFT - generated or edited, not approved" as DRAFT
+    state "APPROVED - named approver and date recorded" as APPROVED
+    state "PUBLISHED - live, with publication evidence" as PUBLISHED
+    state "STALE - published, but the configuration it describes has changed" as STALE
+    state "SUPERSEDED - replaced by a later published version" as SUPERSEDED
+    state "DISCARDED - draft abandoned" as DISCARDED
+
+    [*] --> DRAFT: Establishment created, or a staleness trigger opens the next version
+    DRAFT --> DISCARDED: Abandoned
+    DRAFT --> APPROVED: Named approval, every required Rule 8 clause filled
+    APPROVED --> PUBLISHED: Publication evidence recorded, website URL or dated premises attestation
+    PUBLISHED --> STALE: Talent AI or confirmer configuration changed, liaison officer vacated, URL unreachable, or attestation aged out
+    PUBLISHED --> SUPERSEDED: A later version publishes
+    STALE --> SUPERSEDED: A later version publishes
+    STALE --> DRAFT: Tenant starts the next version
+    SUPERSEDED --> [*]
+    DISCARDED --> [*]
+
+    note right of PUBLISHED
+        Content set by size: at twenty or more employees the full
+        Rule 8 clause 3 content including the manner of selection
+        and the liaison officer. Below twenty, facilities and
+        amenities only. Publication binds every establishment.
+    end note
+
+    note right of STALE
+        Staleness is shown to the tenant, never silently corrected
+        by editing a document already published. Falling below
+        twenty employees never downgrades a published version.
+    end note
+
+    note right of SUPERSEDED
+        Registration with the Chief or State Commissioner is
+        correspondence, not a portal: prepare, dispatch, acknowledge
+        or resubmit, outcome. The word registered appears only
+        against a recorded acknowledgement.
+    end note

@@ -1,0 +1,35 @@
+flowchart TB
+    classDef st fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef bad fill:#5a1a1a,stroke:#a33,color:#ffecec,stroke-width:1px;
+    classDef done fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:2px;
+    classDef step fill:#2a2a2a,stroke:#777,color:#f0f0f0,stroke-width:1px,stroke-dasharray:3 3;
+
+    subgraph SM["Filing-instance states, owned by FR-PAY-711 in section 08"]
+        direction LR
+        SCH["SCHEDULED"]:::st --> GEN["GENERATED"]:::st --> VAL["VALIDATED"]:::st --> SUB["SUBMITTED"]:::st
+        SCH --> BLK["BLOCKED<br/>pending-layout, pending-regime,<br/>chronology, joint declaration"]:::bad
+        BLK --> SCH
+        SUB --> REJ["REJECTED"]:::bad
+        REJ --> GEN
+        SUB --> ACC["ACCEPTED"]:::st
+        ACC --> REV["REVISED<br/>ECR only while no payment initiated"]:::st
+        ACC --> SUP["SUPPLEMENTARY<br/>members absent from prior returns"]:::st
+        ACC --> PI["PAYMENT_INITIATED<br/>after the verification gate"]:::st
+        PI --> FIL["FILED"]:::done
+        ACC --> FIL
+        REV --> ACC
+        FIL -->|"Form 138 correction statement"| REV
+        REV --> FIL
+        FIL --> SUP
+        SUP --> FIL
+    end
+
+    E1["EPFO: upload the .txt in an attended session"]:::step -.-> SUB
+    E2["EPFO: return statement approved, cannot be cancelled"]:::step -.-> ACC
+    E3["EPFO: Due Deposit Balance Summary, challan with TRRN, the employer pays incl. 7Q interest"]:::step -.-> PI
+    E4["EPFO: receipt downloaded and reconciled"]:::step -.-> FIL
+    T1["TDS: deductor runs FVU with the .csi challan file"]:::step -.-> VAL
+    T2["TDS: .fvu uploaded, Return Receipt Number captured"]:::step -.-> ACC
+    C1["ESIC: contribution template uploaded"]:::step -.-> SUB
+    C2["ESIC: challan generated and paid"]:::step -.-> PI
+    P1["State PT or LWF: return and payment on that state's portal"]:::step -.-> SUB

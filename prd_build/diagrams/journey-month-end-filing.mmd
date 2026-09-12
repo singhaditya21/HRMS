@@ -1,0 +1,34 @@
+flowchart TB
+    classDef data fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef gate fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+    classDef gen fill:#123a52,stroke:#1f5f85,color:#e6f5ff,stroke-width:1px;
+    classDef portal fill:#4a3410,stroke:#8a6413,color:#fff4dd,stroke-width:1px;
+    classDef audit fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+
+    A["1. Data assembly<br/>attendance, LOP, arrears,<br/>joiners/exits, revised CTC"]:::data
+    B["2. Payroll month LOCKED<br/>gross, deductions,<br/>employer contributions"]:::data
+
+    V{{"3. In-product validation<br/>ECR 11-field format, EPFO block vs flag,<br/>PT slab by state, .csi challan match"}}:::gate
+    VX["Exceptions queue<br/>fix identifier state or<br/>raise a correction run"]:::gate
+
+    G["4. Generate artefacts<br/>ECR return .txt, ESI upload,<br/>PT return data, LWF statement,<br/>quarterly Form 138 .txt for FVU"]:::gen
+
+    P1["5. Attended upload: EPFO<br/>return statement approved<br/>by the employer"]:::portal
+    P2["5. Attended upload: ESIC<br/>contribution template"]:::portal
+    P3["5. Attended upload: state PT portals<br/>and, quarterly, Form 138 after FVU"]:::portal
+
+    GATE{{"6. Statutory verification gate<br/>last point for a downward<br/>Revised ECR - EV-037"}}:::gate
+    PAY["7. Payment initiated<br/>EPF challan with TRRN and 7Q interest,<br/>ESI, PT, TDS deposit"]:::portal
+
+    ACK["8. Acknowledgement<br/>TRRN, CIN, Return Receipt Number,<br/>PT receipts"]:::audit
+    AUD["9. Filing ledger and audit trail<br/>who acted, on whose credentials,<br/>what, when - evidence pack per period"]:::audit
+
+    A --> B --> V
+    V -->|fail| VX --> A
+    V -->|pass| G
+    G --> P1 & P2 & P3
+    P1 -->|rejected| VX
+    P1 --> GATE
+    P2 --> GATE
+    P3 --> GATE
+    GATE --> PAY --> ACK --> AUD

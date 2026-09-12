@@ -1,0 +1,67 @@
+flowchart LR
+    classDef ev fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef ctr fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+    classDef north fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:2px;
+    classDef guard fill:#2a2a2a,stroke:#555,color:#f0f0f0,stroke-width:1px;
+    classDef late fill:#4a3a0b,stroke:#8a6d14,color:#fff6da,stroke-width:1px;
+
+    subgraph EVENTS["Filing transitions · §08 FR-PAY-711 · one event each"]
+        direction TB
+        E1["filing.scheduled"]:::ev
+        E2["filing.blocked<br/>reason external or tenant-side"]:::ev
+        E3["filing.generated"]:::ev
+        E4["filing.validated"]:::ev
+        E5["filing.submitted<br/>mode and acting user"]:::ev
+        E6["filing.rejected"]:::ev
+        E7["filing.accepted"]:::ev
+        E8["filing.payment_initiated"]:::ev
+        E9["filing.filed<br/>authority timestamp"]:::ev
+        E10["filing.revised or filing.supplementary"]:::ev
+        E11["filing.rft_settled<br/>emitted when the window closes"]:::late
+        E12["filing.miss_classified"]:::ev
+    end
+
+    subgraph COUNTERS["Per-instance counter record · one row per filing instance"]
+        direction TB
+        C1["in_denominator<br/>set by coverage state and block reason"]:::ctr
+        C2["generated_ok"]:::ctr
+        C3["rejected_attempts"]:::ctr
+        C4["filed_authority_ts and on_time_margin_hours"]:::ctr
+        C5["correction_count inside the window"]:::ctr
+        C6["right_first_time · null until settled"]:::ctr
+        C7["miss_class and root-cause reference"]:::ctr
+    end
+
+    subgraph METRICS["Metrics · none reads anything but these counters"]
+        direction TB
+        M1["OTAF · all four gates true"]:::north
+        M2["Filing-Integrity Rate"]:::guard
+        M3["On-Time Filing Rate and On-Time Margin"]:::guard
+        M4["Rejection Rate · split by artefact and error family"]:::guard
+        M5["Correction and RFT Rate"]:::guard
+        M6["Product-Caused Miss Rate"]:::guard
+    end
+
+    E1 --> C1
+    E2 --> C1
+    E3 --> C2
+    E4 --> C2
+    E5 --> C3
+    E6 --> C3
+    E7 --> C3
+    E8 --> C4
+    E9 --> C4
+    E10 --> C5
+    E11 --> C6
+    E12 --> C7
+
+    C1 --> M2
+    C2 --> M1
+    C3 --> M1
+    C3 --> M4
+    C4 --> M1
+    C4 --> M3
+    C5 --> M5
+    C6 --> M1
+    C7 --> M6
+    M1 --> M2

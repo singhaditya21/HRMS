@@ -1,0 +1,20 @@
+flowchart TB
+    mig["Migration cutover<br/>FR-LV-017"] --> OPEN["OPENING<br/>signed off, provenance tagged"]
+    acc["Accrual cadence<br/>or worked-day threshold"] --> ACC["ACCRUAL<br/>reversed forward only"]
+    sub["Request SUBMITTED"] --> HOLD["HOLD<br/>available only, balance untouched"]
+    app["Final approval"] --> AVAIL["AVAIL<br/>one row per leave day"]
+    app --> REL["HOLD_RELEASE"]
+    can["Cancel, withdraw or revoke"] --> REV["AVAIL_REVERSAL<br/>future days only"]
+    can --> REL
+    rest["Rest day or holiday worked"] --> CC["COMPOFF_CREDIT<br/>expiry stamped"]
+    exp["compoff_expiry_days elapses"] --> CE["COMPOFF_EXPIRY"]
+    close["Leave-year close<br/>ordered steps 1 to 6"] --> LAP["LAPSE above the cap"]
+    close --> CF["CLOSE_OUT plus OPENING_CF"]
+    enc["Encashment approved"] --> ENC["ENCASHMENT<br/>days only"]
+    hr["HR correction, maker-checker"] --> ADJ["ADJUSTMENT"]
+    OPEN & ACC & AVAIL & REV & CC & CE & LAP & CF & ENC & ADJ --> BAL[["Balance as at D<br/>sum of deltas with effective_date up to D"]]
+    HOLD & REL --> AVL[["Available now<br/>all rows minus open holds"]]
+    BAL --> AVL
+    AVL --> V4["Validation V4<br/>FR-LV-012"]
+    BAL --> DAYS["Day counts out:<br/>DayStatus, encashment, exit recovery"]
+    DAYS --> PAY["Section 08 prices the days<br/>this ledger never holds rupees"]

@@ -1,0 +1,53 @@
+sequenceDiagram
+    autonumber
+    actor HR as HR or Payroll Operator
+    participant SYS as HRMS Payroll Engine
+    participant CAL as Statutory Rules Engine
+    actor APP as Approver - Finance or Founder
+    participant BANK as Bank or Payment Rail
+    participant GOV as Authority Portals - EPFO, ESIC, Protean, state PT
+    actor EMP as Employee
+
+    Note over HR,SYS: Month OPEN - inputs window
+    HR->>SYS: Import attendance, LOP, leave
+    HR->>SYS: Enter joiners, exits, revisions, arrears, one-offs
+    SYS-->>HR: Validation report - blocking failures and non-blocking flags
+
+    rect rgb(29,26,58)
+    Note right of HR: GATE 1 - INPUTS_CLOSED, snapshot frozen
+    HR->>SYS: Close inputs for the month
+    end
+
+    SYS->>CAL: Evaluate snapshot, rule-set version, evaluation context
+    CAL-->>SYS: Wage bases, EPF, ESI, PT, LWF, TDS projection
+    SYS-->>HR: PROCESSED register and variance against last month
+
+    rect rgb(29,26,58)
+    Note right of APP: GATE 2 - APPROVED by a checker, then LOCKED
+    HR->>APP: Send register for approval
+    APP-->>SYS: Approve, or return with notes
+    end
+
+    SYS->>EMP: Publish payslips after LOCK
+    SYS->>BANK: Generate salary bank file, NEFT or IMPS batch
+
+    rect rgb(90,30,30)
+    Note right of APP: GATE 3 - payment approver releases salaries, DISBURSED
+    APP->>BANK: Authorise salary release
+    BANK-->>EMP: Salary credited
+    end
+
+    Note over SYS,GOV: The engine prepares artefacts, a named human submits in an attended session
+    SYS-->>HR: ECR return file, ESI upload, PT data, quarterly Form 138 file for FVU
+    HR->>GOV: Attended upload under the employer's written authority to act
+    GOV-->>HR: Return statement for approval, or rejection with reasons
+    APP->>GOV: Employer approves the ECR return statement
+
+    rect rgb(90,30,30)
+    Note right of APP: GATE 4 - statutory verification gate, then PAYMENT_INITIATED
+    APP->>GOV: Initiate challan payment including any 7Q interest
+    end
+
+    GOV-->>HR: TRRN, challan receipts, Return Receipt Number
+    HR->>SYS: Record acknowledgements and receipts
+    SYS-->>HR: Filing ledger updated, month FILED

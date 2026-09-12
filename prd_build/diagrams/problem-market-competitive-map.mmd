@@ -1,0 +1,42 @@
+flowchart TB
+    classDef floor fill:#eef1f5,stroke:#6b7a90,color:#1b2a44;
+    classDef gen fill:#e8eef7,stroke:#41618c,color:#1b2a44;
+    classDef sales fill:#fff4d6,stroke:#b8891f,color:#5a4208;
+    classDef target fill:#eef7e8,stroke:#5a8c41,color:#24401b;
+    classDef note fill:#f7f7f7,stroke:#999999,color:#333333;
+
+    subgraph P1["Computes only - outputs charged"]
+        direction TB
+        KR["Kredily<br/>free computation, outputs charged"]:::floor
+        ZO["Zoho Payroll<br/>free to 10 employees, outputs charged"]:::floor
+        FR["Frappe HR<br/>OSS, gross-to-net salary structures<br/>no Indian statutory artefact"]:::floor
+    end
+
+    subgraph P2["Generates portal-ready artefacts - published price"]
+        direction TB
+        GR["greytHR<br/>generation-only language<br/>50-seat base block"]:::gen
+        MM["Qandle, Pocket HRMS, Zimyo, HROne<br/>50-seat minimum blocks"]:::gen
+        TA["TallyPrime<br/>artefacts inside the licence<br/>no PT slab table, no LWF engine"]:::gen
+    end
+
+    subgraph P3["Generates artefacts - sales-qualified"]
+        direction TB
+        KE["Keka<br/>live card suppressed, block floor"]:::sales
+        EN["Enterprise suites<br/>filing scope not in the evidence base"]:::sales
+    end
+
+    subgraph P4["Outsourced filing - demo-sold"]
+        MY["MYND / Qandle<br/>outsourced filing operation, unpriced"]:::sales
+    end
+
+    subgraph P5["Target - attended submission, self-serve, no seat floor"]
+        US["Portal-accepted artefacts<br/>plus attended, assisted submission under written authority<br/>published per-head card, CA console, employee surface<br/>liability stays with the employer - legality under counsel review"]:::target
+    end
+
+    P1 -->|carry the filing further| P2
+    P2 -->|no vendor in the priced set claims to submit| P5
+    P3 -.->|no published card for a 30-person buyer| P5
+    P4 -.->|nearest occupant, unpriced| P5
+
+    NB["Captured September 2026 - vendor pages, docs and source read<br/>no competitor product executed - re-capture before external use"]:::note
+    P5 -.- NB

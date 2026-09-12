@@ -1,0 +1,43 @@
+stateDiagram-v2
+    direction TB
+
+    [*] --> NAMED: a section needs a value the evidence does not give
+
+    NAMED --> ROUTED: joined to exactly one family row in 20.13 with a sizing route and an owner
+    NAMED --> NAMED: still an orphan at the integrity check, finding raised under C-13
+
+    ROUTED --> IN_SIZING: the route runs - a gazette read, a portal capture, a measured cycle, a counsel opinion or an owner decision
+    ROUTED --> BLOCKED: the route cannot run yet, such as no design partner or no counsel opinion
+
+    BLOCKED --> IN_SIZING: the dependency resolves
+    BLOCKED --> FENCED: the build item that needs it is fenced in 05 rather than shipped on a guess
+
+    IN_SIZING --> SET: a value with a dated source or a recorded owner decision, counsel signed where the route is counsel
+    IN_SIZING --> IN_SIZING: located but worded differently, so the engine constraint changes before the value is set
+
+    SET --> PUBLISHED: staged publish through the 22 pipeline, two person review, golden corpus regression passed
+    SET --> DARK: built and not enabled, awaiting counsel clearance
+
+    DARK --> PUBLISHED: counsel clears it
+    DARK --> WITHDRAWN: counsel declines the basis
+
+    PUBLISHED --> SUPERSEDED: a later instrument, capture or measurement changes the value
+    SUPERSEDED --> IN_SIZING: re-sized under the same route, effective dated rather than overwritten
+
+    PUBLISHED --> ROLLED_BACK: a golden case fails after publish
+    ROLLED_BACK --> IN_SIZING: cause found and the value re-derived
+
+    FENCED --> ROUTED: the fence lifts when the route becomes runnable
+
+    note right of SET
+        A value without a dated source
+        or a recorded owner decision
+        fails C-14 and stops the release.
+    end note
+
+    note right of PUBLISHED
+        Every ceiling, rate and slab is
+        effective dated, because
+        or such other amount as may be
+        notified applies to almost all of them.
+    end note

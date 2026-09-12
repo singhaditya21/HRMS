@@ -1,0 +1,33 @@
+flowchart TD
+    classDef run fill:#132b4a,stroke:#2f5f9e,color:#e3efff,stroke-width:1px;
+    classDef due fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef gate fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+    classDef fenced fill:#3a3a3a,stroke:#6b6b6b,color:#f0f0f0,stroke-width:1px,stroke-dasharray: 4 3;
+
+    RUN["Month M pay run locked<br/>one run feeds many filings"]:::run
+
+    TDS["By the 7th of M+1<br/>TDS deposit, IT Rules 2026 r.218<br/>March deductions due 30 April"]:::due
+    Q["Quarterly Form 138, ex-24Q<br/>Q1 31 Jul, Q2 31 Oct, Q3 31 Jan<br/>IT Rules 2026 r.219, EV-049"]:::due
+    Q4["Q4 by 31 May, then Form 130 by 15 Jun<br/>Q4 format not released, fenced, EV-046<br/>Form 130 is TRACES-generated, EV-048"]:::fenced
+
+    ECR1["By the 15th of M+1<br/>ECR upload and validate<br/>11 fields, no header row, EV-035"]:::due
+    ECR2["Return approved<br/>never cancellable, revisable only<br/>until payment is initiated, EV-037"]:::gate
+    ECR3["Verification gate<br/>then challan with TRRN, pay, receipt<br/>EV-036"]:::gate
+
+    ESI["By the 15th of M+1<br/>ESI contribution, ESI reg. 31<br/>template upload"]:::due
+    PT["Within 20 days of month end<br/>Karnataka PT Form 5A<br/>e-PRERANA, Commercial Taxes"]:::due
+
+    SUB["Every submission is attended<br/>by the employer, or by our operator<br/>under written authority to act"]:::run
+
+    RUN --> TDS
+    TDS --> Q
+    Q --> Q4
+    RUN --> ECR1
+    ECR1 --> ECR2
+    ECR2 --> ECR3
+    RUN --> ESI
+    RUN --> PT
+    ECR3 -.-> SUB
+    ESI -.-> SUB
+    PT -.-> SUB
+    Q -.-> SUB

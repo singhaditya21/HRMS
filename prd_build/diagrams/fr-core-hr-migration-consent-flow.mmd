@@ -1,0 +1,22 @@
+flowchart TD
+    CT["Tenant CONTRACTED<br/>§05 TO5 or TO6"] --> R["Stage R - roster only<br/>code, name, DOJ, entity, establishment,<br/>personal contact channel, language<br/>no SPDI-set value, no Aadhaar"]
+    R --> C["Stage C - consent run, §05 TO7<br/>one notice per applicable purpose<br/>cleared template per language<br/>imported evidence proposed for checking"]
+    C --> ST{"Status per employee<br/>per purpose"}
+
+    ST -->|"CONSENTED"| L1["Load that purpose's columns<br/>bank account enters unverified<br/>penny-drop runs"]
+    ST -->|"CONSENTED_IMPORTED<br/>checker accepted the evidence"| L1
+    ST -->|"DECLINED or PENDING"| D1["Drop the columns from the persisted record<br/>list them on the load report"]
+    ST -->|"NOT_APPLICABLE"| D2["Nothing to load"]
+
+    L1 --> S["Stage S - load, §05 TO8<br/>registrations, master, structures, YTD"]
+    D1 --> S
+    D2 --> S
+
+    S --> PG["Staging copy of the source file purged<br/>within migration.staging_purge_hours"]
+    S --> T["Stage T - YTD tie-out, §05 TO9<br/>§16.7 AC-MIG-5, consent plays no part"]
+
+    D1 --> PAY["First live run pays everyone<br/>non_bank_disbursal_mode where no bank grant<br/>non-biometric attendance where no biometric grant<br/>standard ESI ceiling where no disability grant"]
+    PAY --> LATER["Status can change after go-live<br/>employee grants and enters the account in ESS<br/>or a single-employee re-import"]
+
+    NEVER["Never loaded in any status:<br/>biometric templates,<br/>consent the source did not hold,<br/>Aadhaar without a Regulation 5 purpose"]
+    S -.- NEVER

@@ -1,0 +1,14 @@
+flowchart TB
+    ds["Day status and worked minutes<br/>FR-ATT-021"] --> basis{"Test basis<br/>wage period and tenant setting"}
+    basis -->|"daily wage period"| daily["Minutes over 8 h on each<br/>non-rest day"]
+    basis -->|"other wage periods"| weekly["Non-rest-day minutes over 48 h<br/>in the week, week start per<br/>ot_week_start_day - FR-OT-006"]
+    basis -->|"tenant greater-of"| gof["Larger of the two aggregations<br/>never their sum - FR-OT-001 AC5"]
+    daily & weekly & gof --> line[("OT line<br/>minutes by band, rule version")]
+    rest["Every minute on a rostered weekly rest day<br/>FR-SHF-002 AC3, FR-OT-006 AC3"] --> line
+    rest --> srd["Substituted rest day obligation<br/>FR-OT-009"]
+    line --> pay["Payroll pays every minute worked by record<br/>at not less than twice the normal rate"]
+    line --> q["Quarter tracker<br/>calendar quarter and rolling three months<br/>until V-17 fixes the basis"]
+    q --> adv{"Crosses a tenant threshold<br/>or ot_quarterly_ceiling_hours?"}
+    adv -->|"Yes"| warn["Warning only - roster screen, OT approval screen,<br/>pre-lock dashboard, audit entry"]
+    adv -->|"No"| none["No warning"]
+    warn -.->|"never blocks"| guard["No guard reads the ceiling:<br/>punch ingest, roster publish, OT approval,<br/>pay-run lock, registers, filings - FR-OT-008"]

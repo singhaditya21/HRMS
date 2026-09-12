@@ -1,0 +1,31 @@
+flowchart TD
+    P01["FR-T-P01 Goal/KRA<br/>metric, target, weight, period<br/>(KRA/KPI vocab, not only OKR)"]
+    P05["FR-T-P05 Goal versioning<br/>mid-cycle edit -> new version<br/>score vs version in force per sub-period"]
+    P03["FR-T-P03 Check-ins<br/>progress updates (employee app)"]
+    P04["FR-T-P04 Weighted goal scoring<br/>rolls up to goal-component of rating"]
+
+    P10["FR-T-P10 Appraisal cycle<br/>annual / half-yearly / quarterly / probation<br/>population + reviewers scoped"]
+    P11["FR-T-P11 Review form<br/>goal score + competencies + qualitative<br/>self + manager + optional skip-level"]
+    P13["FR-T-P13 Calibration<br/>forced curve OR no forced distribution<br/>every move: actor, from, to, reason (immutable)<br/>AI-influenced move: named confirmer FR-T-D005"]
+
+    RATING["Post-calibration final rating"]
+    P18["FR-T-P18 Rating -> eligibility band<br/>fixed deterministic mapping (1-5 / 1-4)<br/>not a manager's free choice"]
+    P15["FR-T-P15 Increment / promotion outcome<br/>revised CTC (increment %, band change)<br/>generates increment/promotion letter"]
+
+    ENGINE["Effective-dated CTC change<br/>pushed into payroll engine (§10.10/§06)<br/>new CTC record starts at D_eff"]
+    RETRO{"D_eff before D_run?<br/>(e.g. effective 1 Apr,<br/>approved 10 Jun)"}
+    P16["FR-T-P16 Effective-dated arrears<br/>compute (new - old) for periods P1..Pn<br/>each period uses statutory rule version<br/>in force THEN (PF ceiling, PT slab, 50% add-back)"]
+    CURRENT["Current-month run only<br/>at new CTC"]
+    PAYSLIP["Payslip + registers<br/>current + April/May arrears as named lines<br/>PF, PT, ESI, TDS recomputed correctly"]
+
+    P17["FR-T-P17 Performance variable pay<br/>rating-driven reward, discretionary, uncapped<br/>DISTINCT from statutory bonus<br/>Code on Wages s.26: 8.33-20%,<br/>ceilings set by the appropriate Government, §06.7"]
+
+    P01 --> P05 --> P03 --> P04
+    P04 --> P10
+    P10 --> P11 --> P13 --> RATING
+    RATING --> P18 --> P15
+    RATING --> P17
+    P15 --> ENGINE --> RETRO
+    RETRO -->|Yes: already-paid periods| P16 --> PAYSLIP
+    RETRO -->|No| CURRENT --> PAYSLIP
+    P17 --> PAYSLIP

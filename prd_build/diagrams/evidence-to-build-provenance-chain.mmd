@@ -1,0 +1,34 @@
+flowchart TD
+    SRC["Primary source<br/>gazette S.O./G.S.R., notified rule,<br/>MCA/ROC filing by CIN, vendor page (raw fetch + rendered read)<br/>mirror-read source = Verified - mirror"]
+    CAP["Capture record §02.5<br/>deep URL + publication / effective / amendment dates<br/>corrigendum-checked + dual-control grader &ne; re-checker"]
+    ROW["Evidence register row EV-xxx §02.7<br/>key: authority x jurisdiction x instrument<br/>x effective-date-range x corrigendum-status"]
+    MARK{"Grading procedure §02.2<br/>which marker?"}
+
+    SRC --> CAP --> ROW --> MARK
+
+    subgraph BUILD["Engineering artifact §02.10 (schema isomorphic to register row)"]
+        VRULE["[Verified] statutory rule<br/>versioned, effective-dated rule-store row<br/>(PF 12%, PT slab, LWF split) + golden-file fixture"]
+        VFMT["[Verified] file format<br/>conformance-tested export<br/>ECR / ESI challan / PT return / Form 138"]
+        HYP["[Hypothesis]<br/>feature flag / config param,<br/>conservative default, re-pointable (no deploy)"]
+        KILL["[Killed]<br/>regression guard test<br/>= §20 blocklist assertion suite"]
+    end
+
+    MARK -->|"Killed: disproven / provenance defect"| KILL
+    MARK -->|"Verified: rule survived hostile re-check + corrigendum"| VRULE
+    MARK -->|"Verified: layout matches authority validator"| VFMT
+    MARK -->|"Hypothesis: plausible, has §20 kill criterion"| HYP
+
+    VRULE --> COMP["Deterministic computation<br/>resolves rule version in force<br/>FOR the corrected period (no LLM math §12)"]
+    COMP --> VFMT
+    VFMT --> VALID{"Validate vs authority's own<br/>validator (FVU / RPU for the period)?"}
+    VALID -->|"pass: byte-level conformance"| FILE["Portal-accepted artefact<br/>attended, assisted filing under the<br/>employer's written authority §22<br/>liability stays with the employer"]
+    VALID -->|"fail / layout absent (Form 138 Q4, EV-046)"| BLOCK["BLOCK the artefact &mdash; never hand over a guess<br/>(also ESI after ~21.11.2026 fail-safe, EV-004)"]
+
+    HYP -.->|"barred from model & contract<br/>until §20 validates"| GATE(["§20 validation gate"])
+    GATE -.->|"kill criterion fires"| KILL
+    GATE -.->|"primary source captured"| VRULE
+
+    KILL -.->|"asserts banned value never reappears<br/>in any output / quote / export"| FILE
+
+    VRULE --- GUAR1{{"Guarantee: retrospective recomputability<br/>arrears/retro run uses period's rule version §06"}}
+    VFMT --- GUAR2{{"Guarantee: format change (24Q&rarr;138)<br/>= new artifact version, not an edit"}}

@@ -1,0 +1,24 @@
+flowchart TD
+    A["A claim of absence<br/>no X, zero Y, not released, none found"] --> B{"What was searched,<br/>and can it be enumerated?"}
+
+    B -->|"one instrument, read whole"| N1["N1 · instrument-bounded<br/>EV-059, EV-066, EV-086<br/>capture: the full text read, the search terms,<br/>the amendment search on that instrument"]
+    B -->|"a finite corpus, enumerated"| N2["N2 · corpus-bounded<br/>EV-031 source tree, EV-032 five catalogues,<br/>EV-043 all 1,869 circular PDFs, EV-030 surfaces<br/>capture: corpus identity and snapshot, terms,<br/>item count, what was not searched"]
+    B -->|"the state of one element, today"| N3["N3 · state-bounded<br/>EV-046 the Q4 anchor has no link<br/>capture: the element, its value, the date<br/>never a page-rendered freshness date"]
+    B -->|"all law, all cases, all designations"| N4["N4 · unbounded<br/>EV-065 as to designation, EV-072, EV-084<br/>capture: a dated search log<br/>with sources and coverage"]
+
+    N1 --> W1(["Licensed wording:<br/>the instrument contains no X"])
+    N2 --> W2(["Licensed wording:<br/>no X was found in the named corpus,<br/>with its snapshot and date"])
+    N3 --> W3(["Licensed wording:<br/>as re-checked on the date, X is not released"])
+    N4 --> W4(["Licensed wording only:<br/>we are not aware of any X,<br/>as of month and year"])
+
+    W1 --> R1["Re-verify: on any amendment<br/>to the instrument"]
+    W2 --> R2["Re-verify: on a new snapshot<br/>of the corpus"]
+    W3 --> R3["Re-verify: on every change<br/>to the watched element"]
+    W4 --> R4["Re-verify: periodic search,<br/>and L11 on any hit"]
+
+    classDef q fill:#1f2a44,stroke:#0b1220,color:#ffffff;
+    classDef bounded fill:#1f5f2f,stroke:#0f3f1f,color:#ffffff;
+    classDef open fill:#7f1d1d,stroke:#450a0a,color:#ffffff;
+    class A,B q;
+    class N1,N2,N3 bounded;
+    class N4 open;

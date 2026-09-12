@@ -1,0 +1,46 @@
+flowchart LR
+    classDef found fill:#cfe2ff,stroke:#0a58ca,color:#052c65;
+    classDef rel fill:#d1e7dd,stroke:#146c43,color:#0a3622;
+    classDef fence fill:#f8d7da,stroke:#b02a37,color:#5c161c;
+    classDef gate fill:#fff3cd,stroke:#997404,color:#5c4708;
+
+    subgraph CA["Chain A - computation"]
+        direction TB
+        A1["A1 Compliance-data schema<br/>rule object + named parameters, typed and possibly unset"]:::found
+        A2["A2 Engine<br/>pure function of inputs, rule-set version, evaluation context"]:::found
+        A3["A3 Validators<br/>mirror authority checks at the same severity - EV-037, EV-040"]:::found
+        A4["A4 Generators<br/>ECR, Form 138 Q1-Q3, registers, wage slip"]:::found
+        A1 --> A2 --> A3 --> A4
+    end
+
+    subgraph CB["Chain B - obligations"]
+        direction TB
+        B1["B1 Registration model<br/>group, entity, registration, establishment - jurisdiction on work location"]:::found
+        B2["B2 Calendar<br/>per-registration due dates, each with its citation"]:::found
+        B3["B3 Filing ledger<br/>per establishment, unbroken - EV-038"]:::found
+        B1 --> B2 --> B3
+    end
+
+    A1 --> B1
+    A4 -->|"output recorded against registration and rule version"| B3
+
+    R1["R1 First invoice<br/>P0 list only - buildable-now rows<br/>employer submits unless counsel has cleared attended filing"]:::rel
+    R2["R2 Attended and annual<br/>P1 items, attended submission if cleared,<br/>ESI successor, design-partner PT and LWF states,<br/>FORM-XVII and Form XXIII annual returns"]:::rel
+    R3["R3 v1-complete<br/>Form 138 Q4 and Annexures, Form 130 Part B readiness,<br/>ECR arrears if layout obtained, first full year"]:::rel
+
+    B3 --> R1
+    G1{{"Pre-launch gate - section 05.8"}}:::gate
+    G2{{"Annual returns produced by their February due dates<br/>attended filing live or carve-out declared"}}:::gate
+    G3{{"v1 to v2 gate - section 05.8"}}:::gate
+    R1 --> G1 --> R2 --> G2 --> R3 --> G3
+
+    F1["Counsel - four attended-filing questions, section 23"]:::fence
+    F2["ESI successor after 22 Nov 2026 - V-08"]:::fence
+    F3["State gazette rows - V-09"]:::fence
+    F4["Form 138 Q4 formats - EV-046"]:::fence
+    F5["ECR arrear layout - EV-043"]:::fence
+    F1 -.-> R2
+    F2 -.-> R2
+    F3 -.-> R2
+    F4 -.-> R3
+    F5 -.-> R3

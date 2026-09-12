@@ -1,0 +1,42 @@
+flowchart TB
+    subgraph SRC["Transaction sources — each emits an immutable ledger event"]
+        direction TB
+        OPEN["Opening balance<br/>tag: opening (migration §16.7)<br/>reconcile to prior system"]
+        ACC["Accrual run<br/>EL ratio per state, Hypothesis<br/>effective-dated (FR-LV-002)"]
+        APP["Leave application APPROVED<br/>EL / CL / SL / ML / LWP (FR-LV-005)"]
+        COFF["Comp-off / substituted rest day<br/>never replaces OT wages<br/>with expiry (FR-OT-003)"]
+        LAPSE["Year-end lapse<br/>excess over carry-forward cap"]
+        ENC["Encashment<br/>periodic or F&F on exit (FR-LV-006)"]
+        ADJ["Manual adjustment<br/>audited"]
+        CXL["Cancel / reject<br/>compensating reversal (AC2)"]
+    end
+
+    POST{{"Double-entry posting engine<br/>every event = balanced pair of legs<br/>CR Available  /  DR contra-account"}}
+
+    OPEN --> POST
+    ACC --> POST
+    APP --> POST
+    COFF --> POST
+    LAPSE --> POST
+    ENC --> POST
+    ADJ --> POST
+    CXL --> POST
+
+    subgraph LEDGER["Append-only leave ledger — per employee x leave-type (never overwritten)"]
+        direction LR
+        AVAIL[("Available<br/>balance account")]
+        TAKEN[("Taken<br/>consumed")]
+        ENCA[("Encashed")]
+        LAPD[("Lapsed")]
+    end
+
+    POST -- "accrual / comp-off / opening: CR" --> AVAIL
+    POST -- "leave taken: DR Available, CR Taken" --> TAKEN
+    POST -- "encashment: DR Available, CR Encashed" --> ENCA
+    POST -- "lapse: DR Available, CR Lapsed" --> LAPD
+    POST -- "cancel: reverse both legs" --> AVAIL
+
+    AVAIL --> BAL["Balance = SUM of ledger legs<br/>NOT a stored mutable counter (FR-LV-004)"]
+
+    BAL --> REPLAY["Replay to any past date<br/>reconstructs historical balance (AC1)<br/>deterministic + effective-dated"]
+    BAL --> DOWN["Downstream: payroll paid/LOP days,<br/>F&F reconciles to ledger (AC2/AC3),<br/>worker balance surface"]

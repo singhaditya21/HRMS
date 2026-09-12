@@ -1,0 +1,43 @@
+flowchart TD
+    subgraph L1["1 - Read-only, self-scoped"]
+        A1["Examples: own leave balance,<br/>own payslip, policy question"] --> C1["Human control:<br/>None (cited answer)"]
+    end
+    subgraph L2["2 - Reversible, internal"]
+        A2["Examples: save a draft, create a task,<br/>tag a doc, propose a reconciliation"] --> C2["Human control:<br/>Implicit (human uses / discards output)"]
+    end
+    subgraph L3["3 - Irreversible, internal"]
+        A3["Examples: post to payroll ledger,<br/>approve accrual-affecting leave,<br/>change comp structure"] --> C3["Human control:<br/>Explicit confirm + preview<br/>of downstream effect"]
+    end
+    subgraph L3B["3b - Consequential people decision"]
+        A3B["Examples: AI output feeding hiring,<br/>appraisal, promotion, PIP, termination"] --> C3B["Human control:<br/>Named confirmer recorded -<br/>identity, timestamp, reason;<br/>draft only, never auto-applied"]
+    end
+    subgraph L4["4 - Irreversible, external: MONEY"]
+        A4["Examples: release a<br/>bank / NEFT salary file"] --> C4["Human control:<br/>Authorised-role approval;<br/>dual-control above threshold"]
+    end
+    subgraph L5["5 - Irreversible, external: STATUTORY"]
+        A5["Examples: attended upload of ECR, ESI,<br/>PT, Form 138; initiate challan payment;<br/>distribute TRACES-generated Form 130"] --> C5["Human control:<br/>Mandatory approval gate;<br/>agent assembles only, NEVER submits;<br/>verification gate before payment initiation"]
+    end
+
+    L1 -->|"increasing reversibility x externality -&gt; more human friction warranted"| L2
+    L2 --> L3
+    L3 --> L3B
+    L3B --> L4
+    L4 --> L5
+
+    R["Design stance: No autonomous filing, ever, at any tier<br/>(P1/P2, permanent). Every gate logs who approved,<br/>what they saw, when, and the artefact hash.<br/>Employer and deductor liability stays non-delegable."]
+    L5 -.-> R
+
+    classDef low fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+    classDef midlow fill:#f1f8e9,stroke:#558b2f,color:#33691e;
+    classDef mid fill:#fff8e1,stroke:#f9a825,color:#e65100;
+    classDef midhigh fill:#fff3e0,stroke:#fb8c00,color:#bf360c;
+    classDef high fill:#fff3e0,stroke:#ef6c00,color:#bf360c;
+    classDef crit fill:#ffebee,stroke:#c62828,color:#b71c1c;
+    classDef note fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+    class L1,A1,C1 low;
+    class L2,A2,C2 midlow;
+    class L3,A3,C3 mid;
+    class L3B,A3B,C3B midhigh;
+    class L4,A4,C4 high;
+    class L5,A5,C5 crit;
+    class R note;

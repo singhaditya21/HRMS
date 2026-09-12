@@ -1,0 +1,50 @@
+flowchart TD
+    A["1. Inputs assembled<br/>attendance, mid-period changes,<br/>investment declarations, arrears"]
+
+    subgraph CORE["Deterministic core (no AI in the number path)"]
+        B["2. Payroll engine computes gross-to-net<br/>per employee, per component<br/>two concurrent wage bases<br/>stamps rule versions into trace"]
+        RE{{"Statutory-rules engine<br/>effective-dated, period-pinned versions"}}
+    end
+
+    subgraph EDGE["Probabilistic edge (explain / route, no privileged compute)"]
+        C["3. AI reconcile (optional)<br/>flags anomalies vs prior period<br/>explains and routes, never changes a number"]
+    end
+
+    D{"4. Human-in-loop gate<br/>approve, then LOCKED<br/>after LOCKED a change is a diff"}
+    E["5. Disbursement (DISBURSED)<br/>bank host-to-host salary file<br/>actual disbursal date into context"]
+    F["6. Filing orchestrator generates artefacts<br/>ECR / ESI upload / PT return / Form 138 Q1-Q3<br/>validate locally: EPFO blocks and flags, period FVU"]
+    G["7. Attended submission under employer authority<br/>upload, validate, return statement, approve<br/>no API on any statutory portal"]
+    VG{"Verification gate<br/>payments reconcile to locked snapshot"}
+    H["PAYMENT_INITIATED<br/>challan, pay, receipt"]
+    I["FILED<br/>artefacts kept per retention class"]
+
+    A --> B
+    B <-->|"resolve version for period"| RE
+    B --> C
+    C --> D
+    D -->|approved| E
+    D -->|"rejected, rework"| B
+    E --> F
+    F -->|"valid locally, then touch portal"| G
+    G --> VG
+    VG -->|"reconciled"| H
+    VG -->|"mismatch, correct before payment"| F
+    H --> I
+    I -.->|"next period, monthly cadence"| A
+
+    E -.->|"beneficiary reject"| Ebf["Fallback: retry per beneficiary,<br/>run stays approved"]
+    Ebf -.-> E
+    G -.->|"portal down or rejected"| Gbf["Fallback: attended queue against due date,<br/>file valid locally, REJECTED maps error file,<br/>cockpit shows generated, awaiting portal"]
+    Gbf -.-> G
+
+    A -.-> EV
+    B -.-> EV
+    C -.-> EV
+    D -.-> EV
+    E -.-> EV
+    F -.-> EV
+    G -.-> EV
+    VG -.-> EV
+    H -.-> EV
+    I -.-> EV
+    EV[("8. Event / audit stream (filing-first)<br/>every step emits an immutable event<br/>replayable within class-scoped erasure")]

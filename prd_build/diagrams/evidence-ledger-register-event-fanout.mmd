@@ -1,0 +1,26 @@
+flowchart LR
+    GE["Grading event L1 to L18<br/>actor, second actor where the guard needs one,<br/>capture IDs, reason, old and new state"]
+    GE --> EVT{"Register event<br/>emitted with the row ID"}
+
+    EVT -->|"L14, L16"| DOWN["Downgrade or split<br/>§22: DETECTED change request on every citing version<br/>L14 changes no published version<br/>§23: dependent entries suspended<br/>§20: V-item opens or re-opens"]
+    EVT -->|"L7, L11, L15"| KILL["Kill<br/>§22: citing versions superseded through publish, never edited<br/>§23: dependent entries withdrawn<br/>§20.4: banned-list entry if the claim is a figure<br/>owning sections: Reversed entry, L18"]
+    EVT -->|"L3, L4, L6, L10, L12"| UP["Upgrade<br/>§22: drafting may begin, nothing changes before review<br/>§23: entries may be proposed for clearance<br/>§20: V-item closes with its result"]
+    EVT -->|"L9"| CLR["Qualifier cleared<br/>§22: pull-from-primary task closes<br/>§23: customer-facing use may now be cleared"]
+    EVT -->|"L13"| HOLD["Re-verify held<br/>§22: watch subscription re-confirmed<br/>no other consumer changes"]
+    EVT -->|"ledger revision"| NEW["New row<br/>citable in drafts and entries<br/>banned-number crosswalk re-run, §02.7"]
+
+    DOWN --> ACK["Each consumer acknowledges<br/>within register.event_ack_hours<br/>parameter routed to §20.13"]
+    KILL --> ACK
+    UP --> ACK
+    CLR --> ACK
+    HOLD --> ACK
+    NEW --> ACK
+    ACK -->|"no acknowledgement in time"| ALERT(["Alert to the row's owner role<br/>AC-EVR-15"])
+    ACK -->|"all acknowledged"| DONE(["Event closed<br/>consumers logged"])
+
+    classDef ev fill:#1f2a44,stroke:#0b1220,color:#ffffff;
+    classDef bad fill:#7f1d1d,stroke:#450a0a,color:#ffffff;
+    classDef good fill:#1f5f2f,stroke:#0f3f1f,color:#ffffff;
+    class GE,EVT ev;
+    class DOWN,KILL,ALERT bad;
+    class UP,CLR,DONE good;

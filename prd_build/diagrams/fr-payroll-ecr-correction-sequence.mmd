@@ -1,0 +1,26 @@
+sequenceDiagram
+    autonumber
+    actor OP as Payroll operator
+    participant ENG as Payroll engine - return composer
+    participant LED as Establishment ECR ledger
+    participant EPFO as EPFO portal - attended session
+    actor APP as Named approver
+    actor PAY as Employer payer
+
+    OP->>ENG: Correction run for October 2026 with lines for D, A and C
+    ENG->>ENG: Classify each line and plan the returns
+    ENG-->>OP: Plan - Revised for D first, then the gate, then Supplementary for A
+    ENG->>LED: C arrears held as BLOCKED pending layout, due month November 2026
+    OP->>EPFO: Upload the Revised October return for D
+    EPFO-->>OP: Return statement
+    APP->>EPFO: Approve the Revised return before any challan exists
+    ENG->>ENG: Gate checks VG-E1 to VG-E6 pass
+    APP->>EPFO: Instruct the October challan with any 7Q interest
+    Note over ENG,EPFO: Payment initiated - no Revised October return from here, EV-037
+    PAY->>EPFO: Pay the challan
+    Note over OP,EPFO: 20 November - the UAN for A is seeded
+    OP->>EPFO: Upload the Supplementary October return for A
+    APP->>EPFO: Approve it and instruct its own challan
+    PAY->>EPFO: Pay, with the interest the portal assesses
+    EPFO-->>OP: Receipts
+    OP->>LED: Record the Revised and the Supplementary as FILED, arrears still fenced

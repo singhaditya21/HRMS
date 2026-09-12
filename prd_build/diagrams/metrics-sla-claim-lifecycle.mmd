@@ -1,0 +1,19 @@
+stateDiagram-v2
+    direction LR
+    [*] --> OPEN: C1 · product-caused miss recorded or the tenant opens a claim
+    OPEN --> CLASSIFIED: C2 · root cause confirmed and miss_class set
+    CLASSIFIED --> DECLINED: C3 · tenant-caused or authority-caused or an exclusion applies
+    CLASSIFIED --> ACCEPTED: C4 · product-caused
+    DECLINED --> DISPUTED: C5 · tenant disputes inside the dispute window
+    ACCEPTED --> DISPUTED: C5 · tenant disputes the amount
+    DISPUTED --> ACCEPTED: C6 · re-review by a person other than the classifier
+    DISPUTED --> DECLINED: C6 · re-review upholds the decline
+    ACCEPTED --> SETTLED: C7 · remedy paid or credited inside the cap version in force
+    SETTLED --> [*]
+    DECLINED --> [*]
+
+    note right of CLASSIFIED
+        Evidence is assembled at C1, never at C4.
+        A record we were obliged to keep and did not
+        decides the miss as product-caused.
+    end note

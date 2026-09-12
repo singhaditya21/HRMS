@@ -1,0 +1,30 @@
+flowchart LR
+    classDef prog fill:#e2e3e5,stroke:#6c757d,color:#343a40;
+    classDef run fill:#cfe2ff,stroke:#0a58ca,color:#052c65;
+    classDef gate fill:#d1e7dd,stroke:#146c43,color:#0a3622;
+
+    LEDGER["P0 ledger<br/>row, priority, release, blockers, owner"]:::prog
+    REG["Artefact register<br/>A-01 to A-29, with status and release"]:::prog
+    CAP["Capability list<br/>C-01 to C-53"]:::prog
+    WP["Work packages<br/>WP-01 to WP-25"]:::prog
+    TESTS["Test scenarios<br/>TS-05-01 onward"]:::prog
+    FENCE["Fence register<br/>F-01 to F-12, instantiated per state and portal"]:::run
+    HOLD["Parameter-hold registry<br/>PH-01 to PH-26"]:::run
+    FAM["Artefact-family readiness<br/>NOT_BUILT to PL01_PASSED"]:::run
+    COV["Coverage statements<br/>one per tenant, versioned, computed"]:::run
+    GATE["Release gate record<br/>checks, lint result, invariant result"]:::gate
+
+    LEDGER -- "SI-01, SI-02 blockers resolve in both directions" --> FENCE
+    FENCE -- "SI-03 every registered fence blocks something" --> REG
+    REG -- "SI-13 a deferred row keeps a live re-entry trigger" --> FENCE
+    REG -- "SI-15 one artefact, one release, in every register" --> CAP
+    CAP -- "SI-06 no capability outruns the artefacts it delivers" --> REG
+    WP -- "SI-09 every R1 capability is built by some package" --> CAP
+    HOLD -- "SI-05 every BLOCK hold is read by something" --> COV
+    HOLD -- "SI-11 every named parameter is registered exactly once" --> LEDGER
+    COV -- "SI-04 every carve-out names a live blocker" --> FENCE
+    FAM -- "SI-07 one artefact-family vocabulary" --> COV
+    FAM -- "SI-08 IN_SLA only after PL01_PASSED" --> COV
+    FENCE -- "SI-12 a desk fence names the gate it must close before" --> GATE
+    GATE -- "SI-10 a check with no evidence reads FAIL" --> FAM
+    TESTS -- "SI-14 every rule family has a negative scenario" --> GATE

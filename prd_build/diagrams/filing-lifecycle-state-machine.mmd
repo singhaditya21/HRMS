@@ -1,0 +1,32 @@
+stateDiagram-v2
+    direction LR
+    [*] --> SCHEDULED: instance created for registration and period, due date computed
+    SCHEDULED --> BLOCKED: guard fails, reason owner and trigger recorded
+    BLOCKED --> SCHEDULED: guard clears
+    SCHEDULED --> GENERATED: artefact built from the locked snapshot, format version and sha256 stored
+    GENERATED --> VALIDATED: format checks pass
+    VALIDATED --> SUBMITTED: attended upload, session and written authority recorded
+    SUBMITTED --> REJECTED: reasons captured per member
+    REJECTED --> GENERATED: new attempt, same snapshot unless figures changed
+    SUBMITTED --> ACCEPTED: acknowledgement stored
+    ACCEPTED --> REVISED: ECR only while no payment initiated
+    FILED --> REVISED: Form 138 correction statement
+    REVISED --> ACCEPTED: revision accepted, diff kept
+    REVISED --> FILED: correction accepted
+    ACCEPTED --> SUPPLEMENTARY: members absent from every prior return
+    FILED --> SUPPLEMENTARY: members absent from every prior return
+    SUPPLEMENTARY --> FILED: accepted and receipted
+    ACCEPTED --> PAYMENT_INITIATED: month gate passed, challan with TRRN
+    PAYMENT_INITIATED --> FILED: receipt stored and reconciled
+    ACCEPTED --> FILED: no payment leg
+    FILED --> [*]
+
+    note right of GENERATED
+        Every attempt is a new record linked to the prior one.
+        Nothing is overwritten - a correction is a diff.
+        Canonical table in 08 FR-PAY-711.
+    end note
+    note left of BLOCKED
+        Honest blocked states - Form 138 Q4 layout,
+        ECR arrear layout, post-cliff ESI, chronology gap.
+    end note

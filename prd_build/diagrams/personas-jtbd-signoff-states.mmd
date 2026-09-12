@@ -1,0 +1,22 @@
+stateDiagram-v2
+    [*] --> PRESENTED: SG1 operator presents, bridge closes to zero
+    PRESENTED --> APPROVED: SG2 approver decides with step-up, hash unchanged
+    PRESENTED --> RETURNED: SG3 return with a reason code
+    PRESENTED --> SUPERSEDED: SG4 reprocess, newer rule version, due date passes or role changes
+    APPROVED --> LOCKED: SG5 lock while the approval is current
+    APPROVED --> VOIDED: SG6 returned before lock, or SG7 portal object hash changed
+    LOCKED --> [*]
+    RETURNED --> [*]
+    VOIDED --> [*]
+    SUPERSEDED --> [*]
+
+    note right of PRESENTED
+        Blocking count must be zero to approve
+        Maker, reviewer and portal performer are never eligible
+        Escalation finds a backup, never the maker
+    end note
+
+    note right of RETURNED
+        The next presentation is always a new artefact
+        linked to this one
+    end note

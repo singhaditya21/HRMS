@@ -1,0 +1,29 @@
+flowchart LR
+    R["Ravi &mdash; Employee<br/><i>Altitude: Consumption</i><br/>Supplies own data;<br/>trusts the output<br/><b>Fear: paid wrong / unseen</b>"]
+    M["Meera &mdash; HR generalist<br/><i>Altitude: Input</i><br/>Feeds clean, reconciled<br/>inputs; chases dates<br/><b>Fear: blame / escalation</b>"]
+    S["Suresh &mdash; Payroll officer<br/><i>Altitude: Production</i><br/>Produces the correct,<br/>portal-ready file<br/><b>Fear: a wrong signed number</b>"]
+    A["CA Anjali &mdash; Bureau / channel<br/><i>Altitude: Portfolio</i><br/>Discharges it across<br/>~40 clients efficiently<br/><b>Fear: irrelevance + reputation</b>"]
+    V["Vikram &mdash; Founder / CXO<br/><i>Altitude: Outcome</i><br/>Sees THAT it happened,<br/>off my desk; liability stays his<br/><b>Fear: liability</b>"]
+
+    R -->|"supplies data"| M
+    M -->|"reconciles inputs"| S
+    S -->|"produces the file"| A
+    A -->|"discharges across portfolio"| V
+
+    F(["The statutory FILING, discharged<br/>&mdash; correctly and provably &mdash;<br/><b>the unit of delivery</b>"])
+
+    R -.-> F
+    M -.-> F
+    S -.-> F
+    A -.-> F
+    V -.-> F
+
+    N["Same job, five slices:<br/>get the obligation discharged<br/>with the least attention.<br/>A payslip-first product fractures them;<br/>a filing-first product aligns them."]
+    F --- N
+
+    classDef persona fill:#e8f0fe,stroke:#1a56db,color:#111827;
+    classDef anchor fill:#fef3c7,stroke:#b45309,color:#111827,font-weight:bold;
+    classDef note fill:#f3f4f6,stroke:#9ca3af,color:#374151,font-style:italic;
+    class R,M,S,A,V persona;
+    class F anchor;
+    class N note;

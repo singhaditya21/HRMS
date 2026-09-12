@@ -1,0 +1,55 @@
+flowchart LR
+    classDef part fill:#3d3d3d,stroke:#6b6b6b,color:#ffffff,stroke-width:1px;
+    classDef store fill:#1d3a5a,stroke:#2f5c8f,color:#eaf3ff,stroke-width:1px;
+    classDef render fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef open fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+
+    subgraph PART["OSH Code s.33 - particulars the register carries"]
+        P1["i - work performed"]:::part
+        P2["ii - normal working hours in a day"]:::part
+        P3["iii - day of rest in every seven days"]:::part
+        P4["iv - wages paid and receipts"]:::part
+        P5["v - leave and leave wages"]:::part
+        P6["v - overtime work and attendance"]:::part
+        P7["v - dangerous occurrences"]:::part
+        P8["vi - employment of adolescents"]:::part
+    end
+
+    subgraph STORE["Canonical store - held as data"]
+        S1["Designation, posting and place of work per period"]:::store
+        S2["Shift and roster per day, with rest days"]:::store
+        S3["Punch pairs, day status and derived overtime"]:::store
+        S4["Payment records per wage period"]:::store
+        S5["Leave ledger"]:::store
+        S6["Accident and occurrence event"]:::store
+        S7["Date of birth read against osh.adolescent_definition - unset"]:::open
+    end
+
+    subgraph RENDER["Renders - central forms shown, state forms configured"]
+        R1["Form I"]:::render
+        R2["Form IX"]:::render
+        R3["Form IV and the wage slip"]:::render
+        R4["FORM-XX"]:::render
+        R5["FORM-XIX"]:::render
+        R6["ESI Accident Book, Form 11 - while the regulations are saved"]:::render
+        R7["A state form's field, where one asks"]:::render
+    end
+
+    P1 --> S1
+    P2 --> S2
+    P3 --> S2
+    P4 --> S4
+    P5 --> S5
+    P6 --> S3
+    P7 --> S6
+    P8 --> S7
+    S1 --> R1
+    S1 --> R2
+    S2 --> R2
+    S3 --> R2
+    S3 --> R3
+    S4 --> R3
+    S5 --> R4
+    S6 --> R5
+    S6 --> R6
+    S7 --> R7

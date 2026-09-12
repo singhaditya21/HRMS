@@ -1,0 +1,67 @@
+flowchart LR
+    subgraph EV["Evidence rows the controls rest on"]
+        direction TB
+        E27["EV-027 six vendor PEPM<br/>value floor near Rs 50<br/>band Rs 80 to 200"]
+        E26["EV-026 fifty seat block<br/>in six of six"]
+        E30["EV-030 no vendor claims<br/>to submit any filing"]
+        E31["EV-031 Frappe v16<br/>3 files, 549 lines,<br/>no Indian state name"]
+        E32["EV-032 TallyPrime<br/>no PT slab table,<br/>no LWF engine"]
+        E46["EV-046 Form 138 Q4<br/>formats unreleased"]
+        E58["EV-058 DPDP substantive<br/>commencement on or<br/>about 13 May 2027"]
+        E88["EV-088 four line COGS stack<br/>supervised filing dominant<br/>and unsized"]
+    end
+
+    subgraph REG["Registers in this section"]
+        direction TB
+        NG["20.1 Non goals"]
+        KL["20.4 Killed numbers"]
+        KC["20.5 Killed conclusions"]
+        VP["20.6 Validation plan"]
+        RR["20.8 Risk register"]
+        TK["20.11 Thesis kill conditions"]
+    end
+
+    E27 --> KL
+    E27 --> VP
+    E27 --> TK
+    E26 --> KC
+    E26 --> RR
+    E30 --> KC
+    E30 --> RR
+    E30 --> TK
+    E31 --> KL
+    E31 --> KC
+    E32 --> NG
+    E32 --> KC
+    E46 --> RR
+    E46 --> VP
+    E58 --> RR
+    E58 --> VP
+    E88 --> NG
+    E88 --> KL
+    E88 --> TK
+
+    KL --> DEC["Decisions gated on the registers"]
+    KC --> DEC
+    NG --> DEC
+    VP --> DEC
+    RR --> DEC
+    TK --> DEC
+
+    DEC --> D1["What may ship in a deck,<br/>a contract or a website claim"]
+    DEC --> D2["What is funded, and at which gate"]
+    DEC --> D3["What is fenced until a<br/>source releases or counsel clears"]
+    DEC --> D4["Whether the thesis still holds"]
+
+    INV{"Any EV row re-captured<br/>and found changed"}
+    INV -.->|"invalidates"| REG
+    INV --> ACT["Named register rows change<br/>within the withdrawal window,<br/>and the artefacts quoting them<br/>are re-scanned"]
+
+    classDef ev fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
+    classDef reg fill:#fff3cd,stroke:#b7950b,color:#5c4408;
+    classDef dec fill:#d4edda,stroke:#27ae60,color:#14532d;
+    classDef inv fill:#f8d7da,stroke:#c0392b,color:#611a15;
+    class E27,E26,E30,E31,E32,E46,E58,E88 ev;
+    class NG,KL,KC,VP,RR,TK reg;
+    class DEC,D1,D2,D3,D4 dec;
+    class INV,ACT inv;

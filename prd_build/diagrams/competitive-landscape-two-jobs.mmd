@@ -1,0 +1,42 @@
+flowchart LR
+    classDef inc fill:#e8eef7,stroke:#41618c,color:#1b2a44;
+    classDef free fill:#eef1f5,stroke:#6b7a90,color:#1b2a44;
+    classDef quo fill:#f7f7f7,stroke:#999999,color:#333333;
+    classDef us fill:#eef7e8,stroke:#5a8c41,color:#24401b;
+    classDef note fill:#fff4d6,stroke:#b8891f,color:#5a4208;
+
+    subgraph J1["Job 1 - accounting and the statutory artefacts"]
+        direction TB
+        T["TallyPrime<br/>ships PF forms and the ECR, ESI forms, a PT statement,<br/>Form 16 / 130, 24Q / 138 annexures, 12BA / 123, 27A<br/>no state PT slab table, no LWF engine, no leave module"]:::inc
+        CA["CA or payroll bureau<br/>prepares and submits on portals for the employer<br/>fee band unvalidated - section 20 V-01"]:::inc
+        T --- CA
+    end
+
+    subgraph J2["Job 2 - the HRMS"]
+        direction TB
+        G["greytHR<br/>claims 30,000+ companies - Sep 2026 capture<br/>Essential INR 2,495 per month includes 50 employees<br/>statutory language is generation only"]:::inc
+        P["Rest of the priced set<br/>Qandle, Pocket HRMS, Zimyo, HROne, Keka<br/>a minimum block of 50 employees or more on every published card<br/>Keka archived card - 100"]:::inc
+    end
+
+    subgraph J0["Beneath both - the status quo"]
+        X["Spreadsheet plus CA<br/>share of the band unknown - section 20 V-02"]:::quo
+    end
+
+    subgraph F["Zero-priced computation"]
+        direction TB
+        K["Kredily - free computation, payouts and statutory outputs charged"]:::free
+        Z["Zoho Payroll - free to 10 employees, statutory form generation charged"]:::free
+        FR["Frappe HR v16 - OSS, strong gross-to-net<br/>no Indian statutory artefact in the source trees read"]:::free
+    end
+
+    US["Our position<br/>portal-accepted artefacts plus attended, assisted submission<br/>under written authority - liability stays with the employer<br/>multi-state PT and LWF maintained, no seat floor"]:::us
+
+    US -->|attach, never replace - state PT and LWF, leave, attended submission| T
+    US -->|arm the CA - channel and price anchor| CA
+    US -->|displace - no seat floor, attended submission| G
+    US -->|displace on structure, not sticker price| P
+    US -->|replace the spreadsheet, keep the CA| X
+    US -.->|concede computation - parity, not advantage| F
+
+    NB["Pages, documentation and source read, Sep 2026<br/>no competitor product executed - re-capture before external use"]:::note
+    US -.- NB

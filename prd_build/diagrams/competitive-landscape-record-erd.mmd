@@ -1,0 +1,111 @@
+erDiagram
+    VENDOR ||--o{ ARTEFACT : "publishes or ships"
+    VENDOR ||--o{ PRICE_POINT : "lists"
+    VENDOR ||--o{ PARITY_ROW : "is compared in"
+    VENDOR ||--o{ SCENARIO : "may trigger"
+    ARTEFACT ||--o{ CAPTURE : "is read by"
+    CAPTURE ||--o{ PRICE_POINT : "sources"
+    CAPTURE ||--o{ PARITY_CELL : "sources"
+    CAPTURE ||--o{ CLAIM : "evidences"
+    CAPTURE ||--o{ ALERT : "raises on hash change"
+    PARITY_ROW ||--|{ PARITY_CELL : "holds one per comparator"
+    CLAIM ||--o{ CLAIM_USE : "appears in"
+    OUR_ARTEFACT ||--o{ CLAIM_USE : "carries"
+    CLAIM_CLASS ||--o{ CLAIM : "governs"
+    CLAIM_CLASS ||--o| COUNSEL_TEMPLATE : "cleared by"
+    WATCH_SIGNAL ||--o{ ALERT : "produces"
+    ARTEFACT ||--o{ WATCH_SIGNAL : "is watched by"
+    ALERT ||--o{ CLAIM : "returns to WITHDRAWN"
+    SCENARIO ||--o{ WATCH_SIGNAL : "is detected by"
+    PARAMETER ||--o{ CLAIM : "bounds age and withdrawal of"
+
+    VENDOR {
+        string vendor_key PK "immutable slug"
+        string display_name
+        string class_set "incumbent, parity_comparator, priced_set, freemium, adjacent, enterprise, services, out"
+        string primary_class
+        bool in_competitive_set
+        string dimensions_searched "completeness is asked per research dimension"
+        string watch_owner
+    }
+    ARTEFACT {
+        string artefact_id PK
+        string vendor_key FK
+        string handle "URL, repo at tag, document title"
+        string artefact_type "pricing_page, product_page, docs, terms, repo_tree, config_file, archive, filing_pdf, changelog, catalogue, sales_quote"
+        string locale
+        bool requires_render
+        bool comment_bearing
+        bool blocks_nonbrowser_fetch
+        bool login_required "no capture without a cleared counsel position"
+    }
+    CAPTURE {
+        string capture_id PK
+        string artefact_id FK
+        string method "raw_fetch_comment_scan, rendered_read, config_file_read, archive_fetch, source_read, pdf_extract, catalogue_read, sales_quote_intake"
+        string tool_and_network "recorded because a tool failure was once read as a site property"
+        date captured_at
+        string round
+        int bytes
+        string hash_with_comments
+        string hash_without_comments
+        string posture "declared, observed_in_product, claim_posture, frozen"
+        string operator
+        string evidence_copy_ref
+    }
+    PRICE_POINT {
+        string price_id PK
+        string vendor_key FK
+        string plan_name
+        string model "flat_with_minimum, base_plus_overage, per_user_min_billing, per_employee_no_block, free_to_n, block_unknown, quote_only"
+        int base_amount_inr
+        int block_seats
+        int marginal_rate_inr
+        string cadence "monthly or annual"
+        string unit "employee or user or recruiter or licence"
+        string tax_treatment "ex_gst, incl_gst, unstated"
+        string plan_status "live, archived_withdrawn, suppressed_in_comment, unrendered_config_value"
+        string capture_id FK
+    }
+    PARITY_ROW {
+        string par_id PK
+        string capability
+        string our_v1_position
+        string row_class "concede, parity, differentiator, unresolved, unassessed"
+        string owning_section
+    }
+    PARITY_CELL {
+        string cell_id PK
+        string par_id FK
+        string comparator "frappe_v16 or tallyprime"
+        string finding "present, absent_in_artefact_read, hand_entered, contested, not_assessed"
+        string capture_id FK
+        string say_until_closed
+    }
+    CLAIM {
+        string claim_id PK
+        string statement
+        string vendor_key FK
+        string claim_class FK
+        string evidence_ref "EV id or research file"
+        string capture_id FK
+        string posture_label
+        string state "DRAFT, CAPTURED, CLEARED, PUBLISHED, WITHDRAWN"
+        date expires_on
+        string owner
+    }
+    CLAIM_USE {
+        string use_id PK
+        string claim_id FK
+        string our_artefact_id FK
+        date published_on
+        string status "live or flagged or pulled"
+    }
+    ALERT {
+        string alert_id PK
+        string watch_signal_id FK
+        date raised_at
+        string diff_summary
+        string triage_state "new, material, immaterial, actioned"
+        date triaged_at
+    }

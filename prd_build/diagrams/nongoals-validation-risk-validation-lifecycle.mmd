@@ -1,0 +1,40 @@
+stateDiagram-v2
+    direction TB
+
+    [*] --> DRAFTED
+
+    DRAFTED --> PRE_REGISTERED: owner files question, method, pass threshold, amber band and kill criterion
+    DRAFTED --> WITHDRAWN: the decision it fed no longer exists
+
+    PRE_REGISTERED --> IN_COLLECTION: first datum captured or first interview held
+    PRE_REGISTERED --> PRE_REGISTERED: threshold amended BEFORE collection, with reason logged
+
+    IN_COLLECTION --> REPORTED: artefact produced and filed in the dossier
+    IN_COLLECTION --> BLOCKED: dependency unavailable such as design partner, counsel or portal access
+    BLOCKED --> IN_COLLECTION: dependency resolved
+    BLOCKED --> ESCALATED: blocked past the gate date it feeds
+
+    REPORTED --> CLOSED_PASS: result clears the pre-registered pass threshold
+    REPORTED --> CLOSED_AMBER: result lands in the amber band
+    REPORTED --> CLOSED_FAIL: result meets the kill criterion
+    CLOSED_AMBER --> IN_COLLECTION: sample widened under the SAME threshold
+
+    CLOSED_PASS --> REOPENED: a later capture contradicts the result
+    CLOSED_FAIL --> REOPENED: the underlying source is re-read and found different
+    CLOSED_PASS --> SUPERSEDED: the instrument or page it rested on is replaced
+    REOPENED --> IN_COLLECTION: re-run under a NEW pre-registration record
+
+    CLOSED_FAIL --> THESIS_REVIEW: the item is named in a whole-thesis kill condition
+    ESCALATED --> THESIS_REVIEW: the gate it feeds cannot clear in time
+
+    note right of PRE_REGISTERED
+        A threshold changed after collection starts
+        is a rationalisation, not a threshold.
+        The record is append only.
+    end note
+
+    note right of CLOSED_FAIL
+        Fail is a result, not a failure.
+        The pre-agreed response fires
+        without further argument.
+    end note

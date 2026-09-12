@@ -1,0 +1,64 @@
+flowchart TB
+    CAND["A build a reasonable person would expect<br/>(feature / strategy / channel)"]
+    Q{"Is it inside<br/>filing-first scope?"}
+
+    CAND --> Q
+
+    subgraph INSCOPE["IN SCOPE — the unit of delivery"]
+        CORE["India statutory filing: portal-accepted artefact<br/>+ attended, assisted submission under written authority<br/>+ maintained-compliance SLA<br/>rules-first deterministic payroll,<br/>employee surface, CA console,<br/>ADMS/WDMS push receiver"]
+    end
+
+    Q -->|yes| CORE
+
+    Q -->|"no — declined"| SORT{"Type of decline?"}
+
+    subgraph PERM["Permanent structural declines — [Killed] / [Verified], cannot re-open without re-litigating the evidence"]
+        P1["NG-1 attendance hardware -> partner with eSSL/ZKTeco"]
+        P2["NG-2 free HRMS on interchange/float (Zaggle model)"]
+        P8["NG-8 any statutory number from an LLM -> rules-first, LLM-last"]
+        P14["NG-14 global/multi-geography payroll -> India-only"]
+        P20["NG-20 Aadhaar e-KYC or verification on a tenant behalf -> cannot be built, token store only"]
+        P21["NG-21 payroll-disbursement principal -> drive the rail, no custody"]
+        PMORE["...NG-3,4,5,6,7,9,12,16,17,18,19,23"]
+    end
+
+    subgraph COND["Conditional declines — [Hypothesis], each with a kill/keep gate"]
+        C10["NG-10 EOR/PEO -> keep only if >=20% of V-03/V-07 buyers name multi-country top-3"]
+        C11["NG-11 EWA/lending -> referral only, after signed NBFC term sheet"]
+        C13["NG-13 full MDM -> revisit only if scored in >=3 enterprise tenders"]
+        C15["NG-15 D2C fintech -> only if partner test clears 3x LTV:CAC"]
+        C22["NG-22 standalone LMS/OKR -> only if >=30% of renewals name it top-3"]
+        C16["AR-16 white-label to banks -> after a bank writes startup relaxation + V-13 clears"]
+    end
+
+    subgraph TIME["Timing-gated deferrals — not killed, explicit re-open gate (phasing per section 05)"]
+        T1["Enterprise 2,000+ -> ISO 27001 held >=12mo + 30k-emp reference + GFR relaxation in bid doc"]
+        T2["Public-sector / BFSI -> RBI materiality-gated terms + SEBI residency + 3 in-India inference backends"]
+        T3["Metered AI SKUs -> only after V-07 shows non-zero willingness-to-pay"]
+    end
+
+    SORT -->|"proven false / structurally excluded"| PERM
+    SORT -->|"awaiting field evidence"| COND
+    SORT -->|"blocked on phasing gate"| TIME
+
+    GATE["Re-open gate fires -> revisit"]
+    COND -.->|"kill/keep criterion met"| GATE
+    TIME -.->|"documentary/statutory gate cleared"| GATE
+    GATE -.-> Q
+
+    NOTE["Discipline: a decline is only useful if<br/>falsifiable and pre-committed<br/>(section 20 control register)"]
+    SORT -.- NOTE
+
+    classDef inscope fill:#dcfce7,stroke:#16a34a,color:#14532d;
+    classDef killed fill:#fee2e2,stroke:#dc2626,color:#7f1d1d;
+    classDef hypothesis fill:#fef9c3,stroke:#ca8a04,color:#713f12;
+    classDef deferred fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
+    classDef note fill:#f3e8ff,stroke:#9333ea,color:#581c87;
+    classDef gate fill:#e0e7ff,stroke:#4f46e5,color:#312e81;
+
+    class CORE inscope;
+    class P1,P2,P8,P14,P20,P21,PMORE killed;
+    class C10,C11,C13,C15,C22,C16 hypothesis;
+    class T1,T2,T3 deferred;
+    class NOTE note;
+    class GATE gate;

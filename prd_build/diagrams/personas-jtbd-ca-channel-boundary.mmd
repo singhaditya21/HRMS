@@ -1,0 +1,36 @@
+flowchart LR
+    subgraph CLIENT["Client tenant - the employer, whose statutory liability stays with it"]
+        OWN["Client owner<br/>grants and revokes the CA's access"]
+        APR["Client's approver and named approver<br/>M6, M8, M9, M10 and every portal instruction"]
+        REC["Client data, filing ledger and on-behalf log<br/>stay in the client tenant"]
+    end
+
+    subgraph CAORG["CA organisation - a channel, not a proxy"]
+        JR["CA junior<br/>payroll-operator role - makes the run"]
+        CA["CA Anjali<br/>reviews - note travels outside the hash"]
+    end
+
+    subgraph PORTAL["Government portal - always attended"]
+        OWNARR["CA signs in under her own arrangement with the client<br/>outside the product - recorded by evidence import<br/>submission_mode employer, session mode D"]
+        VLT["Mode D with credentials in our vault<br/>P1, R2 - the written authority names the CA organisation"]
+    end
+
+    OWN -->|"revocable grant, one per client"| JR
+    JR -->|"presents"| CA
+    CA -->|"artefact plus review note"| APR
+    APR -->|"instructs each irreversible act"| OWNARR
+    APR -->|"instructs each irreversible act"| VLT
+    OWNARR -->|"objects reconciled to the approved hash"| REC
+    VLT -->|"same runbooks and log"| REC
+
+    NO["Never<br/>the CA decides or instructs for a run she made or reviewed<br/>the CA is the approver by default<br/>the client's data moves to the CA's tenant<br/>two clients' records co-mingle"]
+    CA -.- NO
+
+    classDef client fill:#e8f0fe,stroke:#1a56db,color:#111827;
+    classDef ca fill:#ecfdf5,stroke:#047857,color:#111827;
+    classDef portal fill:#fef3c7,stroke:#b45309,color:#111827;
+    classDef stop fill:#fef2f2,stroke:#b91c1c,color:#111827;
+    class OWN,APR,REC client;
+    class JR,CA ca;
+    class OWNARR,VLT portal;
+    class NO stop;

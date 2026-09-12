@@ -1,0 +1,59 @@
+flowchart TD
+    Menu["fbp_component_config (BEN-30)<br/>effective-dated menu: tax rule, exemption section,<br/>annual/monthly cap, proof_required flag,<br/>qualifying conditions (BEN-62, BEN-63), per-regime availability"]
+
+    subgraph DECL["Declaration cycle (rides the Form 124 ex-12BB declaration calendar)"]
+        direction TB
+        D0["Employee declares FBP allocation for the tax year<br/>meal card / telephone / LTA / books ... (BEN-31)"]
+        D1{"Within component cap?"}
+        Draft["status: draft"]
+        Submitted["status: submitted<br/>regime_at_submit snapshotted"]
+        Locked["status: locked<br/>(locks with investment-declaration cycle)"]
+        Reject0["Rejected at submit<br/>cap cited"]
+        D0 --> Draft --> D1
+        D1 -- "no (over cap)" --> Reject0
+        D1 -- "yes" --> Submitted --> Locked
+    end
+
+    Menu -.->|"restructures gross, CTC unchanged"| D0
+
+    subgraph PROOF["proof_of_spend per line, collected through the year (BEN-32)"]
+        direction TB
+        P0["Employee submits proof<br/>document_ref, amount_claimed"]
+        Pending["status: pending"]
+        Approved["approved: amount_approved exempt"]
+        Rejected["rejected: full declared amount taxable"]
+        Query["query: back to employee"]
+        P0 --> Pending
+        Pending --> Approved
+        Pending --> Rejected
+        Pending --> Query
+        Query --> Pending
+    end
+
+    Locked -->|"provisional exemption reduces monthly TDS"| P0
+
+    subgraph VAL["Deterministic valuation (BEN-34, no model-generated figure)"]
+        direction TB
+        V0["Every payroll run: taxable-vs-exempt split<br/>= pure function of current proof state (BEN-39)"]
+        V1["Meal: exempt only if premises-provided or attested<br/>non-transferable eating-outlet voucher (BEN-62)<br/>eligible-meal count x per-meal cap, net LOP and holidays (BEN-37)"]
+        V2["LTA: old regime only · 4-year block usage + carry-forward (BEN-33)"]
+        V0 --> V1
+        V0 --> V2
+    end
+
+    Approved --> V0
+    Rejected --> V0
+    V1 --> Split
+    V2 --> Split
+    Split["Payslip: exempt portion excluded from taxable income;<br/>over-cap / unsubstantiated portion taxed"]
+
+    subgraph TRUEUP["Year-end reconciliation before Q4"]
+        direction TB
+        T0["Proof-lock before Q4 true-up (BEN-35)"]
+        T1["Provisional (declared) vs actual (proof-approved)"]
+        T2["Shortfall -> taxable income; TDS trued-up<br/>across final pay runs"]
+        T0 --> T1 --> T2
+    end
+
+    Split --> T0
+    T2 --> Forms["s.392 TDS + Form 123 (ex-12BA) + annual tax computation<br/>tie exactly to valued FBP perquisites (BEN-34)<br/>Form 138 Annexure II fenced until Q4 format released"]

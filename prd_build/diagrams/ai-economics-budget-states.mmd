@@ -1,0 +1,30 @@
+stateDiagram-v2
+    [*] --> WITHIN
+    WITHIN --> SOFT_BREACHED: U1 period spend reaches the soft budget
+    SOFT_BREACHED --> HARD_BREACHED: U2 period spend reaches the hard budget
+    WITHIN --> HARD_BREACHED: U3 worst-case cost of the next call passes the hard budget
+    SOFT_BREACHED --> HARD_BREACHED: U3 worst-case cost of the next call passes the hard budget
+    WITHIN --> UNDER_REVIEW: U4 post-check failures reach the abuse threshold
+    SOFT_BREACHED --> UNDER_REVIEW: U4 post-check failures reach the abuse threshold
+    HARD_BREACHED --> UNDER_REVIEW: U4 post-check failures reach the abuse threshold
+    UNDER_REVIEW --> WITHIN: U5 review closed and spend below the soft budget
+    UNDER_REVIEW --> SOFT_BREACHED: U5 review closed and spend at the soft budget or more
+    UNDER_REVIEW --> HARD_BREACHED: U5 review closed and spend at the hard budget or more
+    SOFT_BREACHED --> WITHIN: U6 period rolls
+    HARD_BREACHED --> WITHIN: U6 period rolls
+
+    note right of SOFT_BREACHED
+        Logged only. The answer is unchanged.
+    end note
+
+    note right of HARD_BREACHED
+        A1 and A2 answer rules-only with the engine figure.
+        A3 is queued and A5 soft-blocked.
+        The statutory figure always survives.
+    end note
+
+    note left of UNDER_REVIEW
+        Rules-only answers regardless of spend.
+        Prompt-injection candidate raised to the
+        AI and ML incident intake.
+    end note

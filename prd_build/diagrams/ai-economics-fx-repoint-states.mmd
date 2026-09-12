@@ -1,0 +1,24 @@
+stateDiagram-v2
+    [*] --> USD_ROUTED
+    USD_ROUTED --> FX_WATCH: F1 daily rate at or above the trigger level
+    FX_WATCH --> USD_ROUTED: F2 daily rate back below the trigger level
+    FX_WATCH --> REPOINT_PROPOSED: F3 trigger held for the confirm days
+    REPOINT_PROPOSED --> INR_ROUTED: F4 owner approves with parity passed and provider eligible
+    REPOINT_PROPOSED --> HELD: F5 decision table says hold
+    HELD --> REPOINT_PROPOSED: F6 parity, eligibility or residency record changes
+    HELD --> USD_ROUTED: F7 daily rate back below the trigger level
+    INR_ROUTED --> REVERT_PROPOSED: F8 rate at or below the revert level for the confirm days
+    REVERT_PROPOSED --> USD_ROUTED: F9 owner approves with the USD parity record current
+    INR_ROUTED --> USD_ROUTED: F10 INR configuration suspended, in-tier fallback
+
+    note right of HELD
+        Cheapest and cheap tier classes always hold.
+        Regulated cohorts hold while the INR provider
+        residency is unverified.
+    end note
+
+    note right of INR_ROUTED
+        One machine per task class and tenant cohort.
+        Revert level sits below the trigger level
+        so routing does not flap around 100.
+    end note

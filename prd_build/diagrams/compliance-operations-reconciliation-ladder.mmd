@@ -1,0 +1,32 @@
+flowchart LR
+    classDef ours fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef portal fill:#5a1a1a,stroke:#a33,color:#ffecec,stroke-width:2px;
+    classDef tie fill:#2a2a2a,stroke:#777,color:#f0f0f0,stroke-width:1px;
+    classDef gate fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:2px;
+    classDef diff fill:#4a3a10,stroke:#a08020,color:#fff6dc,stroke-width:1px;
+
+    SNAP["Locked payroll snapshot<br/>per member, to the paisa"]:::ours
+    FILE["ECR file as uploaded<br/>11 fields, hash recorded"]:::ours
+    RS["Return statement<br/>rendered by the portal"]:::portal
+    DDBS["Due Deposit Balance Summary:<br/>contributions, interest,<br/>damages, charge lines"]:::portal
+    CH["Challan with TRRN"]:::portal
+    RCP["Payment receipt"]:::portal
+
+    T1["Tie 1 - file to snapshot:<br/>generator self-check, exact"]:::tie
+    T2["Tie 2 - statement to file:<br/>totals, then fields,<br/>then member lines"]:::tie
+    T3["Tie 3 - summary to statement:<br/>contribution lines exact;<br/>interest, damages and charges<br/>carried as portal-computed"]:::tie
+    T4["Tie 4 - challan to summary:<br/>amount equals pay-now total<br/>less any deferred damages"]:::tie
+    T5["Tie 5 - receipt to challan:<br/>TRRN and amount, and the<br/>bank debit where shared"]:::tie
+
+    G1["Instruction gate 1:<br/>approve the return"]:::gate
+    G2["Instruction gate 2:<br/>generate the challan,<br/>after the verification gate"]:::gate
+
+    D["Difference classes:<br/>explained-by-rule, membership,<br/>portal-computed, timing, unexplained"]:::diff
+
+    SNAP --> T1 --> FILE --> T2 --> RS --> G1 --> DDBS --> T3
+    T2 -.->|"any unexplained difference<br/>withholds approval"| D
+    T3 --> G2 --> CH --> T4
+    T4 --> RCP --> T5
+    T3 -.->|"portal-computed lines are<br/>reconciling items, never defects"| D
+    T5 -.->|"a receipt that does not tie<br/>holds the instance"| D
+    D -.->|"each class has one route:<br/>reject and regenerate, Revised,<br/>Supplementary, or a reconciling item"| SNAP

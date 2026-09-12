@@ -1,0 +1,72 @@
+flowchart TB
+    classDef trig fill:#4a1414,stroke:#7d2626,color:#ffe3e3,stroke-width:1px;
+    classDef prod fill:#132b4a,stroke:#2f5f9e,color:#e3efff,stroke-width:1px;
+    classDef nofile fill:#4a3a10,stroke:#8a6d1f,color:#fff2cf,stroke-width:1px;
+    classDef inv fill:#0b5c3e,stroke:#17b37a,color:#eafff5,stroke-width:2px;
+
+    subgraph THRESH["Headcount-threshold crossings (obligation jumps discontinuously)"]
+        direction TB
+        Bev["Ex B &middot; 10-test LATCHES<br/>seasonal 11 &rarr; falls back to 7<br/>gratuity + maternity test:<br/>'any day of preceding 12 months'<br/>ESI text has no look-back - rule unverified"]:::trig
+        Bbh["Latch-aware obligation engine (items 4, 7):<br/>per-obligation look-back held as rule data<br/>gratuity + maternity stay ON; name triggering day for audit<br/>ESI never auto-ceased - operator decision<br/>&rarr; why 10-19 is worth acquisition-serving"]:::prod
+
+        Aev["Ex A &middot; 20-CROSSING (the wedge)<br/>18 on Tally+CA &rarr; hires 4 = 22<br/>EPF reg + ECR mandatory; grievance committee at 20+ workers<br/>(EPF is the monthly filing that starts at 20)"]:::trig
+        Abh["Detect crossing (item 10 HC master) +<br/>surface obligations (item 12 watcher) +<br/>prepare EPF registration; employee self-generates UAN via UMANG<br/>generate first ECR (item 3)<br/>attended upload under written authority; employer approves + pays<br/>&rarr; highest-intent acquisition moment"]:::prod
+
+        Hev["Ex H &middot; 50 &amp; 100 crossings<br/>44 &rarr; 52 &rarr; 110 employees<br/>creche @50, canteen @100 workers<br/>works committee only on a govt order<br/>facility/governance duties, NO periodic return"]:::nofile
+        Hbh["Model obligations with NO filing artefact (items 10, 12):<br/>surface as compliance tasks &mdash; evidence slot + owner + status<br/>shown in same calendar (&sect;05.9) as filings<br/>&rarr; compliance surface is broader than filings"]:::prod
+
+        Jev["Ex J &middot; contract labour @ 70 own-roll + 40 contract<br/>OSH contract-labour threshold 50 (was 20)<br/>contractor wage default &rarr; principal pays, OSH r.98(8)<br/>PF/ESI reach - counsel review<br/>contract workers do NOT count to own-roll HC"]:::trig
+        Jbh["item 10 master: own-roll vs contract flag + contractor link<br/>40 contract must not trip own-roll thresholds (Ex A)<br/>flag = P0 in v1; contractor filing = P2 surface"]:::prod
+
+        Dev["Ex D &middot; mid-year migration at 55<br/>competitor switch in Sep (mid-tax-year)<br/>two partial-year histories &rarr; one Form 138 Annexure II<br/>TRACES then generates Form 130 (EV-048)"]:::trig
+        Dbh["item 17: carry opening bal, YTD, TDS-to-date,<br/>regime (ex-115BAC), UAN/ESI-IP, accruals<br/>dual wage base (item 2) recomputes vs per-period rule-version<br/>v1 exit: &ge;10 migrations, 0 reconciliation breaks"]:::prod
+    end
+
+    subgraph INBAND["In-band edge cases (obligation shifts with no new headcount threshold)"]
+        direction TB
+        Cev["Ex C &middot; ESI ceiling crossing mid-period<br/>&#8377;20,000 &rarr; &#8377;23,000 in Jul (ceiling &#8377;21,000)<br/>during Apr-Sep contribution period"]:::trig
+        Cbh["item 4: do NOT drop the employee mid-period<br/>continue on actual wages through 30 Sep<br/>coverage ceases only at 1 Oct period boundary"]:::prod
+
+        Fev["Ex F &middot; gratuity 4-year edge @ 80 emp<br/>engineer resigns at 4y 8m; fixed-term analyst at 14 months<br/>continuous service is day-counted, 240 days a year<br/>fixed-term eligible after 1 year; 4-year edge to counsel"]:::trig
+        Fbh["item 7: separate accrual (from latch) vs eligibility-at-exit<br/>15 days per year, part-year over 6 months counts<br/>ceiling unnotified - no silent cap, review above legacy figure<br/>re-base on add-back base (item 2), not naive '5.0 years'"]:::prod
+
+        Gev["Ex G &middot; international worker @ 45 emp<br/>US-parent secondee on Indian payroll<br/>IW in scope of ECR, EPS by joining date<br/>contribution base held as a parameter - unverified"]:::trig
+        Gbh["item 10: IW flag + country-of-origin<br/>item 3 ECR: IW base from parameter +<br/>&#8377;15,000 ceiling for domestic on the same run<br/>ECR has no IW field, so the flag must live in the master"]:::prod
+
+        Iev["Ex I &middot; LWF, smallest / most-ignored filing<br/>90 emp, Maharashtra + Karnataka branch<br/>cadence and amounts disputed even for major states<br/>small amounts, high miss-risk"]:::trig
+        Ibh["item 7 LWF: state-scheduled + per-establishment<br/>schedule from gazette-sourced rows only - else fenced<br/>a sourced no-levy state raises NO false obligation<br/>&rarr; feeds item 23 all-states dataset (P2)"]:::prod
+
+        Kev["Ex K &middot; maternity continuity @ 130 emp<br/>26 weeks paid leave from Oct<br/>rides the latched 10-test (Ex B)"]:::trig
+        Kbh["carry as active-on-paid-leave (items 1-7):<br/>keep on every return per the maternity treatment parameter<br/>gratuity / leave accrual does not reset to zero"]:::prod
+
+        Eev["Ex E &middot; multi-state PT growth<br/>60 &rarr; 140 across KA / MH / TS<br/>3 PT formats + calendars; cap &#8377;2,500/yr (Art. 276)"]:::trig
+        Ebh["item 5 PT = P0 for gazette-sourced design-partner states<br/>item 23 all-states dataset = P2 - only MH and OD slabs,<br/>and KA effect, read at state primary source (EV-014)<br/>TS slab never verified - fenced<br/>per-establishment PT registration model in v1<br/>greenfield in both incumbents - a differentiator"]:::prod
+    end
+
+    Bev --> Bbh
+    Aev --> Abh
+    Hev --> Hbh
+    Jev --> Jbh
+    Dev --> Dbh
+    Cev --> Cbh
+    Fev --> Fbh
+    Gev --> Gbh
+    Iev --> Ibh
+    Kev --> Kbh
+    Eev --> Ebh
+
+    Bev -.->|"latch is load-bearing downstream"| Kev
+
+    INV["INVARIANT (&sect;05.6): band edges are where value is made or destroyed.<br/>The FILING is the unit of delivery &mdash; but the compliance surface is strictly broader than filings.<br/>'Delivers correct filings' &ne; 'calculates payroll' &mdash; the edge cases are exactly where the two products diverge."]:::inv
+
+    Abh -.-> INV
+    Bbh -.-> INV
+    Cbh -.-> INV
+    Dbh -.-> INV
+    Ebh -.-> INV
+    Fbh -.-> INV
+    Gbh -.-> INV
+    Hbh -.-> INV
+    Ibh -.-> INV
+    Jbh -.-> INV
+    Kbh -.-> INV

@@ -1,0 +1,39 @@
+flowchart TB
+    subgraph SRC["Instrumented request paths"]
+        INF["AI inference call<br/>(assistant / agent)"]
+        SVC["Platform services<br/>(payroll, filing, ingest)"]
+    end
+
+    subgraph LEDGER["Cost & usage ledger · NFR-OBS-1101 · from v1"]
+        TAG["Tag every call:<br/>tenant · user · agent · model · task-class<br/>input/output tokens · cache state"]
+        FX["Book INR cost at FX<br/>baseline Rs 94.43/USD (EV-089)<br/>sensitivity 90 / 95 / 100<br/>(Rs 83.3 banned, §20.4)"]
+        RL["Per-tenant / per-user rate limits<br/>hard threshold degrades gracefully<br/>tenant backstop: tenant_token_budget_pct_of_arpu (§13.7)"]
+        TAG --> FX
+    end
+
+    subgraph PILLARS["Three pillars · NFR-OBS-1102"]
+        MET["Metrics: RED per service<br/>+ business (filings-on-time, pay-runs)"]
+        LOG["Logs: structured, correlation-ID<br/>rolling 180-day, India-resident (EV-062)<br/>AI-layer logs included"]
+        TRC["Traces: distributed<br/>incl. assistant tool-calls"]
+    end
+
+    INF --> TAG
+    INF --> TRC
+    SVC --> MET
+    SVC --> LOG
+    SVC --> TRC
+
+    FX --> RECON{"Reconcile to provider<br/>invoice within +/- 2%"}
+    FX --> RL
+
+    MET --> SLI["Headline SLI · NFR-OBS-1103<br/>% due filings portal-accepted on time >= 99%<br/>per tenant, per statute (§19.1)"]
+    MET --> ALERT["SLO burn-rate alerting · NFR-OBS-1104<br/>on-call rota · MTTA <= 5 min<br/>>= 95% pages actionable"]
+    LOG --> ALERT
+    TRC --> AID["AI/ML incident class · NFR-OBS-1105<br/>prompt-injection · tool-abuse · anomalous tool-calls<br/>poisoning · extraction · inference-pipeline access"]
+    INF --> AID
+
+    SLI -->|"tenant trending to miss"| CS["Alert CS BEFORE deadline"]
+    SLI --> ALERT
+    ALERT -->|"statutory-window pages"| ONCALL["On-call runbook (17.8)"]
+    AID -->|"reportable class, item xx"| CERTIN["Incident runbook<br/>CERT-In six-hour clock (live today)"]
+    RL --> ALERT

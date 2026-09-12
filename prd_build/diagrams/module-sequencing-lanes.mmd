@@ -1,0 +1,72 @@
+flowchart TB
+  classDef p0 fill:#0b3d2e,stroke:#12b886,color:#e6fff5;
+  classDef p1 fill:#3d360b,stroke:#c9a227,color:#fff9e6;
+  classDef p2 fill:#3d1f0b,stroke:#d67a1c,color:#fff1e6;
+  classDef p3 fill:#2e0b3d,stroke:#9d4edd,color:#f6e6ff;
+
+  RULE["Sequencing rule: statutory necessity FIRST · acquisition leverage SECOND · monetisation LAST"]
+
+  subgraph L0["P0 = the R1 list - buildable-now parts only; fenced parts carry R2/R3 tags"]
+    direction TB
+    n1["1 Rules-first statutory payroll engine (no model-gen figures)"]
+    n2["2 Dual wage base - 50% add-back, effective-dated, recomputable"]
+    n3["3 EPF ECR generator (not fenced, EV-035) + attended upload; arrears fenced (EV-043)"]
+    n4["4 ESI compute + upload - live at 10 persons; template and post-22-Nov-2026 fenced"]
+    n5["5 State PT compute + return (gazette-sourced design-partner states)"]
+    n6["6 TDS s.392 + Form 138 Q1-Q3; Q4 + Form 130 Part B fenced (EV-046)"]
+    n7["7 Gratuity + LWF accrual (LWF per state, fenced until sourced)"]
+    n8["8 Six registers + wage slip, retention per rule-set (EV-053/054)"]
+    n9["9 Appointment letter at 10+ workers, state form (EV-057)"]
+    n10["10 Core HR system-of-record (employee/org/dependants)"]
+    n11["11 ADMS/WDMS attendance receiver (eSSL/ZKTeco)"]
+    n12["12 Statutory-change watcher (amendments + corrigenda)"]
+    n13["13 Bundled AI assistant (rules-first; router; smallest COGS line)"]
+    n14["14 Full cost/token/cache attribution per tenant/user"]
+    n15["15 Residency-selectable provider seam, one backend wired (full matrix is item 29)"]
+    n32["32 Excel/CSV onboarding import + YTD tie-out at zero variance"]
+    n33["33 Salary bank file, separate payment approver, credit reconciliation"]
+    n34["34 CERT-In day-one controls - six-hour reporting, 180-day logs in India (EV-062)"]
+    n35["35 Consent record + SPDI written consent + migration consent flow (EV-060)"]
+  end
+
+  subgraph L1["P1 - v1 acquisition + completeness"]
+    direction TB
+    n16["16 Published INR self-serve price card, no cliffs"]
+    n17["17 Migration importers (Tally first; Zoho/Kredily/Frappe)"]
+    n18["18 FBP/benefits data model (build now, monetise later)"]
+    n19["19 Recruiting - bring-your-own job-board, inbound ingest"]
+    n20["20a Thin CA console (P1, R2) - 20b productised console is a separate P2 row"]
+    n21["21 Device compatibility matrix + self-serve checker"]
+  end
+
+  subgraph L2["P2 - v2 scale up-market (200-1,999 private)"]
+    direction TB
+    n22["22 Multi-establishment / group-entity payroll"]
+    n23["23 All-states PT/LWF dataset - a differentiator (EV-031/032)"]
+    n24["24 SSO/SCIM + richer role model (from ~1,000 seats)"]
+    n25["25 Metered monetisation SKUs (recruiting/docs/copilot)"]
+    n26["26 Performance / talent modules (pull-driven)"]
+    n27["27 GPS live-tracking (priced)"]
+  end
+
+  subgraph L3["P3 - vision (2,000+, incl. regulated)"]
+    direction TB
+    n28["28 Self-host/dedicated as priced compliance SKU"]
+    n29["29 Full residency matrix GA + in-country inference"]
+    n30["30 MCP server matured as data+tools moat"]
+    n31["31 Full IR / works-council tooling"]
+  end
+
+  RULE --> L0
+  L0 ==>|"v1 exit: 40 tenants, 1 full cycle, 98% SLA, 4 COGS lines"| L2
+  L1 -.-> L0
+  L2 ==>|"v2 exit: 5x 200-999, SSO/SCIM, ISO seasoned"| L3
+
+  n15 -. "seam built early, GA later" .-> n29
+  n18 -. "data model early, monetise in v2" .-> n25
+  n20 -. "thin now, productise on evidence" .-> n25
+
+  class n1,n2,n3,n4,n5,n6,n7,n8,n9,n10,n11,n12,n13,n14,n15,n32,n33,n34,n35 p0;
+  class n16,n17,n18,n19,n20,n21 p1;
+  class n22,n23,n24,n25,n26,n27 p2;
+  class n28,n29,n30,n31 p3;

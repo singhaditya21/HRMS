@@ -1,0 +1,23 @@
+sequenceDiagram
+    autonumber
+    participant M as Manager
+    participant T as Talent - review and calibration
+    participant K as Compliance checker
+    participant E as Payroll engine
+    participant L as Filing ledger
+
+    M->>T: Rating and increment recommendation for the cycle
+    Note over M,T: An AI-drafted note needs a named confirmer and a snapshot, FR-T-D005
+    T->>T: Calibration moves recorded with actor, before, after and reason
+    T->>K: Increment outcome proposed as a compensation assignment with its effective date
+    K->>E: Approved, a new B-class compensation assignment row from the effective date
+    E->>E: Is the effective date inside a closed period
+    alt Effective date inside a closed period
+        E->>E: Arrears batch, each past month recomputed on that month's rule versions, FR-PAY-401
+        E->>K: Approval artefact shows the PF liability date from the planned disbursal date
+        E->>L: Arrears PF carried as blocked pending the arrear-return layout, EV-043
+    else Effective date in the open month
+        E->>E: Revised structure applies from the effective date in the current run
+    end
+    E->>M: Increment letter drafted with figures bound to the engine
+    Note over E,L: The corrected months' ECRs are not rewritten. A later change of the actual disbursal date re-derives the PF due month

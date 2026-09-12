@@ -1,0 +1,47 @@
+flowchart LR
+    subgraph OURS["Our HRMS — bring-your-own-contract, inbound-only ATS"]
+        ATS["ATS core<br/>fan requisition OUT<br/>ingest applications BACK<br/>dedup across sources"]
+    end
+
+    CUST["Customer holds the board contracts<br/>Naukri / LinkedIn / foundit / apna / Indeed"]
+    CUST -.->|"own contract, own credentials"| ATS
+
+    subgraph BOARDS["Job boards (post out + ingest in only)"]
+        LI["LinkedIn"]
+        NAUKRI["Naukri (Info Edge)"]
+        FOUNDIT["foundit"]
+        APNA["apna / WorkIndia"]
+        INDEED["Indeed"]
+    end
+
+    %% LinkedIn: the one certifiable passive-graph partner path
+    ATS -->|"Job Posting API (post out)"| LI
+    LI -->|"Apply Connect / RSC (structured ingest, high fidelity)"| ATS
+
+    %% Naukri: no public API we are aware of, post + parse only
+    ATS -->|"job posting (own contract)"| NAUKRI
+    NAUKRI -->|"authorised inbox / email parse (fragile, low-confidence flagged)"| ATS
+
+    %% Other boards: path not yet captured, so CSV/email fallback until a dated capture exists
+    ATS -->|"post out, path to capture per board"| FOUNDIT
+    FOUNDIT -->|"ingest back or CSV/email fallback FR-T-R15"| ATS
+    ATS -->|"post out, path to capture per board"| APNA
+    APNA -->|"ingest back or CSV/email fallback FR-T-R15"| ATS
+    ATS -->|"post out, path to capture per board"| INDEED
+    INDEED -->|"ingest back or CSV/email fallback FR-T-R15"| ATS
+
+    %% The wall: passive-candidate graph we cannot reach
+    subgraph WALL["Passive-candidate graph — no licensing path we are aware of"]
+        RESDEX["Resdex database SEARCH<br/>over 50M profiles per Naukri FAQ<br/>(118M is the investor total-resumes metric)"]
+        ZWAYAM["Zwayam — Info Edge's own ATS<br/>markets in-built Resdex as exclusive"]
+    end
+    RESDEX --- ZWAYAM
+    ATS -. "X database search FORBIDDEN — no public API or licence path we are aware of" .-> RESDEX
+    ATS -. "X authenticated-session scraping FORBIDDEN (legal exposure)" .-> ZWAYAM
+
+    classDef ours fill:#dbeafe,stroke:#1e40af,color:#111;
+    classDef ok fill:#dcfce7,stroke:#166534,color:#111;
+    classDef blocked fill:#fee2e2,stroke:#991b1b,color:#111;
+    class ATS ours;
+    class LI ok;
+    class RESDEX,ZWAYAM blocked;

@@ -1,0 +1,39 @@
+flowchart TD
+    classDef run fill:#cfe2ff,stroke:#0a58ca,color:#052c65;
+    classDef q fill:#fff3cd,stroke:#997404,color:#5c4708;
+    classDef side fill:#e2e3e5,stroke:#6c757d,color:#343a40;
+    classDef ok fill:#d1e7dd,stroke:#146c43,color:#0a3622;
+
+    LINE["A coverage line reads CARVED_OUT_FENCE,<br/>CARVED_OUT_PARAMETER or NOT_OFFERED"]:::run
+    KEY{"Who holds the key - the fence class"}:::q
+    ARM["Authority or counsel holds it<br/>armed, never queued as work:<br/>watch cadence, ageing escalation,<br/>outcome table written in advance"]:::side
+    ITEM["Queue item - class, gate dependency,<br/>blocked instances per month, blocked tenants,<br/>effort class, date pressure"]:::run
+    G{"QR-1 does it make a gate check FAIL<br/>and is it ours to clear"}:::q
+    TOP["Ranked first, in gate order:<br/>R1 before R2 before R3"]:::ok
+    D{"QR-2 is a statutory date inside<br/>its escalation window"}:::q
+    ARMED["Ranked next, with its outcome table armed"]:::ok
+    RANK["QR-3 rank by blocked instances per month<br/>QR-4 ties by tenants, then effort, then fence age<br/>QR-5 demand with no tenant behind it ranks last"]:::ok
+    SLOT["Taken into the operating review's slots<br/>desk_sourcing_slots_per_review - PH-25"]:::run
+    WORK["Desk work: a capture, a read, or a state pack"]:::run
+    PUB["Version, format or pack published - FL6"]:::ok
+    SHIP["First real instance accepted - FL8"]:::ok
+    COVOUT["Coverage statements re-versioned,<br/>notices sent, lines enter the SLA under SS-1"]:::ok
+    DEMAND["Customer request - class SC-H<br/>recorded as demand, never as evidence"]:::side
+
+    LINE --> KEY
+    KEY -->|"authority or counsel"| ARM
+    KEY -->|"our desk"| ITEM
+    DEMAND --> ITEM
+    ITEM --> G
+    G -->|"yes"| TOP
+    G -->|"no"| D
+    D -->|"yes"| ARMED
+    D -->|"no"| RANK
+    TOP --> SLOT
+    ARMED --> SLOT
+    RANK --> SLOT
+    SLOT --> WORK
+    WORK --> PUB
+    PUB --> SHIP
+    SHIP --> COVOUT
+    ARM -. "clears on its own timetable" .-> PUB

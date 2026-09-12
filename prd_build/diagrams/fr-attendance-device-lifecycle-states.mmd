@@ -1,0 +1,23 @@
+stateDiagram-v2
+    [*] --> PENDING: admin registers serial, secret shown once
+    PENDING --> ACTIVE: first authenticated handshake
+    PENDING --> EXPIRED: no handshake before device_pending_expiry_h
+    ACTIVE --> STALE: unseen beyond device_unseen_alert_h, alert before lock
+    STALE --> ACTIVE: authenticated heartbeat, buffered upload follows
+    ACTIVE --> ROTATING: admin starts secret rotation
+    ROTATING --> ACTIVE: new secret used or overlap window ends
+    ACTIVE --> SUSPENDED: wrong tenant route or repeated authentication failures
+    STALE --> SUSPENDED: security event
+    ROTATING --> SUSPENDED: security event
+    SUSPENDED --> ACTIVE: admin re-verifies and rotates the secret
+    ACTIVE --> DECOMMISSIONED: admin decommissions, open erasure items routed to attestation
+    STALE --> DECOMMISSIONED: admin decommissions
+    SUSPENDED --> DECOMMISSIONED: admin decommissions
+    DECOMMISSIONED --> SUSPENDED: same serial authenticates again, erasure items reopened
+    EXPIRED --> [*]
+    DECOMMISSIONED --> [*]
+    note right of SUSPENDED
+        Ingest refused. Delete-template and
+        delete-user commands are still served,
+        so erasure can finish on a returning device.
+    end note

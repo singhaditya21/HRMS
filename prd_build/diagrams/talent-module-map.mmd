@@ -1,0 +1,54 @@
+flowchart TB
+  SPINE["STATUTORY FILING SPINE (§06/§08)<br/>payroll engine + registers<br/>the unit of delivery"]
+
+  subgraph WEDGE["TALENT — the wedge, not the spine"]
+    direction TB
+
+    subgraph REC["Recruiting &nbsp;·&nbsp; FR-T-R &nbsp;·&nbsp; v1.5 &nbsp;·&nbsp; Metered per req/hire"]
+      direction TB
+      R1["§10.1 External-dependency map<br/>BYO-contract, inbound-only ATS<br/>no Resdex search / no scrape"]
+      R2["§10.2 Requisitions (FR-T-R01–R07)<br/>metered unit · statutory-crossing tag"]
+      R3["§10.3 Job-board multi-post (R10–R18)<br/>Naukri/LinkedIn/foundit/apna/Indeed<br/>post out · ingest in · dedup"]
+      R4["§10.4 Pipeline / ATS core (R20–R29)"]
+      R5["§10.5 Interview &amp; evaluation (R30–R36)"]
+      R6["§10.6 Sourcing &amp; BGV (R40–R43)<br/>DigiLocker · UAN prior-employment · Metered"]
+      R7["§10.7 Offer management (R50–R56)<br/>CTC in two wage bases · 50% add-back"]
+    end
+
+    subgraph ONB["Onboarding handoff &nbsp;·&nbsp; FR-T-O &nbsp;·&nbsp; v1 &nbsp;·&nbsp; Bundled"]
+      direction TB
+      O1["§10.8 Hired → employee on register<br/>EPF and ESI joining declarations · nomination · Form 122 (ex-12B)<br/>appointment letter (state-prescribed form, 10+ workers)<br/>UAN link or UMANG routing · ESI IP · register commit"]
+    end
+
+    subgraph PERF["Performance &nbsp;·&nbsp; FR-T-P &nbsp;·&nbsp; v2 &nbsp;·&nbsp; no per-unit meter (tier per §18)"]
+      direction TB
+      P1["§10.9 Goals / KRAs (P01–P05)"]
+      P2["§10.10 Review · calibration (P10–P18)<br/>increment/promotion → revised CTC"]
+    end
+
+    XC["Cross-cutting · FR-T-X<br/>metering · consent under SPDI and DPDP · audit · AI rails<br/>one person entity: candidate → employee"]
+    XD["Discrimination defensibility · FR-T-D (§10.13b)<br/>named confirmer · decision snapshot · attribute bar<br/>EOP · Rule 9(1) record · complaint workflows"]
+  end
+
+  R7 -->|"pre-boarding record<br/>(FR-T-R54)"| O1
+  O1 -->|"register commit · UAN/IP<br/>feeds ECR/ESI/PT (FR-T-O10)"| SPINE
+  R7 -.->|"offer CTC = engine wage base<br/>(FR-T-R51)"| SPINE
+  P2 -->|"effective-dated CTC + arrears<br/>(FR-T-P15/P16)"| SPINE
+  SPINE -.->|"headcount thresholds<br/>10/20/50/100/300 (FR-T-R06)"| R2
+  XC -.-> REC
+  XC -.-> PERF
+  XD -.-> REC
+  XD -.-> PERF
+
+  classDef spine fill:#1f2937,stroke:#111,color:#fff,font-weight:bold;
+  classDef v1 fill:#dcfce7,stroke:#16a34a,color:#052e16;
+  classDef v15 fill:#dbeafe,stroke:#2563eb,color:#0c1e4a;
+  classDef v2 fill:#fef9c3,stroke:#ca8a04,color:#422006;
+  classDef xc fill:#f3e8ff,stroke:#9333ea,color:#2e1065;
+  classDef xd fill:#fee2e2,stroke:#b91c1c,color:#450a0a;
+  class SPINE spine;
+  class O1 v1;
+  class R1,R2,R3,R4,R5,R6,R7 v15;
+  class P1,P2 v2;
+  class XC xc;
+  class XD xd;

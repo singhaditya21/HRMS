@@ -1,0 +1,34 @@
+flowchart LR
+    classDef cyc fill:#cfe2ff,stroke:#0a58ca,color:#052c65;
+    classDef ok fill:#d1e7dd,stroke:#146c43,color:#0a3622;
+    classDef fence fill:#f8d7da,stroke:#b02a37,color:#5c161c;
+    classDef side fill:#e2e3e5,stroke:#6c757d,color:#343a40;
+
+    GO["First live wage month<br/>April 2027 - the cleanest cutover, GL-5"]:::cyc
+    C1["Cycle 1 - wage month April<br/>ECR due 15 May, ESI due 15 May,<br/>TDS deposit in month, registers finalised"]:::cyc
+    C2["Cycle 2 - wage month May<br/>ECR due 15 June"]:::cyc
+    C3["Cycle 3 - wage month June<br/>ECR due 15 July"]:::cyc
+    GATE["R1 gate reads the evidence that exists"]:::side
+
+    E1["ECR - AF4 on the first accepted return<br/>3 accepted instances per registration by mid-July"]:::ok
+    E2["Registers and wage slip - AF4 by conformance render<br/>3 finalised periods"]:::ok
+    E3["ESI upload - zero instances<br/>every post-lapse instance is BLOCKED by F-04"]:::fence
+    E4["Form 138 - zero submissions<br/>Q1 of Tax Year 2027-28 falls due 31 July"]:::fence
+    E5["Maharashtra PT - computation only<br/>the return leg is fenced"]:::fence
+    E6["Form 130 distribution - first real certificate June 2028"]:::fence
+    SUB["What the calendar cannot supply:<br/>seeded fixtures SF-01 to SF-15,<br/>the V-11 bench result, a profiled regulated tenant"]:::side
+
+    GO --> C1 --> C2 --> C3 --> GATE
+    C1 --> E1
+    C1 --> E2
+    C1 --> E3
+    C1 --> E5
+    C3 --> E4
+    C3 --> E6
+    E1 --> GATE
+    E2 --> GATE
+    E3 --> GATE
+    E4 --> GATE
+    E5 --> GATE
+    E6 --> GATE
+    SUB --> GATE

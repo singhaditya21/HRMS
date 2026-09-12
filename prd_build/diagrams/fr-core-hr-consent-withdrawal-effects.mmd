@@ -1,0 +1,16 @@
+flowchart LR
+    W["Written withdrawal received<br/>from any worker surface<br/>no approval step, FR-CHR-115"] --> Q{"Which purpose?"}
+
+    Q -->|"BANK_DISBURSAL"| B["Account closed to new use<br/>next unreleased disbursal by<br/>non_bank_disbursal_mode<br/>past payout records kept under<br/>their retention class, restricted"]
+    Q -->|"BIOMETRIC_FINGERPRINT or _FACE"| BI["Election set non-biometric<br/>two-phase device erasure, §09.3-B<br/>punches and Form IX unaffected"]
+    Q -->|"HEALTH_DISABILITY_STATUS"| H["Flag cleared, forward only<br/>ESI re-derives on the standard ceiling<br/>month set by esi.ceiling_change_timing<br/>locked snapshots unchanged"]
+    Q -->|"AADHAAR purposes"| AA["Open task closes as withdrawn<br/>PURGE, token becomes a tombstone"]
+    Q -->|"PHOTO_ON_RECORD or<br/>FORM_I_THUMB_IMPRESSION"| PH["Field 34 or 35 empty going forward<br/>register copies follow CR-35"]
+
+    B --> N["Payroll computed as usual<br/>no penalty field exists<br/>nothing shown to the manager"]
+    BI --> N
+    H --> N
+    AA --> N
+    PH --> N
+
+    N --> R["Employee can grant again at any time<br/>a new version, the old record kept"]

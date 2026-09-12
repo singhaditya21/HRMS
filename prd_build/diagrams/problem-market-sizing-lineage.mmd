@@ -1,0 +1,50 @@
+flowchart LR
+    classDef v fill:#d5f5e3,stroke:#1e8449,color:#145a32;
+    classDef h fill:#fdebd0,stroke:#ca6f1e,color:#7e5109;
+    classDef f fill:#e8eef7,stroke:#41618c,color:#1b2a44;
+    classDef o fill:#f7f7f7,stroke:#666666,color:#222222;
+
+    subgraph IN["Inputs - green Verified, amber Hypothesis"]
+        direction TB
+        I1["IN-01 contributing establishments 7,66,254"]:::v
+        I2["IN-02 contributing members 7,37,39,204"]:::v
+        I4["IN-04 above-200 count, 41,881 to 1,73,250"]:::h
+        I6["IN-06 beachhead_sub20_share"]:::h
+        I7["IN-07 billable seats, 55"]:::h
+        I8["IN-08 modelling PEPM, Rs 80-150"]:::h
+        I9["IN-09 3-year share, 0.5-1.5 pct"]:::h
+        I10["IN-10 30,000+ claimed, Sep 2026"]:::v
+        I11["IN-11 filed revenue Rs 1,374.12 Cr"]:::v
+        I12["IN-12 share of spend, 35-65 pct"]:::h
+    end
+
+    subgraph FX["Formulas"]
+        direction TB
+        F3["F-03 beachhead establishments"]:::f
+        F4["F-04 and F-05 beachhead SAM"]:::f
+        F6["F-06 3-year SOM ARR"]:::f
+        F7["F-07 share-calibrated bound"]:::f
+        F8["F-08 real software spend"]:::f
+        F1["F-01 and F-02 spend per member, implied penetration"]:::f
+    end
+
+    I1 --> F3
+    I4 --> F3
+    I6 --> F3
+    F3 --> F4
+    I7 --> F4
+    I8 --> F4
+    F3 --> F6
+    I9 --> F6
+    F3 --> F7
+    I10 --> F7
+    I11 --> F8
+    I12 --> F8
+    F8 --> F1
+    I2 --> F1
+    F7 -.->|caps the share| F6
+
+    F4 --> O1["SAM Rs 950-6,018 Cr - a potential, never revenue"]:::o
+    F6 --> O2["3-year SOM Rs 5.8-32.7 Cr ARR"]:::o
+    F7 --> O3["Bound near Rs 65 Cr at the 2.2-lakh scenario"]:::o
+    F1 --> O4["Rs 23.7-44.1 per member-month"]:::o

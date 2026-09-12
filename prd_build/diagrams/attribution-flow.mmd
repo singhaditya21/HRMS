@@ -1,0 +1,36 @@
+flowchart TD
+    R["Router §13.5<br/>routes each call to a tier/model"] -->|"attribution tap: 1 record per routed call"| REC
+
+    subgraph REC["Attribution record (P0 schema, emitted per routed call)"]
+        direction TB
+        F1["tenant_id · user_id"]
+        F2["agent / task_class (A0–A6)"]
+        F3["model / provider (post-routing)"]
+        F4["model_list_price_ref"]
+        F5["input / output tokens · cache_read · cache_write"]
+        F6["escalated (bool) + reason"]
+        F7["fx_rate_at_call"]
+        F8["residency_region"]
+        F9["rules_fallback (bool) + reason"]
+        F10["§13.9.1 additions: price_row_id · class_contract_version ·<br/>eligible_set_version · channel · turn_id · cost_inr"]
+    end
+
+    REC -.->|"fails a type or null rule"| Q["Quarantine with reason ·<br/>counted against completeness · never dropped"]
+
+    REC --> STORE["Attribution store — build in month zero,<br/>while the price is still zero"]
+
+    STORE --> CERT["CERT-In / log residency §13.9, §12.8.3<br/>India-resident for EVERY tenant ·<br/>retain ≥180 days · clock-synced to NIC/NPL NTP (EV-062)"]
+
+    STORE --> DASH
+
+    subgraph DASH["Derived P0 dashboards"]
+        direction TB
+        M1["PEPM inference cost per tenant<br/>(replaces the EV-008 [Hypothesis] band)"]
+        M2["Inference % of revenue per tenant<br/>(> ~5% = investigate · §20 V-14)"]
+        M3["Escalation rate per task class<br/>(rising = cost leak)"]
+        M4["Cache economics per tenant §13.11"]
+        M5["Frontier-call rate (must stay < 1%)"]
+        M6["Rules-fallback rate per class<br/>(rising = generation quality problem)"]
+    end
+
+    DASH -.->|"closes §20 V-04 / V-14:<br/>ratios [Verified], absolutes → measured"| CLOSE["₹0.15–3.27 PEPM moves<br/>[Hypothesis] → measured<br/>(inference line only — one COGS line of four, EV-088)"]

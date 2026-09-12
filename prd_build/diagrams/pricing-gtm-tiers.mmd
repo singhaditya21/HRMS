@@ -1,0 +1,23 @@
+flowchart LR
+    classDef free fill:#3a3a3a,stroke:#6b6b6b,color:#f0f0f0,stroke-width:1px;
+    classDef core fill:#0b5c3e,stroke:#17b37a,color:#eafff5,stroke-width:2px;
+    classDef scale fill:#132b4a,stroke:#2f5f9e,color:#e3efff,stroke-width:1px;
+    classDef vision fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px,stroke-dasharray:4 3;
+    classDef note fill:#f2f2f2,stroke:#6b6b6b,color:#111111,stroke-width:1px;
+
+    F["<b>FREE - Comply</b><br/>under 20 employees - &#8377;0<br/>size gate at the EPF line, never a feature gate<br/>payroll computation incl. ESI and TDS<br/>generated artefacts - the customer submits"]:::free
+    B["<b>FILE - beachhead, 20 to 199</b><br/>target &#8377;80 to 150 PEPM - Hypothesis<br/>actual headcount, no seat floor - P6<br/>registration allowance plus multi-registration line - EV-088<br/>portal-accepted artefacts plus attended submission, under SLA<br/>operator route under written authority once counsel clears"]:::core
+    S["<b>SCALE - 200 to 1,999</b><br/>tapered PEPM, base plus metered filings<br/>multi-entity, multi-state, SSO and SCIM<br/>priority SLA"]:::scale
+    E["<b>ASSURE - 2,000 plus</b><br/>priced, not sold in v1<br/>documentary gate: ISO 27001 seasoning,<br/>references, sectoral residency"]:::vision
+
+    F -->|"crosses 20 - EPF turns on"| B
+    B -->|"crosses 200"| S
+    S -.->|"documentary gate met"| E
+
+    M["<b>Market anchors at 50 employees - EV-027</b><br/>value floor near &#8377;50 PEPM: Qandle, greytHR<br/>clearing band &#8377;80 to 200: Zimyo, HROne, Keka<br/>six of six bill a 50-seat minimum - EV-026"]:::note
+    P["<b>Payroll is in every tier - EV-028</b><br/>computation and artefacts in Free,<br/>attended submission and SLA in File - never an upsell"]:::note
+    L["<b>Statutory liability stays with the employer and deductor</b><br/>non-delegable - K-13<br/>our remedy is contractual and capped"]:::note
+
+    M -.-> B
+    P -.-> F
+    L -.-> B

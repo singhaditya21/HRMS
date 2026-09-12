@@ -1,0 +1,98 @@
+erDiagram
+    person ||--o{ employment : "has (survives rehire / inter-entity)"
+    person ||--o{ nomination : "EPF / gratuity / ESI, form per scheme version"
+    person ||--o| aadhaar_token_store : "optional; opaque token only"
+    person ||--o{ consent_record : "versioned; regime-tagged"
+    legal_entity ||--o{ employment : "employs"
+    legal_entity ||--o{ establishment : "contains"
+    establishment ||--o{ establishment_mapping : "scopes filing (PF/ESI/PT/LWF)"
+    employment ||--|{ establishment_mapping : "eff-dated: one at a time"
+    employment ||--|{ wage_structure : "eff-dated CTC + tags"
+    employment ||--|{ eligibility : "DERIVED, eff-dated per scheme"
+    employment ||--|{ org_assignment : "eff-dated mgmt hierarchy"
+    person ||--o{ document : "collected + generated artefacts"
+    audit_event }o--|| person : "append-only, on every mutation"
+
+    person {
+        uuid person_id PK "immutable, never reused"
+        string PAN "one active per person"
+        string UAN "one active_for_filing per period; others declared_additional"
+        string ESI_IP "per person"
+        uuid aadhaar_token FK "opaque; never the number or a hash"
+        enum uan_seeding_status "drives exclude-and-flag"
+        date DOB "as recorded against UAN"
+    }
+    aadhaar_token_store {
+        uuid aadhaar_token PK "separate store, keys, ACL"
+        string number_ciphertext "last-4 display only"
+        uuid consent_id FK "Sharing Reg 5 consent"
+        date purge_due "reg 6(5): purpose spent"
+    }
+    consent_record {
+        uuid consent_id PK "versioned, first-class"
+        enum regime "SPDI written / Aadhaar reg 5 / DPDP"
+        string purpose_and_classes
+        string notice_version "counsel-cleared template"
+        enum artefact_owner "employer / vendor / both"
+        timestamp granted_withdrawn "ERASABLE class"
+    }
+    legal_entity {
+        uuid entity_id PK
+        string TAN "entity-level, scopes Form 138 ex-24Q"
+        string PTEC "per state; entity own PT"
+        string GSTIN
+        string CIN
+    }
+    establishment {
+        uuid establishment_id PK
+        string EPFO_code "scopes ECR"
+        string ESIC_code "sub-codes as separate rows"
+        string PTRC "employer PT registration, per state"
+        string LWF_reg "per state"
+        string SnE_LIN "S&E + Shram Suvidha LIN"
+    }
+    employment {
+        uuid employment_id PK
+        uuid person_id FK
+        uuid entity_id FK
+        date DOJ "effective-dated"
+        enum employment_type "perm/FTC/apprentice/consultant"
+    }
+    establishment_mapping {
+        uuid employment_id FK
+        uuid establishment_id FK
+        string pf_member_id "scoped to the establishment code"
+        daterange effective_range "closed-open [from,to)"
+    }
+    wage_structure {
+        uuid employment_id FK
+        daterange effective_range
+        money CTC
+        json component_tags "pf/esi/pt/equal-pay dual base"
+    }
+    eligibility {
+        uuid employment_id FK
+        enum scheme "PF/ESI/PT/LWF/gratuity/bonus"
+        daterange effective_range
+        json derived_status "recomputed, never hand-edited"
+    }
+    org_assignment {
+        uuid employment_id FK
+        daterange effective_range
+        string department_manager_costcentre_grade "decoupled from statutory"
+    }
+    nomination {
+        uuid person_id FK
+        enum scheme
+        int version
+    }
+    document {
+        uuid document_id PK "immutable while retained; ERASABLE class"
+        string template_version "effective-dated; Form 130 stored as downloaded"
+    }
+    audit_event {
+        uuid event_id PK "append-only"
+        string actor
+        timestamp ntp_ts "NTP/NIC-synced"
+        json before_after "+ valid-time & txn-time; token, never Aadhaar"
+    }

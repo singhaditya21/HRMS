@@ -1,0 +1,52 @@
+flowchart LR
+    INTAKE["One joiner intake<br/>the nine fan-outs of 03.2"]
+
+    subgraph MAND["Mandatory subset - holds a statutory line, never salary"]
+        UAN["1 UAN<br/>employee activates in UMANG<br/>employer route only for International Workers<br/>and citizens of Nepal and Bhutan"]
+        ESIIP["2 ESI IP registration"]
+        LETTER["3 Appointment letter<br/>state-prescribed form, 10 or more workers"]
+        DECL["8 Declaration and regime election<br/>Form 124, ex-12BB"]
+    end
+
+    subgraph WARN["Warning subset - never holds a line"]
+        NOMEPF["6 EPF and EPS nomination"]
+        NOMGRAT["7 Gratuity nomination<br/>owed at one year of service"]
+        PRIOR["9 Prior-employer income<br/>Form 122, ex-12B and 12BAA"]
+    end
+
+    subgraph CONSENT["Written-consent set - SPDI r.5 1 today"]
+        BANK["4 Bank and IFSC<br/>financial information"]
+    end
+
+    AADHAAR["5 Aadhaar - optional everywhere<br/>only its seeding status is tracked"]
+
+    ECR["ECR line for the member<br/>11 fields, hash-tilde-hash delimited"]
+    ESIRET["ESI return line"]
+    REG["Letter register and the inspection pack"]
+    TDS["TDS projection and the quarterly statement"]
+    PAYFILE["Bank payout file"]
+    SALARY["Salary - computed and payable<br/>held by nothing on this page"]
+
+    INTAKE --> UAN & ESIIP & LETTER & DECL & NOMEPF & NOMGRAT & PRIOR & BANK & AADHAAR
+    UAN -->|"absent - line held, chase open"| ECR
+    AADHAAR -.->|"unseeded - exclude and flag, notices both ways"| ECR
+    ESIIP -->|"absent - line held, chase open"| ESIRET
+    LETTER -->|"absent - owed and listed on the status tile"| REG
+    DECL -->|"absent - the default regime applies and is labelled"| TDS
+    PRIOR -.->|"not furnished - projection labelled, never blocked"| TDS
+    NOMEPF -.->|"warning only"| REG
+    NOMGRAT -.->|"warning only"| REG
+    BANK -->|"no grant - the field takes no input"| PAYFILE
+    PAYFILE -.->|"paid by the configured alternative mode"| SALARY
+    INTAKE ==>|"never held by any item above"| SALARY
+
+    classDef mand fill:#fee2e2,stroke:#b91c1c,color:#111827;
+    classDef warn fill:#fef3c7,stroke:#b45309,color:#111827;
+    classDef cons fill:#ede9fe,stroke:#6d28d9,color:#111827;
+    classDef out fill:#ecfdf5,stroke:#047857,color:#111827;
+    classDef opt fill:#f3f4f6,stroke:#9ca3af,color:#374151;
+    class UAN,ESIIP,LETTER,DECL mand;
+    class NOMEPF,NOMGRAT,PRIOR warn;
+    class BANK cons;
+    class AADHAAR opt;
+    class ECR,ESIRET,REG,TDS,PAYFILE,SALARY,INTAKE out;

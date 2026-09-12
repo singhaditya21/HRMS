@@ -1,0 +1,35 @@
+stateDiagram-v2
+    direction TB
+
+    [*] --> WATCHING: risk admitted with an observable trigger, a named watcher and a cadence
+
+    WATCHING --> WATCHING: cadence review finds no trigger, watch date stamped
+    WATCHING --> TRIGGERED: the named observable is observed by the named watcher
+    WATCHING --> UNOBSERVABLE: the cadence review cannot name where the trigger would be seen
+    UNOBSERVABLE --> WATCHING: trigger rewritten as something a specific person can watch for
+
+    TRIGGERED --> RESPONDING: the pre-agreed response fires, owner logs the start time
+    TRIGGERED --> FALSE_POSITIVE: the observable is confirmed not to be the trigger
+    FALSE_POSITIVE --> WATCHING: trigger wording tightened so it does not fire the same way twice
+
+    RESPONDING --> MITIGATED: the response completes and the residual is re-stated
+    RESPONDING --> ESCALATED: the response does not hold or the owner cannot act alone
+    ESCALATED --> MITIGATED: escalated decision taken and logged
+    ESCALATED --> THESIS_REVIEW: the risk is named in a whole thesis kill condition
+
+    MITIGATED --> WATCHING: the trigger can recur
+    MITIGATED --> RETIRED: the validation that retires this risk closed PASS
+    WATCHING --> RETIRED: the condition that created the risk no longer exists
+
+    RETIRED --> WATCHING: a later capture shows the condition has returned
+
+    note right of TRIGGERED
+        The moment of the trigger is never
+        the moment of the argument.
+        The response was agreed in advance.
+    end note
+
+    note right of UNOBSERVABLE
+        A risk with no observable trigger
+        is an anxiety, not a register row.
+    end note

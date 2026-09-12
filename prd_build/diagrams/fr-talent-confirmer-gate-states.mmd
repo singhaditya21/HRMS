@@ -1,0 +1,34 @@
+stateDiagram-v2
+    direction TB
+
+    state "PROPOSED - intent raised, nothing changed for the person" as PROPOSED
+    state "GATE_PENDING - waiting for a named confirmer, time and reason" as GATE
+    state "SNAPSHOT_PENDING - composing the reconstruction payload" as SNAP
+    state "COMMITTED - state change and decision record are durable together" as COMMITTED
+    state "ABANDONED - lapsed or withdrawn before commit" as ABANDONED
+    state "REVERSED - a later decision reversed this one" as REVERSED
+
+    [*] --> PROPOSED: G1 decision intent, actor holds the decide permission
+    PROPOSED --> COMMITTED: G2 not adverse, or influence is NONE
+    PROPOSED --> GATE: G3 adverse and influence is not NONE
+    GATE --> SNAP: G4 named natural person confirms with a non-empty reason
+    GATE --> ABANDONED: G5 withdrawn, or the proposal ages out
+    SNAP --> COMMITTED: G6 every required block present
+    SNAP --> GATE: G7 composition failed, commit rolled back, FR-T-D017
+    COMMITTED --> REVERSED: G8 a reversing decision passes the gate in its own right
+    COMMITTED --> COMMITTED: G9 reason amended by the original confirmer, appended not edited
+    ABANDONED --> [*]
+    REVERSED --> [*]
+
+    note right of GATE
+        Refused as confirmer: service accounts, integration
+        principals, shared logins, schedulers and the subject
+        of the decision. A delegate is allowed where configured
+        and is recorded as a delegate.
+    end note
+
+    note right of SNAP
+        There is no configuration that commits an influenced
+        adverse decision without a snapshot. A failure here
+        leaves the person's state untouched.
+    end note

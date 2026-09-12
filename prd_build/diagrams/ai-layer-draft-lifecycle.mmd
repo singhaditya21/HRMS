@@ -1,0 +1,33 @@
+stateDiagram-v2
+    direction TB
+    [*] --> GENERATED: D1 output returns through the chokepoint with a registered use case
+    GENERATED --> BLOCKED: D2 interceptor, citation, scope or format check fails
+    GENERATED --> PRESENTED: D3 guardrails pass, shown to the requesting human
+    PRESENTED --> PRESENTED: D4 human edits free prose, engine-bound fields stay locked
+    PRESENTED --> SIGNED_OFF: D5 named human signs off from an interactive session
+    PRESENTED --> DISCARDED: D6 human discards
+    PRESENTED --> EXPIRED: D7 a ledger, rule, policy or target version changes
+    SIGNED_OFF --> EXPIRED: D7 a ledger, rule, policy or target version changes
+    SIGNED_OFF --> PRESENTED: D8 content edited after sign-off, signature voided
+    SIGNED_OFF --> CHECK_PENDING: D9 target is a maker-checker point
+    CHECK_PENDING --> APPLIED: D10 a distinct checker approves
+    CHECK_PENDING --> PRESENTED: D11 checker returns it with reasons
+    SIGNED_OFF --> APPLIED: D12 authority re-checked, applied through the human write path
+    PRESENTED --> EXPIRED: D13 open longer than the draft age limit
+    BLOCKED --> [*]
+    DISCARDED --> [*]
+    EXPIRED --> [*]
+    APPLIED --> [*]
+
+    note right of SIGNED_OFF
+      The signer becomes the maker of record.
+      The AI is never maker, signer or checker.
+      A sign-off binds to the content hash shown.
+    end note
+
+    note right of APPLIED
+      From here the object follows its own
+      machine - payroll month, filing, appraisal.
+      A later correction is that machine's
+      business, never a re-application.
+    end note

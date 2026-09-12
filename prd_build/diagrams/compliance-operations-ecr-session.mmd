@@ -1,0 +1,34 @@
+sequenceDiagram
+    autonumber
+    participant AP as Named approver
+    participant PR as Product
+    participant OP as Compliance operator
+    participant VA as Credential vault
+    participant EP as EPFO portal
+    participant OT as OTP contact
+    participant PY as Employer payer
+    PR->>AP: ECR artefact, diff and exclude-and-flag list
+    AP->>PR: Approves the artefact in product
+    PR->>OP: Session READY, chronology and pre-checks passed
+    OP->>VA: Checks out the credential for this PF code
+    VA-->>OP: Credential injected into the workspace, never displayed
+    OP->>EP: Signs in, operator solves the CAPTCHA
+    EP-->>OT: OTP, only if the portal prompts
+    OT->>OP: Relays the OTP through the product prompt
+    OP->>EP: Uploads file, enters Wage Month, Return Type, Rate, Remark
+    EP-->>OP: Validation result and return statement
+    OP->>PR: Captures the return statement
+    PR->>AP: Line-by-line reconciliation, instruction requested
+    AP->>PR: Instructs approval, bound to the statement hash
+    OP->>EP: Approves the return, now non-cancellable
+    EP-->>OP: Due Deposit Balance Summary with 7Q interest
+    OP->>PR: Captures the summary
+    PR->>AP: Verification gate result, instruction requested
+    AP->>PR: Instructs the challan, bound to the summary hash
+    OP->>EP: Generates the challan with TRRN
+    OP->>VA: Checks the credential in, hands payment over
+    PY->>EP: Pays the TRRN challan on own bank authentication
+    EP-->>PY: Payment receipt
+    PY->>PR: Receipt imported, or fetched in a short evidence session
+    PR->>PR: Reconciles and records FILED
+    Note over AP,PY: From payment initiation a Revised return is impossible - EV-037

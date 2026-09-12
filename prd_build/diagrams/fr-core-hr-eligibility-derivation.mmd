@@ -1,0 +1,28 @@
+flowchart TD
+    IN["Derivation inputs<br/>wage structure and component tags<br/>DOJ, DOB, engagement type<br/>establishment mapping and its coverage facts<br/>declared statutory attributes"] --> CTX["Evaluation context<br/>period derived · as-of decision time<br/>jurisdiction set: work-location state and sphere<br/>scheme version in force for the period"]
+    CTX --> RV{"Rule version resolved<br/>for this period and jurisdiction?"}
+
+    RV -->|"No row sourced for the state or period"| UND["UNDETERMINED<br/>readiness reason raised<br/>no default, no guessed slab"]
+    RV -->|"Resolved"| COV{"Establishment covered<br/>for this scheme?"}
+
+    COV -->|"Not notified or below the line"| NC["NOT_COVERED_ESTABLISHMENT<br/>re-derives on a later crossing<br/>or a later notification"]
+    COV -->|"Covered"| TEST["Apply the scheme test<br/>on the period's wage base<br/>and the master facts in force"]
+
+    TEST --> OPT{"Does the rule object<br/>expose an option?"}
+    OPT -->|"Yes and one is recorded"| OVR["Option applied<br/>maker-checked, own effective range<br/>named in the explainer"]
+    OPT -->|"No option, or none recorded"| STD["Statutory branch applied"]
+
+    OVR --> LATCH{"Latch or stickiness<br/>in force for this period?"}
+    STD --> LATCH
+    LATCH -->|"Yes"| CONT["LATCHED_CONTINUING<br/>range stays open until the<br/>latch's own exit condition"]
+    LATCH -->|"No"| OUT["ELIGIBLE or NOT_ELIGIBLE<br/>as the branch decided"]
+
+    CONT --> EXP
+    OUT --> EXP
+    NC --> EXP
+    UND --> EXP
+    EXP["Derived range written with its explainer<br/>inputs and their values · rule version and citation<br/>branch taken · option and its approver · decided-at"]
+    EXP --> CONS["Consumers<br/>§08 engine · readiness report<br/>registers · inspection evidence export"]
+
+    NOEDIT["No hand edit anywhere on this path.<br/>A disagreement is fixed at an input<br/>or at the rule object, then re-derived."]
+    EXP -.- NOEDIT

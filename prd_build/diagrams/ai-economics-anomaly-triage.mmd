@@ -1,0 +1,26 @@
+flowchart LR
+    subgraph BASE["Baselines · per task class, backend and tenant-size band"]
+        direction TB
+        B1["cost per event · tokens per event"]
+        B2["events per active employee per day"]
+        B3["escalation share · rules-fallback share"]
+        B4["cache reads per held hour · duplicate provider requests"]
+    end
+
+    BASE --> DET{"Deviation beyond the metric threshold<br/>held for the confirm periods?"}
+    PEAK["Pay dates and the Form 130 window compared<br/>with their own prior peaks, never with an average day (§13.3.2)"] -.-> DET
+
+    DET -->|"no"| NOOP["No signal · the budget machines still run (§13.7.1)"]
+    DET -->|"yes"| TRI["Triage · classify the cause"]
+
+    TRI --> C1["Configuration · prompt, retrieval, tier map,<br/>cache band · roll back the version"]
+    TRI --> C2["Metering · missing or duplicate records ·<br/>router defect, quarantine reviewed"]
+    TRI --> C3["Demand · a real volume shift ·<br/>baseline re-based with the reason recorded"]
+    TRI --> C4["Abuse or injection signature ·<br/>raised to the AI and ML incident intake (§12.8.4)"]
+
+    C1 --> OUT["Contained · then resolved or accepted"]
+    C2 --> OUT
+    C3 --> OUT
+    C4 --> INC["Handled as an incident, not as a cost event"]
+
+    OUT -.-> NEVER["Never: raise a budget to silence a signal ·<br/>edit an attribution record · disable the metric ·<br/>weaken the post-check or the redaction chokepoint"]

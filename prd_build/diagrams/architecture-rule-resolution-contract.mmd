@@ -1,0 +1,35 @@
+flowchart TB
+    classDef req fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+    classDef step fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef ok fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef err fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+
+    REQ["resolve request<br/>rule class, jurisdiction set, period,<br/>evaluation context, pack pin or none"]:::req
+    V1{"evaluation context complete<br/>and internally consistent"}:::step
+    E1["E-CONTEXT-INCOMPLETE<br/>blocking, names the missing field"]:::err
+    V2{"jurisdiction resolved from a<br/>work location, not an employee"}:::step
+    E2["E-JURISDICTION-UNRESOLVED<br/>blocking, names the assignment"]:::err
+    V3{"pack pin supplied"}:::step
+    P1["resolve the pinned pack version set<br/>replay path, no new decision time"]:::step
+    P2["resolve as known at the as-of decision time<br/>first evaluation path"]:::step
+    V4{"exactly one version covers the period"}:::step
+    E3["E-NO-RULE-IN-FORCE<br/>blocking, never a zero, never a neighbour version"]:::err
+    E4["E-OVERLAPPING-VERSIONS<br/>blocking, a pack defect, quarantines the pack"]:::err
+    V5{"superseding retro-effective version present"}:::step
+    OK1["outcome plus resolved version ids,<br/>clauses, citations and a pack pin handle"]:::ok
+    OK2["same outcome plus RETRO-SUPERSEDED flag<br/>caller enqueues the permitted correction"]:::ok
+
+    REQ --> V1
+    V1 -- no --> E1
+    V1 -- yes --> V2
+    V2 -- no --> E2
+    V2 -- yes --> V3
+    V3 -- yes --> P1
+    V3 -- no --> P2
+    P1 --> V4
+    P2 --> V4
+    V4 -- "zero versions" --> E3
+    V4 -- "two or more" --> E4
+    V4 -- "exactly one" --> V5
+    V5 -- no --> OK1
+    V5 -- yes --> OK2

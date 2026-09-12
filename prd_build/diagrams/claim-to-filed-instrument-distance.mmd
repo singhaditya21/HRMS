@@ -1,0 +1,18 @@
+flowchart LR
+    A["A claim in a PRD<br/>(e.g. 12% PF rate,<br/>50% wage add-back)"]
+    M{"Confidence marker<br/>[Verified] / [Hypothesis] / [Killed]<br/>— the load-bearing wall"}
+
+    subgraph STEPS["Three engineering steps, not thirty"]
+        direction LR
+        S1["Step 1: Graded claim becomes a<br/>versioned rule-store row (&sect;02.10)<br/>keyed by authority, jurisdiction,<br/>instrument, effective-date, corrigendum"]
+        S2["Step 2: Row feeds a<br/>deterministic computation<br/>(payroll / TDS / PF engine)"]
+        S3["Step 3: Computation emits a<br/>conformance-tested return"]
+        S1 --> S2 --> S3
+    end
+
+    Z["A number in a filed Form 138<br/>portal-accepted artefact, submitted by<br/>attended, assisted filing under the<br/>employer's written authority &sect;22<br/>liability stays with the employer:<br/>penalty &amp; interest exposure"]
+
+    A --> M
+    M -->|"[Verified]: safe to hard-code"| S1
+    M -.->|"[Hypothesis]/[Killed]:<br/>must not reach the engine"| BLOCK["Blocked from<br/>hard-code &amp; contract"]
+    S3 --> Z

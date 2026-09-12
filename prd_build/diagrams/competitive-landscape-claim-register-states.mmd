@@ -1,0 +1,37 @@
+stateDiagram-v2
+    direction TB
+    [*] --> DRAFT : author records statement, vendor and intended artefact
+
+    DRAFT --> CAPTURED : research attaches a capture that meets the dual-capture rule<br>posture label set to declared, observed in product or claim posture
+    DRAFT --> REJECTED : no artefact can carry the statement<br>or the only source is a search summary or a rival's comparison page
+
+    CAPTURED --> CLEARED : rules CLR-02 to CLR-09 and CLR-12 to CLR-16 pass<br>instance fits a counsel-cleared template for its class
+    CAPTURED --> COUNSEL : class is counsel-per-instance<br>capability absent, commercial terms, legal-comparative
+    CAPTURED --> REJECTED : wording cannot be scoped to the artefact read
+
+    COUNSEL --> CLEARED : counsel records clearance on the entry
+    COUNSEL --> REJECTED : counsel refuses the phrasing in every form
+
+    CLEARED --> PUBLISHED : capture still inside its age window on the day of use<br>our artefact linked as a claim use row
+    CLEARED --> WITHDRAWN : capture expires before first use
+
+    PUBLISHED --> WITHDRAWN : watch alert triaged as material<br>or the capture reaches its expiry date
+    WITHDRAWN --> CAPTURED : fresh capture taken inside the withdrawal window
+    WITHDRAWN --> RETIRED : the finding is superseded or killed<br>entry and reason kept, never deleted
+
+    REJECTED --> RETIRED : kept as a record of what may not be said
+    RETIRED --> [*]
+
+    note right of WITHDRAWN
+        Withdrawal fans out. Every claim use row is flagged
+        within the withdrawal window and every live artefact
+        carrying the claim is pulled or re-cleared.
+        A claim is never deleted, so a killed claim
+        cannot quietly return.
+    end note
+
+    note left of PUBLISHED
+        Only PUBLISHED claims may appear outside the company.
+        Export of a claim whose capture is outside the age
+        window is blocked, not warned.
+    end note

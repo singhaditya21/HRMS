@@ -1,0 +1,48 @@
+stateDiagram-v2
+    state "1. Enrollment status" as ENR {
+        [*] --> proposed
+        proposed --> active : Employer confirms / PRAN issued<br>emit add-member, accrue from effective_from
+        proposed --> void : Never activated e.g. PRAN rejected<br>no accrual, row kept for audit
+        active --> suspended : Unpaid leave / sabbatical / LOP<br>accrual STOPS, row retained, modify-member
+        suspended --> active : Return from leave<br>accrual resumes, no data loss, re-add
+        active --> terminated : Exit / scheme withdrawal<br>pro-rated final period, gratuity settles, EDLI claim only on death in service, delete-member
+        void --> [*]
+        terminated --> [*]
+    }
+
+    note right of ENR
+        Every transition is an audited event, BEN-05.
+        No hard delete of bitemporal-class rows. Erasable classes are shredded.
+        Perquisite/contribution accrual follows the enrollment state.
+    end note
+
+    state "2. Endorsement status, to insurer or TPA" as END {
+        [*] --> drafted
+        drafted --> sent : batched per policy per cycle, BEN-10
+        sent --> acknowledged : ack_ref received
+        acknowledged --> premium_adjusted : insurer re-bills premium
+        sent --> exception : no ack_ref past SLA<br>surfaces in exceptions queue, BEN-11
+        premium_adjusted --> [*]
+    }
+
+    state "3. FBP declaration + proof-of-spend" as FBP {
+        state "Declaration" as DEC {
+            [*] --> draft
+            draft --> submitted : employee allocates CTC for the tax year
+            submitted --> locked : locks with investment-declaration cycle,<br>hard proof-lock before Q4 true-up, BEN-35
+        }
+        state "proof_of_spend, per line, in parallel" as POS {
+            [*] --> pending
+            pending --> approved : evidence verified, exempt
+            pending --> rejected : no valid proof, taxable
+            pending --> query : clarification sought
+            query --> approved
+            query --> rejected
+        }
+    }
+
+    note right of FBP
+        Taxable-vs-exempt split on each payslip
+        is a pure function of current proof state,
+        recomputed every run, BEN-39.
+    end note

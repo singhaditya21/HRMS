@@ -1,0 +1,31 @@
+stateDiagram-v2
+    direction LR
+
+    state "Draft - author holds it" as Draft
+    state "In review - counsel pack assembled" as Review
+    state "Cleared - usable verbatim on its channels" as Cleared
+    state "Suspended - channels listed for withdrawal" as Suspended
+    state "Withdrawn - readable only as history" as Withdrawn
+    state "Superseded by a newer cleared version" as Superseded
+
+    [*] --> Draft
+    Draft --> Review: Submitted, evidence present and commencement named
+    Review --> Draft: Counsel returns it with a reason
+    Review --> Cleared: Clearance recorded with reviewer, date and scope
+    Cleared --> Suspended: Watch item fires, or an EV row is re-graded in section 02
+    Cleared --> Suspended: Corrigendum check older than the re-check age
+    Suspended --> Review: Primary source re-pulled, capture date refreshed
+    Suspended --> Withdrawn: Evidence no longer supports the wording
+    Cleared --> Superseded: A successor version reaches Cleared
+
+    note right of Cleared
+        No transition from Draft straight to Cleared.
+        No edit in place - a change of wording is a new version.
+        The assistant may read Cleared entries and nothing else.
+    end note
+
+    note right of Suspended
+        A suspension is lifted only through re-verification,
+        never by approval alone.
+        Dependent copy is withdrawn from its channels first.
+    end note

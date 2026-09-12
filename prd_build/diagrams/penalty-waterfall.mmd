@@ -1,0 +1,34 @@
+flowchart TD
+    START([One EPF ECR missed: 60-person firm, filer on leave<br/>Monthly PF remittance Rs 1,20,000<br/>60 employees x assumed blended Rs 2,000/head]):::trig
+
+    subgraph QUANT["Quantifiable penalty layers (3-month delay illustration)"]
+        direction TB
+        P1["+ Interest, the portal's 7Q line: 12% p.a. simple, S.O. 2698-E<br/>= 1.2L x 12% x 3/12 = Rs 3,600<br/>mandatory and auto-calculated with the contribution - EV-039"]
+        P2["+ Damages, legacy s.14B - Code-era provision not captured<br/>scale not in the evidence base - epf.damages_scale, no default<br/>= 1.2L x d x 3/12 = Rs 300 per point of annual rate d<br/>may be deposited later at the employer's option - EV-039"]
+        P1 --> P2
+    end
+
+    SUB{{"Arithmetic subtotal: Rs 3,600 + Rs 300 x d<br/>one missed portal, one month"}}:::sub
+
+    subgraph UNINS["The unquantified layer - not in the arithmetic"]
+        direction TB
+        U1["Employer, not the bureau, receives the interest and damages demand"]
+        U2["Code-era offence provisions for repeat default unmapped - not sized"]
+        U3["Reputational and audit cost"]
+        U1 --> U2 --> U3
+    end
+
+    OUT([Mandatory interest alone = 40-75pct of one month of the product<br/>at Rs 80-150 PEPM, Rs 4,800-9,000 for 60 employees<br/>before damages and the unquantified layers - no forewarning today]):::net
+
+    GAP["The gap the retainer was supposed to insure<br/>filing-status visibility = the real insurance"]:::note
+
+    START --> QUANT
+    QUANT --> SUB
+    SUB --> UNINS
+    UNINS --> OUT
+    OUT -.-> GAP
+
+    classDef trig fill:#e8eef7,stroke:#41618c,color:#1b2a44;
+    classDef sub fill:#fff4d6,stroke:#b8891f,color:#5a4208;
+    classDef net fill:#f7dede,stroke:#a83232,color:#4d1414;
+    classDef note fill:#eef7e8,stroke:#5a8c41,color:#24401b;

@@ -1,0 +1,45 @@
+flowchart TB
+    classDef src fill:#3d3d3d,stroke:#6b6b6b,color:#ffffff,stroke-width:1px;
+    classDef snap fill:#123a52,stroke:#1f5f85,color:#e6f5ff,stroke-width:1px;
+    classDef out fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef hold fill:#5a3a1e,stroke:#8f5c2f,color:#fff3ea,stroke-width:1px;
+    classDef never fill:#4a1f26,stroke:#8a3a46,color:#ffe9ec,stroke-width:1px;
+
+    A["Day-status counts - section 09<br/>paid, LOP, weekly offs, holidays, NCP, OT hours by band"]:::src
+    B["Service record - section 07<br/>joining, leaving, work location, establishment"]:::src
+    C["Compensation - assignments and revisions<br/>effective-dated, FR-PAY-103"]:::src
+    D["Variable pay, one-time items, recoveries"]:::src
+    E["Declarations, proofs and the regime election<br/>FR-PAY-503"]:::src
+    F["Identifier state - UAN, PAN, ESIC IP, bank<br/>section 07"]:::src
+    G["Opening balances at a cutover<br/>attested, FR-PAY-314"]:::src
+    H["Rule-set versions for the period<br/>resolved through the run's decision time<br/>never a snapshot content"]:::src
+    CTX["Evaluation context - FR-PAY-210<br/>disbursal date, decision time,<br/>jurisdiction set, regime election"]:::snap
+
+    GATE{"M2 close inputs<br/>checklist closed or waived<br/>plus hard guards HG-1 to HG-3"}
+    SNAP["Input snapshot frozen<br/>one version, read only<br/>each fact stamped with source and time"]:::snap
+    EVAL["Evaluation - pure function of<br/>snapshot, rule-set version, context<br/>M4 and M5"]:::out
+
+    PUNCH["Punches, biometric templates,<br/>rendered documents, consent artefacts"]:::never
+    NOTE["Never evaluation inputs - erasable classes,<br/>so an erasure never moves a replayed figure"]:::never
+
+    R1["Reopen - M3<br/>new snapshot version, both kept"]:::hold
+    R2["Defer to the next wage month<br/>labelled adjustment, FR-PAY-111"]:::hold
+    R3["Correction run after LOCKED<br/>a diff, never a mutation, FR-PAY-307"]:::hold
+
+    A --> GATE
+    B --> GATE
+    C --> GATE
+    D --> GATE
+    E --> GATE
+    F --> GATE
+    G --> GATE
+    GATE -->|"a class is incomplete"| MISS["Missing-fact behaviour per class<br/>block, compute on the last known value,<br/>or proceed and flag - FR-PAY-313"]:::hold
+    MISS --> GATE
+    GATE -->|"complete"| SNAP
+    H --> EVAL
+    SNAP --> EVAL
+    CTX --> EVAL
+    PUNCH -.-> NOTE
+    SNAP -. "source edited after the freeze" .-> R1
+    SNAP -. "source edited after the freeze" .-> R2
+    EVAL -. "source edited after LOCKED" .-> R3

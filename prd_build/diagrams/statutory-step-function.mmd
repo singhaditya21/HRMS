@@ -1,0 +1,24 @@
+flowchart LR
+    classDef step fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef gate fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+    classDef spine fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+
+    S0["HC 1-9<br/>TDS on salary (24Q)<br/>from Rupee 1"]:::step
+    S10["HC 10+<br/>+ Professional Tax (state)<br/>+ Shops/Estab & LWF"]:::step
+    S20["HC 20+<br/>+ EPF/EPS (EPFO)<br/>ECR monthly"]:::step
+    SBIG["HC 50-200<br/>revenue-carrying band<br/>full statutory stack"]:::step
+
+    ESI{{"ESI: 10+ or 20+<br/>threshold varies by state"}}:::gate
+    GRAT{{"Gratuity: any HC<br/>triggers at 5-yr tenure<br/>(time-based, not HC)"}}:::gate
+
+    SPINE["Filing calendar = product spine<br/>each step adds a recurring return"]:::spine
+
+    S0 --> S10 --> S20 --> SBIG
+    S10 -.state rule.-> ESI
+    S20 -.state rule.-> ESI
+    ESI -.-> SBIG
+    GRAT -.overlays all bands.-> SPINE
+    S0 --> SPINE
+    S10 --> SPINE
+    S20 --> SPINE
+    SBIG --> SPINE

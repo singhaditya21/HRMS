@@ -1,0 +1,35 @@
+flowchart TD
+    KMS["Managed KMS — India region (ap-south-1)<br/>Master Key / KEK<br/>auto-rotation &le; 365 days · KMS policy audit"]
+
+    KMS -->|"wraps (envelope encryption)"| DEK_A["Per-tenant DEK<br/>tenant t_00912"]
+    KMS -->|"wraps"| DEK_B["Per-tenant DEK<br/>tenant t_00875"]
+    KMS -->|"wraps - separate keyspace"| AAD["Aadhaar token-store key<br/>separate store, separate access control<br/>(NFR-SEC-303, Part E-6)"]
+    KMS -->|"wraps - separate keyspace"| BIO["Biometric template key<br/>erasable class - subject-level<br/>crypto-shred or tombstone (§14)"]
+    KMS -.->|"distinct key, never primary's"| BKP["Backup / DR Key<br/>restore requires KMS access<br/>(NFR-SEC-302, §17.14)"]
+
+    subgraph APP["App-layer field encryption — Restricted class only"]
+        AAD --> R1["Aadhaar — optional everywhere; token store only<br/>business tables hold an opaque token, never the number or a hash<br/>masked XXXX XXXX 1234 by default (NFR-SEC-303)"]
+        DEK_A --> R2["Bank account"]
+        DEK_A --> R3["PAN"]
+        DEK_A --> R4["Health / disability"]
+        BIO --> R5["Biometric attendance template<br/>no image column, no image bucket"]
+    end
+
+    subgraph STORE["Storage-level AES-256 (volumes, DB, object store, backups)"]
+        S_CONF["Confidential — salary, CTC, PF/ESI/TDS, appraisal<br/>RLS-scoped, storage-encrypted"]
+        S_INT["Internal — org chart, leave, attendance summary<br/>RLS-scoped, storage-encrypted"]
+        S_PUB["Public — form templates, holiday calendar<br/>no special handling"]
+    end
+
+    R1 --> STORE
+    R2 --> STORE
+    R3 --> STORE
+    R4 --> STORE
+    R5 --> STORE
+    BKP -.-> STORE
+
+    NOTE["Field-level classification tag drives encryption + audit (NFR-SEC-204) + purpose and legal-basis tags (NFR-DPDP-501)<br/>Product classes, not legal ones: DPDP has no sensitive category, SPDI r.3 does<br/>Untagged column = build-fail · Restricted read = audited event · never in logs/URL/model-input"]
+    KMS --- NOTE
+
+    SECRETS["Secrets store (NFR-SEC-304)<br/>DB creds · KMS keys · provider/BSP tokens<br/>rotated · never in source/image/env · CI secret-scan gate"]
+    SECRETS -.->|"guards access to"| KMS

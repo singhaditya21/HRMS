@@ -1,0 +1,29 @@
+sequenceDiagram
+    autonumber
+    participant R as Ravi employee
+    participant M as Meera operator
+    participant P as Product
+    participant V as Vikram approver
+    participant B as Employer bank channel
+    participant E as EPFO portal
+
+    R->>P: Flags a missing punch before the cut-off
+    P->>M: Regularisation resolved, inputs close at M2
+    M->>P: Process and reprocess at M4 and M5
+    P->>V: Sign-off artefact presented, bridge closes to zero
+    V->>P: Approve and lock at M6 and M8
+    P->>R: Payslip published with every line explained
+    V->>B: Release the salary file, then the bank OTP, M9
+    B-->>P: UTRs and the actual disbursal date
+    M->>E: Upload the ECR in an attended session
+    E-->>M: Return statement rendered
+    P->>V: Statement reconciled member by member
+    V->>P: Instruct approval, bound to the statement hash
+    M->>E: Approve the return, which can never be cancelled
+    E-->>M: Due Deposit Balance Summary with any 7Q interest
+    Note over P,V: Verification gate - the last point for a downward correction
+    V->>P: Confirm the gate at M10
+    M->>E: Generate the challan with TRRN
+    V->>B: Pay the challan on the employer's own authentication
+    E-->>M: Receipt
+    M->>P: Receipt stored, the filing instance reaches FILED

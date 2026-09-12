@@ -1,0 +1,40 @@
+stateDiagram-v2
+    direction TB
+    [*] --> OPEN: M1 period opened
+    OPEN --> INPUTS_CLOSED: M2 close inputs and freeze the snapshot
+    INPUTS_CLOSED --> OPEN: M3 reopen inputs, before lock only
+    INPUTS_CLOSED --> PROCESSED: M4 process with the evaluation context
+    PROCESSED --> PROCESSED: M5 reprocess and diff
+    PROCESSED --> OPEN: M3 reopen inputs to change them
+    PROCESSED --> APPROVED: M6 checker approves, no blocking validation
+    APPROVED --> PROCESSED: M7 return for correction
+    APPROVED --> LOCKED: M8 lock, publish payslips, bank file
+    LOCKED --> DISBURSED: M9 payment approver releases salaries
+    DISBURSED --> PAYMENT_INITIATED: M10 verification gate passed, statutory payment initiated
+    PAYMENT_INITIATED --> FILED: M11 every monthly filing instance FILED
+    FILED --> [*]
+
+    state "Correction run - a diff against the locked snapshot" as CORRECTION
+    LOCKED --> CORRECTION: M12 correction needed
+    DISBURSED --> CORRECTION: M12
+    PAYMENT_INITIATED --> CORRECTION: M12
+    FILED --> CORRECTION: M12
+
+    note right of LOCKED
+      Reversible before LOCKED.
+      Immutable from LOCKED onward.
+    end note
+
+    note right of PAYMENT_INITIATED
+      The statutory verification gate sits
+      immediately before this state - EV-037.
+      After it, no Revised ECR is possible.
+    end note
+
+    note left of CORRECTION
+      Runs its own OPEN to FILED cycle.
+      Filings route by the EV-037 guards,
+      the fenced arrear flow, or a
+      Form 138 correction statement.
+      The locked month stays byte-identical.
+    end note

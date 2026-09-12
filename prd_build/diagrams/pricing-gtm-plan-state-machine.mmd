@@ -1,0 +1,36 @@
+stateDiagram-v2
+    direction TB
+    [*] --> PROSPECT: T1 marketing visit or partner introduction
+    PROSPECT --> FREE: T2 tenant created, headcount under 20
+    PROSPECT --> FILE: T3 self-serve checkout completed at any headcount
+    FREE --> FILE: T4 census crosses the 20 line, or the tenant elects File
+    FILE --> SCALE_BAND: T5 census crosses the 200 line
+    SCALE_BAND --> FILE: T6 census stays under the 200 line for the whole step-down window
+    FILE --> DUNNING: T7 mandate debit fails
+    SCALE_BAND --> DUNNING: T7 mandate debit fails
+    DUNNING --> FILE: T8 payment recovered inside the grace window
+    DUNNING --> READ_ONLY: T9 grace window expires
+    READ_ONLY --> FILE: T10 arrears cleared
+    READ_ONLY --> CLOSED: T11 closure notice expires
+    FILE --> CLOSING: T12 tenant cancels, effective at term end
+    CLOSING --> FILE: T13 cancellation withdrawn before term end
+    CLOSING --> CLOSED: T14 term ends
+    CLOSED --> FILE: T15 win-back inside the post-closure retention window
+    CLOSED --> [*]: T16 retention window expires, export offered and evidenced
+
+    note left of FREE
+      FREE never enters DUNNING.
+      There is no invoice to fail.
+    end note
+
+    note right of FILE
+      A tenant that has crossed 20 is
+      never auto-returned to FREE.
+      Down-tiering needs a named approver.
+    end note
+
+    note right of READ_ONLY
+      Statutory artefacts, the filing ledger
+      and full export stay available.
+      Never withheld as a collections lever.
+    end note

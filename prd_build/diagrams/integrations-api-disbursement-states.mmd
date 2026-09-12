@@ -1,0 +1,23 @@
+stateDiagram-v2
+    [*] --> DRAFT: batch built from a locked payroll month
+    DRAFT --> PREFLIGHT_FAILED: a line fails IFSC, account, amount, rail or control totals
+    PREFLIGHT_FAILED --> DRAFT: line corrected in the exception worklist
+    DRAFT --> READY: every line passes pre-flight and a rail is resolved per line
+    READY --> HELD: bank connection expiring, stale or locked out on OTP attempts
+    HELD --> READY: tenant re-authenticates, OTP never auto-retried
+    READY --> RELEASED: payment approver distinct from the payroll processor releases
+    RELEASED --> PENDING_BANK_APPROVAL: the corporate has bank-side approval workflows
+    RELEASED --> ACCEPTED_BY_BANK: no bank-side approval configured
+    PENDING_BANK_APPROVAL --> ACCEPTED_BY_BANK: named bank approver authorises in the bank portal
+    PENDING_BANK_APPROVAL --> REJECTED_BY_BANK: bank approver rejects or the window lapses
+    REJECTED_BY_BANK --> DRAFT: batch re-prepared, prior batch retained, never auto re-initiated
+    ACCEPTED_BY_BANK --> PARTIALLY_SETTLED: some lines credited, some returned or failed
+    ACCEPTED_BY_BANK --> SETTLED: every line credited
+    PARTIALLY_SETTLED --> SETTLED: exactly the failed lines re-queued under the same per-line keys
+    SETTLED --> RECONCILED: sum credited equals sum net equals sum payslips
+    RECONCILED --> [*]
+
+    note right of PENDING_BANK_APPROVAL
+        Never described as paid, settled or disbursed
+        on any surface
+    end note

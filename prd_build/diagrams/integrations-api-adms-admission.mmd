@@ -1,0 +1,33 @@
+sequenceDiagram
+    autonumber
+    participant D as Terminal at the site
+    participant E as Tenant-scoped ingest edge
+    participant A as Vendor adapter, versioned
+    participant S as Punch store and quarantine
+    participant X as Exception worklist
+
+    D->>E: handshake with serial and per-device secret
+    E->>E: resolve the route token to exactly one tenant, before any parsing
+    alt serial unregistered or secret wrong
+        E-->>D: rejected, timing identical to an unknown route
+        E->>X: security event, nothing ingested in any tenant
+    else admitted
+        E-->>D: accepted, adapter version pinned for this session
+    end
+
+    D->>E: attendance-log upload, buffered burst after reconnect
+    E->>E: size cap and per-device rate cap checked
+    alt payload above the size cap or device throttled
+        E-->>D: rejected with the vendor retry semantics preserved
+        Note over D: the device keeps its buffer, so no punch is lost
+    else within caps
+        E->>S: raw bytes and payload hash written durably first
+        E->>A: parse
+        A->>S: normalised punch rows, deduplicated on the ingest key
+        S-->>E: durable
+        E-->>D: acknowledge only what is durable
+    end
+
+    A->>S: unparseable records to quarantine with their raw bytes
+    S->>X: one item per device and adapter version, never one per record
+    Note over A,S: a template or image on an attendance record is stripped before persistence

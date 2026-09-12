@@ -1,0 +1,35 @@
+flowchart TB
+    classDef stage fill:#e8eef7,stroke:#41618c,color:#1b2a44;
+    classDef stop fill:#eef1f5,stroke:#6b7a90,color:#1b2a44;
+    classDef svc fill:#fff4d6,stroke:#b8891f,color:#5a4208;
+    classDef us fill:#eef7e8,stroke:#5a8c41,color:#24401b;
+    classDef note fill:#f7f7f7,stroke:#999999,color:#333333;
+
+    S1["Stage 1 - gross-to-net<br/>salary structure, components, LOP, arrears"]:::stage
+    S2["Stage 2 - statutory computation<br/>PF, ESI, PT by state, LWF, TDS"]:::stage
+    S3["Stage 3 - generate the statutory artefact<br/>ECR text file, challans, Form 138 text file, registers"]:::stage
+    S4["Stage 4 - validate against the portal's own structure<br/>for example the FVU for the TDS return"]:::stage
+    S5["Stage 5 - submit on the portal<br/>every surface is an attended portal - no submission API"]:::stage
+    S6["Stage 6 - capture the acknowledgement<br/>return statement and TRRN, Return Receipt Number"]:::stage
+    S7["Stage 7 - stand behind it<br/>contractual remedy, capped - liability stays with the employer"]:::stage
+
+    S1 --> S2 --> S3 --> S4 --> S5 --> S6 --> S7
+
+    N0["Every vendor read reaches stage 1<br/>Frappe HR v16's gross-to-net is genuinely strong"]:::stop
+    N1["Frappe HR v16 source read stops inside stage 2<br/>income tax via slabs, HRA and marginal relief<br/>PF and PT only as component types a user tags, ESI absent<br/>no rate tables, no state dimension"]:::stop
+    N2["Kredily free and Zoho Payroll free - pages stop at the end of stage 2<br/>computation free - statutory outputs sit behind the paywall"]:::stop
+    N3["TallyPrime, Keka, Kredily paid, Zoho Payroll paid - pages and docs stop here<br/>artefacts generated for the customer or its CA to file"]:::stop
+    N4["greytHR's payroll page stops here<br/>24Q generation with FVU validation - generation language only"]:::stop
+    N5["Services layer works here<br/>the CA or bureau, and MYND's outsourced filing operation - unpriced, demo-sold"]:::svc
+    N7["Our deliverable spans stages 3 to 7<br/>attended, assisted submission under written authority<br/>legality under counsel review - section 23"]:::us
+
+    S1 -.- N0
+    S2 -.- N1
+    S2 -.- N2
+    S3 -.- N3
+    S4 -.- N4
+    S5 -.- N5
+    S7 -.- N7
+
+    NB["Claim posture from pricing, payroll and feature pages, docs and source<br/>captured Sep 2026 - absence of a claim is not proof of absent capability"]:::note
+    S7 -.- NB

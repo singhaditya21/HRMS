@@ -1,0 +1,31 @@
+flowchart TD
+    IN["Approver's queue - the artefacts presented to one approver<br/>CA's roster - each client's next instruction-gated act, presented or not"]
+    GRP["Shown in three groups<br/>Pay - SO-PAYRUN, SO-OFFCYCLE, SO-BANK<br/>File - SO-EXIT, SO-RETURN, SO-GATE, SO-ESIC, SO-PT<br/>Quarter and corrections - SO-CORRECTION, SO-STATEMENT<br/>groups ordered by their first item"]
+    K1{"Key 1 - chronology<br/>does leaving it undecided block<br/>a later month's Regular return?"}
+    K2{"Key 2 - due date<br/>which is earlier?<br/>past-due items come first, oldest first"}
+    K3{"Key 3 - asked<br/>has its approver been notified?<br/>roster only - always tied in one approver's queue"}
+    K4{"Key 4 - kind rank<br/>PAYRUN, OFFCYCLE, BANK, EXIT, RETURN,<br/>GATE, ESIC, PT, CORRECTION, STATEMENT"}
+    K5{"Key 5 - presentation<br/>which was presented first?"}
+    OUT["Ordered queue<br/>each row shows due date, approver and reminders sent<br/>past-due EPF rows show predicted 7Q interest per day, labelled a prediction"]
+    NEVER["Ordering never changes a guard<br/>no item becomes decidable earlier because of its place<br/>no damages figure is ever shown"]
+
+    IN --> GRP --> K1
+    K1 -->|"one blocks - it goes first"| OUT
+    K1 -->|"tie"| K2
+    K2 -->|"earlier date first"| OUT
+    K2 -->|"tie"| K3
+    K3 -->|"not yet asked goes first"| OUT
+    K3 -->|"tie"| K4
+    K4 -->|"lower rank first"| OUT
+    K4 -->|"tie"| K5
+    K5 --> OUT
+    OUT -.- NEVER
+
+    classDef input fill:#e8f0fe,stroke:#1a56db,color:#111827;
+    classDef key fill:#fef3c7,stroke:#b45309,color:#111827;
+    classDef out fill:#ecfdf5,stroke:#047857,color:#111827;
+    classDef note fill:#f3f4f6,stroke:#9ca3af,color:#374151,font-style:italic;
+    class IN,GRP input;
+    class K1,K2,K3,K4,K5 key;
+    class OUT out;
+    class NEVER note;

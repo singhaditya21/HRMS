@@ -1,0 +1,18 @@
+flowchart TB
+    subgraph ERASABLE["Erasable class - tombstoned when its retention class expires"]
+        punch[("Punch store<br/>raw, source-tagged, payload_hash")]
+    end
+    punch --> pair["Pairing - FR-ATT-020<br/>skew-corrected, shift-start anchored,<br/>working-day cut-off where there is no roster"]
+    pair --> sessions["Sessions per shift-day<br/>every IN and OUT kept"]
+    sessions --> cell{"Cell state<br/>FR-ATT-033"}
+    cell -->|"paired session"| paired["PAIRED<br/>render per form_ix_multi_session_render,<br/>all sessions stored"]
+    cell -->|"leave, holiday, weekly-off, OD,<br/>absent, not employed, assigned elsewhere, waived"| expl["EXPLAINED<br/>explanation code, tour note for OD"]
+    cell -->|"missing IN or OUT"| unres["UNRESOLVED<br/>blocks sheet close, routed to regularization"]
+    unres -->|"approved regularization"| sessions
+    paired & expl --> lock["Payroll lock of every cycle covering the month<br/>cells frozen as values, never as references"]
+    lock --> v1[("FormIXRow v1<br/>calendar-month sheet per establishment")]
+    v1 -->|"retro correction - FR-STAT-002"| v2[("FormIXRow v2<br/>diff to v1 retained")]
+    v1 & v2 --> inst["Register instance<br/>§06.9 lifecycle and retention clock"]
+    inst --> render["Render in the state's form version<br/>plus the provenance annex - FR-STAT-003"]
+    erase["Punch erasure at retention end"] -.-> punch
+    erase -.->|"never touches"| kept["FormIXRow values unchanged<br/>replay returns lock-time cells flagged source-erased"]

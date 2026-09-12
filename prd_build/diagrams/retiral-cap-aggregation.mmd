@@ -1,0 +1,29 @@
+flowchart TB
+    subgraph SRC["Three sources, one cap (per employee, per tax year)"]
+        EPF["EPF employer contribution<br/>sum of the month's approved ECR returns<br/>post-payment corrections as dated diff rows (BEN-43)"]
+        NPS["NPS employer contribution<br/>regime-conditional 10% or 14%<br/>of basic+DA (BEN-23)"]
+        SUP["Superannuation employer<br/>contribution (BEN-24)"]
+    end
+
+    VPF["VPF = employee's own<br/>contribution (BEN-27)"] -.->|"excluded from<br/>employer cap"| X["not added to aggregate"]
+
+    EPF --> LEDGER
+    NPS --> LEDGER
+    SUP --> LEDGER
+
+    LEDGER["retiral_contribution_ledger<br/>aggregate = EPF + NPS + superann<br/>persisted, audited (BEN-40)"]
+
+    LEDGER --> CAP{"aggregate ><br/>₹7,50,000 per tax year?<br/>s.17(2)(vii), 2025-Act successor pending B9"}
+
+    CAP -->|"No"| NOBREACH["No cap-breach perquisite<br/>cap_breach_amount = 0"]
+
+    CAP -->|"Yes"| BREACH["Excess = aggregate − ₹7,50,000<br/>= taxable perquisite this tax year<br/>e.g. ₹8,01,600 − ₹7,50,000 = ₹51,600<br/>(BEN-41)"]
+
+    BREACH --> STATE["Persist cumulative excess PC1<br/>and prior taxed accretion TP1"]
+
+    STATE --> R3B["Rule 3B accretion (next FYs, BEN-42)<br/>TP = (PC/2)×R + (PC1+TP1)×R<br/>R = I / Favg — stateful across FYs"]
+
+    BREACH --> TAX["Feeds s.392 TDS accrual +<br/>Form 123 (ex-12BA) + annual tax computation"]
+    R3B --> TAX
+
+    NOBREACH -.->|"no perquisite line"| TAX

@@ -1,0 +1,35 @@
+flowchart TD
+    ON["Tenant onboarding<br/>authorised signatory confirms regulated status<br/>sector_profile is never null (NFR-RES-704)"]
+    ON --> P{"sector_profile"}
+
+    P -->|"none"| N["Default bundle<br/>India data at rest, Mumbai + Hyderabad DR<br/>AI per section 12 defaults<br/>sub-processor change = notice"]
+    P -->|"RBI"| R["RBI overlay - addressed to the entity, materiality-gated<br/>India-pinned, localisation secured where material (EV-087, mirror)<br/>AI off until opt-in, inference india_only<br/>sub-processor change blocked until consent, para 16(r)<br/>inspection reaching sub-contractors, para 16(o)"]
+    P -->|"SEBI"| S["SEBI overlay<br/>India-pinned, MeitY-empanelled infrastructure (EV-085)<br/>AI off until opt-in, inference india_only<br/>BYOK or BYOE + dedicated HSM, India key location per FAQ Q26<br/>segregated from in-purview systems (FAQ Q27)<br/>secure erase on exit from disks, backups, logs"]
+    P -->|"IRDAI"| I["IRDAI overlay<br/>no localisation in the 2023 guidelines,<br/>policy records only (EV-086)<br/>AI off until opt-in<br/>reg 53 access undertaking reaches sub-contractors<br/>offshore never offered, reg 53(2)"]
+
+    S --> GATE{"India regions confirmed<br/>MeitY-empanelled in writing?"}
+    GATE -->|"no"| HOLD["SEBI profile NOT activated<br/>open item 8, section 17.20"]
+    GATE -->|"yes"| SOK["SEBI profile active"]
+
+    I --> CLS{"Attended filing added<br/>to an insurer plan?"}
+    CLS -->|"yes"| FLAG["Configurator flags the combination<br/>outsourcing under reg 2(14) is a counsel question, section 23"]
+    CLS -->|"no"| IOK["Self-service licence"]
+
+    N --> PROP["Propagate to every subsystem<br/>storage region, inference routing, sub-processor manifest,<br/>key mode, AI default"]
+    R --> PROP
+    SOK --> PROP
+    FLAG --> PROP
+    IOK --> PROP
+
+    PROP --> DRIFT["Nightly profile-to-config drift check<br/>target 0 drift"]
+    PROP --> PACK["Evidence pack from live config<br/>attestation, manifest, contract rider per profile<br/>supports evidence production - does not discharge<br/>the customer's audit, access and inspection duties"]
+
+    classDef reg fill:#fde7e7,stroke:#c0392b,color:#000;
+    classDef base fill:#e7f0fd,stroke:#2c6fbb,color:#000;
+    classDef gate fill:#fff8e1,stroke:#b8860b,color:#000;
+    classDef out fill:#e7f9ee,stroke:#1e8449,color:#000;
+    class R,S,I reg;
+    class ON,N base;
+    class P,GATE,CLS gate;
+    class HOLD,FLAG gate;
+    class SOK,IOK,PROP,DRIFT,PACK out;

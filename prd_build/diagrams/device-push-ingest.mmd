@@ -1,0 +1,38 @@
+sequenceDiagram
+    autonumber
+    participant DEV as eSSL or ZKTeco terminal
+    participant EP as Tenant-scoped ADMS ingest endpoint
+    participant SEC as Serial and secret check
+    participant ING as Idempotent ingest
+    participant MAP as Device user to employee map
+    participant WL as Exceptions worklist
+    participant ATT as Attendance rules in section 09
+
+    Note over DEV,EP: Setup - admin enters the tenant endpoint and secret in the device cloud settings once
+    Note over DEV,EP: Endpoint paths and packet fields come from the vendor protocol docs at the V-11 bench test, not from this PRD
+    DEV->>EP: Handshake with device serial
+    EP->>SEC: Validate serial and secret against the tenant
+    alt Unknown serial or no secret match
+        SEC-->>DEV: Reject and log a security event, AC-DEV-5
+    else Registered
+        SEC-->>EP: OK, serial resolved to tenant and location
+        EP->>DEV: Queue user-sync commands on the command poll
+    end
+
+    Note over DEV: Device offline 6h across a shift change, buffers 214 punches
+    DEV->>EP: Attendance-log upload with 214 punches
+    Note right of DEV: No ACK in time, device retries the upload twice
+    DEV->>EP: Attendance-log upload again, same records
+    EP->>ING: Punch records with serial, device user, timestamp, direction
+    ING->>ING: Dedup on serial, device user, timestamp, direction and payload hash
+
+    ING->>MAP: Resolve device user to employee
+    alt Mapped
+        MAP->>ATT: Attribute punch, derive IN and OUT, OT, LOP
+    else Unmapped, users 00042 and 00119
+        MAP->>WL: Hold punch, exclude from LOP and OT until an admin maps it, AC-DEV-3
+    end
+    EP-->>DEV: ACK so the device marks records delivered
+    Note over ING,ATT: Result - 212 attributed, 2 held, 0 duplicated, 0 dropped
+
+    Note over DEV,ATT: Device down or unsupported - fall back to web or mobile check-in, bulk CSV, manual muster. Never blocks payroll

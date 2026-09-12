@@ -1,0 +1,41 @@
+stateDiagram-v2
+    direction TB
+
+    state "RECEIVED - logged at the date it reached the employer" as RECEIVED
+    state "ROUTED - case type and clocks set from that date's threshold facts" as ROUTED
+    state "EVIDENCE_ASSEMBLED - reconstruction packs and related records pulled" as EVIDENCE
+    state "ACTION_INITIATED - the employer initiates action under the Act" as ACTION
+    state "RESPONSE_DRAFTED - assembled parts 1, 2, 3 and 5, part 4 authored by the employer" as DRAFTED
+    state "RESPONSE_ISSUED - approved by a named person, channel and date recorded" as ISSUED
+    state "ESCALATED_EXTERNAL - notice of proceedings before a Commissioner, Ombudsman, Local Committee or court" as ESCALATED
+    state "CLOSED - outcome and closing note recorded" as CLOSED
+    state "REOPENED - further complaint or direction on the same facts" as REOPENED
+
+    [*] --> RECEIVED: K1 intake, retention hold placed on the subject's snapshots
+    RECEIVED --> ROUTED: K2 routing on threshold facts with their counting units
+    ROUTED --> EVIDENCE: K3 owner requests the pack
+    EVIDENCE --> ACTION: K4 exit a, initiate action under the Act
+    EVIDENCE --> DRAFTED: K5 exit b, written reasoned response, RPwD Rule 3 clause 2 cases only
+    DRAFTED --> ISSUED: K6 named approver issues, never sent automatically
+    ROUTED --> ESCALATED: K7 external proceedings, hold widened
+    EVIDENCE --> ESCALATED: K7
+    ISSUED --> CLOSED: K8 outcome recorded, clocks stopped, hold not released
+    ACTION --> CLOSED: K8
+    ESCALATED --> CLOSED: K8
+    CLOSED --> REOPENED: K9 new clock instance, prior record untouched
+    REOPENED --> EVIDENCE: Owner reworks the case
+    CLOSED --> [*]
+
+    note right of ROUTED
+        A complaint engaging two statutes opens linked cases,
+        one per statute, each with its own owner and clock.
+        Below twenty persons a disability complaint opens a
+        tenant-policy case, and the screen says the written
+        response duty attaches at twenty.
+    end note
+
+    note right of DRAFTED
+        The assembler refuses to draft where the snapshot is
+        missing or erased and says so. A truthful cannot
+        reconstruct beats a plausible reconstruction.
+    end note

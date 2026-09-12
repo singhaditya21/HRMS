@@ -1,0 +1,25 @@
+stateDiagram-v2
+    direction LR
+    [*] --> PLANNED: RS1 release defined from ledger rows tagged to it
+    PLANNED --> IN_BUILD: RS2 every entry check passes
+    IN_BUILD --> GATE_REVIEW: RS3 every row reports done with its evidence
+    GATE_REVIEW --> IN_BUILD: RS5 a gate check fails, named with its owner
+    GATE_REVIEW --> RELEASED: RS4 every gate check passes, every fence declared
+    PLANNED --> RESCOPED: RS6 fence outcome or approved change request
+    IN_BUILD --> RESCOPED: RS6 fence outcome or approved change request
+    RESCOPED --> PLANNED: RS7 rows re-tagged and the P0 lint passes
+    RELEASED --> HELD: RS8 hold trigger - intake stops for the affected family
+    HELD --> RELEASED: RS9 root cause closed and corrective version published
+    RELEASED --> SUPERSEDED: RS10 next release RELEASED
+    SUPERSEDED --> [*]
+
+    note right of GATE_REVIEW
+      R1 gate is the pre-launch gate PL-01 to PL-05.
+      R2 gate is R2X-01 to R2X-06.
+      R3 gate is the v1 to v2 gate V1X-01 to V1X-08.
+    end note
+
+    note right of HELD
+      Existing tenants keep the Mode A fallback.
+      No new tenant is admitted to the held family.
+    end note

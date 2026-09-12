@@ -1,0 +1,25 @@
+flowchart TD
+    classDef input fill:#3d3d3d,stroke:#6b6b6b,color:#ffffff,stroke-width:1px;
+    classDef rec fill:#1d3a5a,stroke:#2f5c8f,color:#eaf3ff,stroke-width:1px;
+    classDef src fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef fence fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+
+    FILE["Form 138 Q1 to Q3 statement<br/>ASCII txt, caret-delimited, variable width<br/>every record ends CR LF, the last one included"]:::input
+    FH["FH - file header<br/>file type SL1<br/>16 fields, so 15 delimiters"]:::rec
+    BH["BH - batch header<br/>Form Number 138, Tax Year 202627, the quarter<br/>salary-detail and 194P counts marked Not applicable in Q1 to Q3"]:::rec
+    CD["CD - challan detail<br/>challan columns A to K after the remap<br/>plus Interest Allocation and Others Allocation"]:::rec
+    DD["DD - deductee detail, Annexure I<br/>columns C to K, M and N after the remap<br/>date of payment inside the quarter and tax year"]:::rec
+    Q4["Annexure II salary summary and Annexure III specified senior citizens<br/>Q4 only - format not released, fenced"]:::fence
+    CSI["csi file from TIN Challan Status Inquiry<br/>import mandatory, TAN and TAN name must match"]:::src
+    WB["Protean workbook, pinned by the downloaded file<br/>field names and positions per record type"]:::src
+    FIX["138RQ1.txt sample<br/>the golden fixture, never a transcription of it"]:::src
+
+    FILE --> FH
+    FH -->|"then"| BH
+    BH -->|"then"| CD
+    CD -->|"then"| DD
+    CSI -.->|"verifies"| CD
+    WB -.->|"defines"| FH
+    WB -.->|"defines"| DD
+    FIX -.->|"tests"| FILE
+    BH -.->|"a Q4 statement only"| Q4

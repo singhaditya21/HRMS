@@ -1,0 +1,39 @@
+flowchart TB
+    classDef q fill:#123a52,stroke:#1f5f85,color:#e6f5ff,stroke-width:1px;
+    classDef line fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef hold fill:#5a3a1e,stroke:#8f5c2f,color:#fff3ea,stroke-width:1px;
+    classDef none fill:#3d3d3d,stroke:#6b6b6b,color:#ffffff,stroke-width:1px;
+
+    START["Every person on the locked snapshot of<br/>wage month M, for one EPF registration"]:::q
+    Q1{"An EPF member of this<br/>registration in month M?"}:::q
+    N1["No line. An excluded employee<br/>or another registration's member<br/>AC-202.3, AC-105.2"]:::none
+    Q2{"Any employment day in M<br/>between the valid date of joining<br/>and the date of leaving?"}:::q
+    N2["No line. A contribution outside that<br/>window is refused by the portal<br/>EV-040, EV-041"]:::none
+    Q3{"UAN present and usable?"}:::q
+    H1["No line. Exclusion item on the ledger<br/>with its M plus 4 deadline and notices<br/>AC-701.2, AC-712.6"]:::hold
+    Q4{"Already carried by an approved<br/>return for month M?"}:::q
+    H2["Not in this return. A change for a<br/>returned member is a Revised return<br/>while no payment is initiated<br/>FR-PAY-714"]:::hold
+    Q5{"Paid in a run locked before<br/>this return is generated?"}:::q
+    H3["No line. Held or catch-up line<br/>classified by FR-PAY-406, design route<br/>a Supplementary for month M"]:::hold
+    Q6{"Any paid day in M?"}:::q
+    L1["Zero-wage line - wages at zero,<br/>NCP days at the month's days<br/>section 09 FR-FIL-002"]:::line
+    L2["Member line from the locked snapshot<br/>fields per section 06.2, contributions<br/>to the date of leaving where there is one"]:::line
+    OUT["Selected lines assembled, self-checked,<br/>packaged and hashed - FR-PAY-721"]:::line
+    AR["True arrears never take a line here.<br/>Ledger item, arrear flow, fenced<br/>EV-043, AC-401.2"]:::hold
+
+    START --> Q1
+    Q1 -->|"no"| N1
+    Q1 -->|"yes"| Q2
+    Q2 -->|"no"| N2
+    Q2 -->|"yes"| Q3
+    Q3 -->|"no"| H1
+    Q3 -->|"yes"| Q4
+    Q4 -->|"yes"| H2
+    Q4 -->|"no"| Q5
+    Q5 -->|"no"| H3
+    Q5 -->|"yes"| Q6
+    Q6 -->|"no"| L1
+    Q6 -->|"yes"| L2
+    L1 --> OUT
+    L2 --> OUT
+    AR -.-> OUT

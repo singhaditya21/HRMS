@@ -1,0 +1,26 @@
+stateDiagram-v2
+    direction LR
+    [*] --> ON: K1 provisioned with no sector profile
+    [*] --> OFF: K2 provisioned RBI, SEBI or IRDAI, or AI declined at onboarding
+    OFF --> ENABLE_PENDING: K3 tenant admin requests enablement
+    ENABLE_PENDING --> ON: K4 distinct checker approves and an eligible provider exists
+    ENABLE_PENDING --> OFF: K5 checker rejects or request withdrawn
+    ON --> OFF: K6 any tenant admin switches off, no checker
+    ON --> SUSPENDED: K7 incident owner contains an AI or provider fault
+    ENABLE_PENDING --> SUSPENDED: K7 incident owner contains an AI or provider fault
+    SUSPENDED --> ON: K8 incident owner lifts containment
+    SUSPENDED --> OFF: K9 tenant admin switches off during suspension
+    ON --> ON: K10 per-feature opt-out or checked opt-in
+    ON --> OFF: K11 sector profile changes to RBI, SEBI or IRDAI
+
+    note right of ON
+      Narrowing is single-actor and immediate.
+      Widening is maker-checked.
+      The chokepoint re-reads the state on
+      every call - it is the enforcement point.
+    end note
+
+    note right of SUSPENDED
+      Only the incident owner lifts it.
+      A tenant may still switch off.
+    end note

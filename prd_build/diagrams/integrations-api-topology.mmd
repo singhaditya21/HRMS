@@ -1,0 +1,58 @@
+flowchart LR
+    classDef hub fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:2px;
+    classDef sys fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef gov fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+    classDef human fill:#4a3a0b,stroke:#8a6d14,color:#fff6da,stroke-width:1px;
+    classDef other fill:#2a2a2a,stroke:#555,color:#f0f0f0,stroke-width:1px;
+
+    HUB{{"Filing-First HRMS<br/>integration layer<br/>versioned schemas · idempotency keys<br/>retry and DLQ · per-tenant secrets · audit"}}:::hub
+
+    subgraph FIN["Money and books"]
+        direction TB
+        TALLY["Tally, on the customer's LAN<br/>payroll journal as XML or CSV<br/>via file or local connector"]:::sys
+        BANKF["Per-bank salary file<br/>the floor, every bank"]:::sys
+        BANKA["Payout aggregator or connected banking<br/>the upsell, partner-gated"]:::sys
+        BAPP["Bank-side maker-checker<br/>approval in the bank portal"]:::human
+    end
+
+    subgraph DEV["On-prem devices"]
+        direction TB
+        BIO["eSSL / ZKTeco terminals<br/>outbound ADMS push"]:::sys
+    end
+
+    subgraph GOVT["Statutory portals, no submission API we are aware of"]
+        direction TB
+        OP["Attended session<br/>employer, or our operator<br/>under written authority to act"]:::human
+        EPFO["EPFO employer portal<br/>login with CAPTCHA<br/>ECR return, then challan with TRRN"]:::gov
+        TDS["Income-tax portal<br/>deductor runs FVU with .csi<br/>Form 138 Q1-Q3"]:::gov
+        ESIC["ESIC portal<br/>contribution template upload"]:::gov
+        PT["State PT and LWF<br/>one manual portal per state"]:::gov
+        TRACES["TRACES<br/>generates Form 130"]:::gov
+    end
+
+    subgraph OUT["People, identity, talent"]
+        direction TB
+        COMMS["Email · DLT SMS · WhatsApp via BSP"]:::other
+        IDP["IdP: OIDC / SAML / SCIM"]:::other
+        JOBS["Job boards<br/>inbound posting and applications only"]:::other
+    end
+
+    HUB -->|"journal file or connector post"| TALLY
+    HUB -->|"generate and pre-flight"| BANKF
+    HUB -->|"API payout, idempotency key"| BANKA
+    BANKF --> BAPP
+    BANKA --> BAPP
+    BIO -->|"punch packets, deduped"| HUB
+
+    HUB -->|"portal-accepted artefact"| OP
+    OP --> EPFO
+    OP --> TDS
+    OP --> ESIC
+    OP --> PT
+    TDS -.->|"Annexure I plus Q4 Annexure II"| TRACES
+    TRACES -.->|"signed certificate downloaded, then distributed"| HUB
+    EPFO -.->|"return file ID, TRRN, receipt captured"| HUB
+
+    HUB --> COMMS
+    IDP --> HUB
+    JOBS -->|"applications"| HUB

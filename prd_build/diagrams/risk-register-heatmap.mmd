@@ -1,0 +1,48 @@
+flowchart TB
+    classDef hdr fill:#2c3e50,color:#ffffff,stroke:#1b2631,stroke-width:1px;
+    classDef rowlbl fill:#34495e,color:#ffffff,stroke:#1b2631,stroke-width:1px;
+    classDef high fill:#c0392b,color:#ffffff,stroke:#7b241c,stroke-width:1px;
+    classDef med fill:#e59866,color:#1b2631,stroke:#b9770e,stroke-width:1px;
+    classDef low fill:#82c99a,color:#1b2631,stroke:#1e8449,stroke-width:1px;
+    classDef none fill:#eaecee,color:#7b7d7d,stroke:#aeb6bf,stroke-width:1px;
+    classDef legend fill:#fdf2e0,color:#1b2631,stroke:#b9770e,stroke-width:1px;
+
+    c0r0["RESIDUAL &gt;&gt;"]:::hdr
+    c0r1["Market and<br/>competitive"]:::rowlbl
+    c0r2["Statutory and<br/>compliance"]:::rowlbl
+    c0r3["Operating-model<br/>and org"]:::rowlbl
+    c0r4["Technical and<br/>vendor"]:::rowlbl
+    c0r5["Data-protection<br/>and security"]:::rowlbl
+    c0r6["Migration and<br/>churn"]:::rowlbl
+
+    c1r0["HIGH"]:::hdr
+    c1r1["R-36 rival adds submission<br/>vs that vendor"]:::high
+    c1r2["&#9733;R-2 ESI cliff 22-Nov<br/>&#9733;R-15 50% add-back<br/>&#9733;R-30 edge cases<br/>&#9733;R-32 attended-filing legality"]:::high
+    c1r3["&#9733;R-10 maint. capacity<br/>&#9733;R-16 ISO 27001 clock<br/>&#9733;R-17 fund-before-gate"]:::high
+    c1r4["&mdash;"]:::none
+    c1r5["R-21 CERT-In<br/>R-27 tenant isolation"]:::high
+    c1r6["R-28 cutover churn<br/>R-29 filing-SLA miss<br/>&#9733;R-31 April-only go-live"]:::high
+
+    c2r0["MEDIUM"]:::hdr
+    c2r1["R-1 Zoho free gates<br/>R-6 fintech zero-price<br/>R-9 realised below list<br/>R-35 Zoho adds submission<br/>R-37 MYND self-serves<br/>R-38 Tally closes PT/LWF<br/>R-39 seat block dropped<br/>R-40 greytHR price cut*<br/>R-41 free tier to 20"]:::med
+    c2r2["&#9733;R-3 corrigendum<br/>R-4 Q4 Form 138 layout<br/>R-5 uneven state rules<br/>R-34 Aadhaar-optional vs filing"]:::med
+    c2r3["R-11 key-person<br/>statutory knowledge"]:::med
+    c2r4["R-13 FX/rupee*<br/>R-14 CA channel inverts<br/>R-19 device effort<br/>R-20 WhatsApp cost<br/>R-24 per-user blowout<br/>R-25 recruiting scale<br/>R-26 prompt injection"]:::med
+    c2r5["R-22 consent-regime switch*<br/>R-23 residency lock-in<br/>R-33 migration consent gap"]:::med
+    c2r6["&mdash;"]:::none
+
+    c3r0["LOW"]:::hdr
+    c3r1["R-7 Frappe gross-to-net*<br/>R-8 assistant converge"]:::low
+    c3r2["&mdash;"]:::none
+    c3r3["&mdash;"]:::none
+    c3r4["R-12 Gemini 2x price<br/>R-18 Naukri dependency<br/>R-42 WABA INR deadline**"]:::low
+    c3r5["&mdash;"]:::none
+    c3r6["&mdash;"]:::none
+
+    c0r0 ~~~ c0r1 ~~~ c0r2 ~~~ c0r3 ~~~ c0r4 ~~~ c0r5 ~~~ c0r6
+    c1r0 ~~~ c1r1 ~~~ c1r2 ~~~ c1r3 ~~~ c1r4 ~~~ c1r5 ~~~ c1r6
+    c2r0 ~~~ c2r1 ~~~ c2r2 ~~~ c2r3 ~~~ c2r4 ~~~ c2r5 ~~~ c2r6
+    c3r0 ~~~ c3r1 ~~~ c3r2 ~~~ c3r3 ~~~ c3r4 ~~~ c3r5 ~~~ c3r6
+
+    L["&#9733; = §20.10 watchlist (review every cadence)  &nbsp;|&nbsp;  * R-13, R-22, R-40 sit Low&ndash;Med  &nbsp;|&nbsp;  ** R-42 is High on 1 Jan 2027 if not migrated  &nbsp;|&nbsp;  R-7 flips to HIGH if a rep claims gross-to-net superiority  &nbsp;|&nbsp;  Severity orders the table; the pre-agreed response, not the score, is the deliverable"]:::legend
+    c0r6 ~~~ L

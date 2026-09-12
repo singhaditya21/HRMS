@@ -1,0 +1,42 @@
+flowchart LR
+  subgraph V1["v1 — Statutory beachhead"]
+    direction TB
+    O["Onboarding handoff only (§10.8)<br/>terminal step of core-HR record creation"]
+    O1["Appointment letter (state-prescribed form, 10+ workers)"]
+    O2["UAN link or UMANG routing + ESI IP"]
+    O3["EPF and ESI joining declarations + EPF nomination"]
+    O4["TDS previous-employer income (Form 122, ex-12B)"]
+    O --> O1 & O2 & O3 & O4
+    OM["Money: Bundled — not recruiting, it is record creation the payroll engine needs"]
+  end
+
+  subgraph V15["v1.5 — Recruiting: the talent wedge"]
+    direction TB
+    R["Recruiting core (inbound-only ATS)"]
+    R1["Requisitions"]
+    R2["Job-board multi-post (BYO contract)"]
+    R3["Candidate pipeline / ATS core"]
+    R4["Offer management"]
+    R5["Discrimination-defensibility controls (FR-T-D)<br/>named confirmer · snapshot · attribute bar"]
+    R --> R1 & R2 & R3 & R4 & R5
+    RM["Money: Metered per requisition/hire (deferred)"]
+  end
+
+  subgraph V2["v2 — Performance + recruiting depth"]
+    direction TB
+    P["Performance (no per-unit meter, tier per §18)"]
+    P1["Goals / KRAs"]
+    P2["Review cycles + calibration"]
+    P3["Increment/promotion to payroll loop"]
+    P4["Recruiting depth: referrals, BGV, interview kits"]
+    P --> P1 & P2 & P3 & P4
+    PM["Money: no per-unit meter"]
+  end
+
+  V1 -->|"beachhead payroll stable;<br/>handoff exists to receive hires"| V15
+  V15 -->|"shared person identity persists"| V2
+
+  ENG(["Payroll / statutory engine"])
+  O2 -.->|"records the engine consumes"| ENG
+  R4 -.->|"offer CTC = wage-base run"| ENG
+  P3 -.->|"increment to CTC to effective-dated retro/arrears"| ENG

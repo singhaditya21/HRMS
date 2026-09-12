@@ -1,0 +1,32 @@
+flowchart LR
+    subgraph LIVE["Binding before 2025 and still live"]
+        A1["CERT-In Directions, 28.04.2022<br/>live since late June 2022<br/>six-hour reporting, 180-day in-India ICT logs<br/>EV-062"]
+        A2["IT Act s.43A + SPDI Rules 2011<br/>written consent before sensitive data<br/>s.43A compensation has no cap<br/>EV-060, EV-061"]
+        A3["Aadhaar Act 2016, Sharing Regulations 2016,<br/>AOVR 2021 as amended 9.12.2025<br/>EV-067 to EV-071"]
+        A4["RPwD 2016 + Rules 2017, Transgender Persons Act 2019,<br/>HIV and AIDS Act 2017, POSH Act 2013<br/>EV-056, EV-075 to EV-082"]
+    end
+
+    subgraph NEW["Commenced November 2025 to September 2026"]
+        B1["13 Nov 2025 - DPDP tranche a<br/>definitions, the Board, rule-making,<br/>s.39 civil-court bar<br/>no operative duty on this product"]
+        B2["21 Nov 2025 - four Labour Codes<br/>Central Rules notified 8 May 2026<br/>registers, retention, thresholds<br/>EV-053 to EV-057"]
+        B3["IT Intermediary Amendment Rules, notified 10 Feb 2026<br/>commenced 20 Feb 2026 per secondary sources<br/>synthetic audio-visual content only<br/>EV-074"]
+        B4["30 Mar 2026 - Transgender Amendment Act assented<br/>commences only on separate notification<br/>EV-080"]
+        B5["1 Apr 2026 - Income-tax Act 2025<br/>Forms 138 and 130, dual vocabulary<br/>EV-049, EV-050"]
+    end
+
+    subgraph NEXT["Scheduled or pending"]
+        C1["About 13 Nov 2026 - DPDP tranche b<br/>Consent Manager registration only<br/>nothing new binds this product - K-05 Killed"]
+        C2["On or about 13 May 2027 - DPDP tranche c<br/>ss.3 to 17, 27 to 34, 36, 37, 44(2)<br/>Rules 3, 5 to 16, 22, 23<br/>EV-058 Verified - mirror"]
+        C3["Same date - s.44(2) omits IT Act s.43A and s.87(2)(ob)<br/>whether the SPDI Rules survive: counsel, CR-12"]
+        C4["Undated - Union transgender EOP under Jane Kaushik,<br/>RBI model-risk guidance final text,<br/>MeitY voluntary measures made mandatory,<br/>UIDAI private-verifier registration"]
+    end
+
+    LIVE --> NEW --> NEXT
+    C2 --- C3
+
+    classDef live fill:#fde2e2,stroke:#c0392b,color:#3a0d0d;
+    classDef commenced fill:#fff3cd,stroke:#b8860b,color:#3a2f00;
+    classDef pending fill:#e8f5e9,stroke:#2e7d32,color:#0d2a12;
+    class A1,A2,A3,A4 live;
+    class B1,B2,B3,B4,B5 commenced;
+    class C1,C2,C3,C4 pending;

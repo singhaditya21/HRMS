@@ -1,0 +1,26 @@
+flowchart TB
+    DEC{"v1 decision (§05.5 item 18, P1):<br/>BUILD the benefits data model now,<br/>DEFER the monetisation"}
+
+    subgraph REASONS["Four independent reasons to build the model in v1"]
+        direction TB
+        R1["1 · Correctness, not monetisation<br/>Payroll must value every perquisite<br/>and reflect it in s.392 TDS (ex-s.192)<br/>+ Form 123 (ex-12BA) and Form 138 Annexure II data<br/><i>A benefit the engine cannot see, it mis-taxes</i>"]
+        R2["2 · Retrofit is expensive<br/>Benefits touch employee master, CTC/FBP,<br/>tax engine, payslip, filings, audit trail<br/>Empty tables in v1 = a schema;<br/>adding in v2 = data migration + historical re-compute"]
+        R3["3 · Option value on attach<br/>If §20 validates broker override / NPS POP,<br/>turn on against a populated model in weeks;<br/>skip it and re-underwrite later at full cost"]
+        R4["4 · De-risks a dated reg window<br/>1 Apr 2026: meal ₹50 → ₹200/meal,<br/>gift ₹5,000 → ₹15,000 per tax year (~3.8× wallet)<br/>Needs wallet-config + proof-of-spend to exist,<br/>and the conditions enforced as engine rules (BEN-62, BEN-63)"]
+    end
+
+    R1 --> DEC
+    R2 --> DEC
+    R3 --> DEC
+    R4 --> DEC
+
+    DEC --> BUILD["v1 SHIPS (architecture &amp; correctness only):<br/>enrollment · declaration · dependant · nominee ·<br/>wallet-config · proof-of-spend · gratuity-accrual ·<br/>endorsement-history — wired into perquisite &amp; tax compute"]
+
+    DEC -.->|"bounded by"| GUARD["GUARDRAIL (§11.14):<br/>NO payment instrument · NO custody of funds ·<br/>NO interchange · NO attach revenue booked<br/>Partner surface carries no payment rail, takes no float"]
+
+    BUILD --> V2["DEFERRED to v2, gated on §20 validation:<br/>interchange · broker override · NPS POP fees · card float"]
+    GUARD --> V2
+
+    V2 --> MODEL["Model as two lines that are NEVER blended:<br/>software PEPM  ‖  attach revenue"]
+
+    BANNED["[Killed] banned figures (§20.4):<br/>₹161/user/mo money-movement · ₹150–500 PEPM @ 1.5–5% take rate"] -.->|"never enters a model"| MODEL

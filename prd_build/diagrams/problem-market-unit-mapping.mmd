@@ -1,0 +1,20 @@
+flowchart LR
+    classDef ours fill:#e8eef7,stroke:#41618c,color:#1b2a44;
+    classDef gov fill:#eef7e8,stroke:#5a8c41,color:#24401b;
+    classDef test fill:#fff4d6,stroke:#b8891f,color:#5a4208;
+    classDef no fill:#f7dede,stroke:#a83232,color:#4d1414;
+    classDef note fill:#f7f7f7,stroke:#999999,color:#333333;
+
+    T["Tenant<br/>one contract, one card"]:::ours --> LE["Legal entity<br/>one PAN, its TANs and PTEC"]:::ours
+    LE --> ES["Establishment<br/>a place of work"]:::ours
+    ES --> PF["PF code<br/>ingested as issued, never derived"]:::ours
+    PF --> TEST{"At least one ECR instance<br/>reached FILED in the financial year?"}:::test
+    TEST -->|yes| NUM["Share numerator<br/>count of PF codes"]:::ours
+    TEST -->|"no: NIL months only, rejected, or filed elsewhere"| OUT["Not counted"]:::no
+
+    EPFO["EPFO contributing establishments<br/>7,66,254 PF codes, FY2023-24 - EV-001"]:::gov --> DEN["Share denominator<br/>same financial year as the numerator"]:::gov
+    NUM --> SH["Share claim, both years stated - AC-19"]:::test
+    DEN --> SH
+
+    VC["Vendor company counts<br/>greytHR 30,000+ claimed, Sep 2026"]:::note -.->|"dated ceiling only - EV-016"| SH
+    TC["Tenant, logo and seat counts"]:::note -.->|"never divided by 7,66,254"| REV["Revenue, ARR and logo metrics"]:::ours

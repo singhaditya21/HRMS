@@ -1,0 +1,55 @@
+flowchart TB
+    classDef client fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+    classDef gate fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef det fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef prob fill:#4a3a0b,stroke:#8a6d14,color:#fff6da,stroke-width:1px;
+    classDef store fill:#2a1636,stroke:#59306e,color:#f7e9ff,stroke-width:1px;
+    classDef ext fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+
+    subgraph Z0["Zone 0 - untrusted callers"]
+        CL["Browsers, mobile, kiosk, WhatsApp, MCP clients, devices"]:::client
+    end
+
+    subgraph Z1["Zone 1 - edge, the only tenant resolver"]
+        GW{{"API gateway and tenant router<br/>signs the request context"}}:::gate
+    end
+
+    subgraph Z2["Zone 2 - deterministic core, statutory truth"]
+        CORE["Core-HR, payroll engine, filing orchestrator,<br/>attendance, documents"]:::det
+        RULES["Statutory-rules engine<br/>shared, read-only, versioned"]:::det
+    end
+
+    subgraph Z3["Zone 3 - probabilistic edge"]
+        AI["AI orchestrator and model router<br/>no privileged compute path"]:::prob
+    end
+
+    subgraph Z4["Zone 4 - egress, the only holder of provider credentials"]
+        EG{{"Redaction and tokenisation gateway"}}:::gate
+    end
+
+    subgraph Z5["Zone 5 - persistence and backbone"]
+        DB[("Tenant-partitioned stores")]:::store
+        EV[("Event and audit backbone")]:::store
+    end
+
+    subgraph Z6["Zone 6 - outside"]
+        PROV["Model providers"]:::ext
+        PORT["Statutory portals, banks, job boards<br/>attended or file-based"]:::ext
+    end
+
+    CL --> GW
+    GW --> CORE
+    GW --> AI
+    CORE --> RULES
+    CORE --> DB
+    CORE --> EV
+    AI --> CORE
+    AI --> EG
+    AI --> EV
+    EG --> PROV
+    CORE --> PORT
+
+    CL -. "denied - no service accepts an unsigned tenant claim" .-> CORE
+    AI -. "denied - the edge never writes a statutory figure" .-> DB
+    AI -. "denied - the edge never resolves a rule version itself" .-> RULES
+    CORE -. "denied - no direct provider SDK outside zone 4" .-> PROV

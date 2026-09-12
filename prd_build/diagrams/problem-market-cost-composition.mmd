@@ -1,0 +1,24 @@
+flowchart TD
+    classDef inp fill:#e8eef7,stroke:#41618c,color:#1b2a44;
+    classDef gate fill:#fff4d6,stroke:#b8891f,color:#5a4208;
+    classDef out fill:#d5f5e3,stroke:#1e8449,color:#145a32;
+    classDef ref fill:#f7dede,stroke:#a83232,color:#4d1414;
+
+    S1["Software line today<br/>vendor bill at n from the section 21.4 register<br/>AC-25 computation, ex-GST"]:::inp --> G1
+    S2["Filing labour line today<br/>declared bureau fee and scope, or<br/>the published indicative band for the headcount"]:::inp --> G1
+    S3["Our line<br/>per-head fee times n times 12, no seat floor<br/>modelling band until section 18 publishes a card"]:::inp --> G1
+
+    G1{"Is our card published?"}:::gate -->|no| R1["Internal only - every row labelled<br/>our price unpublished"]:::ref
+    G1 -->|yes| G2{"Is the bureau fee declared<br/>with its filing scope?"}:::gate
+    R1 --> G2
+    G2 -->|no| R2["The filing-labour line reads<br/>indicative band, scope as published<br/>no total is emitted"]:::ref
+    G2 -->|yes| G3{"Do both sides state<br/>the same tax basis?"}:::gate
+    R2 --> G3
+    G3 -->|no| R3["Output says ex-GST where published<br/>and names the side whose basis is not captured"]:::ref
+    G3 -->|yes| B["Two branches, both shown"]:::out
+    R3 --> B
+
+    B --> B1["Bureau retained<br/>our fee plus the bureau line"]:::out
+    B --> B2["Bureau retired<br/>our fee alone, with the scope sentence<br/>and the non-delegable liability sentence"]:::out
+    B1 --> N["Never emitted: a saving from retiring the bureau<br/>V-01, V-02 and V-05 are open"]:::ref
+    B2 --> N

@@ -1,0 +1,29 @@
+flowchart TB
+  U["Quoted market: 5.31 cr Udyam MSMEs<br/>[Killed] not payroll employers"]
+  R["Registered universe: 24,18,266 EPFO estabs<br/>[Killed as denominator] 3.16x contributing, 2/3 dormant"]
+  U --> R
+  R --> TAM
+
+  subgraph TAM["TAM &mdash; 7,66,254 EPFO CONTRIBUTING establishments [Verified]<br/>Honest denominator: revealed payroll obligation<br/>Whole-market spend Rs 2,100-3,900 Cr - modelled ceiling Rs 9,013-10,905 Cr, central Rs 10,126 Cr"]
+    direction TB
+    subgraph SAM["SAM &mdash; Beachhead 20-200: 1.8-7.24 lakh across sub-20-share scenarios<br/>~55 billable seats x Rs 80-150 PEPM, fit row on its own member count<br/>Rs 950-6,018 Cr/yr - 2.2-lakh scenario midpoint ~Rs 1,670 Cr"]
+      direction TB
+      subgraph SOM["SOM (3-yr) &mdash; 0.5-1.5pct of the beachhead<br/>~1,100-3,300 paying establishments at 2.2 lakh<br/>Rs 5.8-32.7 Cr ARR, scales with the count"]
+        MID["Midpoint 1.0pct: 2,200 estabs x 55 seats x Rs 115 PEPM x 12<br/>= Rs 16.7 Cr ARR"]
+      end
+    end
+  end
+
+  CEIL["Share calibration: greytHR 30,000+ companies claimed, Sep 2026 = ~3.9pct<br/>at ~Rs 52 realised PEPM<br/>3-yr SOM upper bound ~Rs 65 Cr ARR at 2.2 lakh"]
+  RECON["Bottom-up: 11 filed HRMS entities = Rs 1,374 Cr<br/>grossed to Rs 2,100-3,900 Cr real spend - modelled gross-up<br/>= Rs 23.7-44.1 per contributing member-month<br/>penetration vs discounting - V-02, V-03"]
+
+  TAM -. denominates .-> CEIL
+  CEIL -. bounds .-> SOM
+  RECON -. explains .-> SAM
+
+  classDef killed fill:#f8d7da,stroke:#c0392b,color:#7b241c;
+  classDef verified fill:#d5f5e3,stroke:#1e8449,color:#145a32;
+  classDef check fill:#fdebd0,stroke:#ca6f1e,color:#7e5109;
+  class U,R killed;
+  class MID verified;
+  class CEIL,RECON check;

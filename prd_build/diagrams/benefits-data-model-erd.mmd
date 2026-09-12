@@ -1,0 +1,157 @@
+erDiagram
+    tenant ||--o{ benefit_scheme : "offers"
+    tenant ||--o{ fbp_component_config : "defines flexi menu"
+    tenant ||--o{ wallet_config : "configures"
+    employee ||--o{ benefit_enrollment : "enrolled in"
+    benefit_scheme ||--o{ benefit_enrollment : "has members"
+    employee ||--o{ dependant : "declares"
+    employee ||--o{ nominee : "nominates per-scheme"
+    fbp_component_config ||--o{ fbp_declaration : "allocated via"
+    employee ||--o{ fbp_declaration : "submits per tax year"
+    fbp_declaration ||--o{ proof_of_spend : "substantiated by"
+    fbp_component_config ||--o{ wallet_config : "backs"
+    benefit_scheme ||--o{ benefit_endorsement : "change-logged in"
+    employee ||--o{ benefit_endorsement : "subject of"
+    dependant ||--o{ benefit_endorsement : "referenced by"
+    employee ||--o{ contribution_instruction : "per period per vehicle"
+    benefit_scheme ||--o{ contribution_instruction : "targets"
+    contribution_instruction ||--o{ retiral_contribution_ledger : "aggregated into"
+    employee ||--o{ retiral_contribution_ledger : "per tax year 7.5L cap"
+    employee ||--o{ gratuity_accrual : "accrues"
+
+    tenant {
+        string tenant_id PK
+    }
+    employee {
+        string employee_id PK "payroll master"
+    }
+    benefit_scheme {
+        string scheme_id PK
+        string tenant_id FK
+        string family "insurance|retiral|flexi|statutory"
+        string provider_ref "nullable"
+        string policy_number "nullable"
+        json coverage_config
+        json sum_insured_grid
+        date effective_from "effective-dated"
+        date effective_to
+    }
+    benefit_enrollment {
+        string enrollment_id PK
+        string scheme_id FK
+        string employee_id FK
+        string status "proposed|active|suspended|terminated"
+        decimal sum_insured_or_rate
+        decimal employee_share
+        decimal employer_share
+        date effective_from "prorates mid-year"
+        date effective_to
+    }
+    dependant {
+        string dependant_id PK
+        string employee_id FK
+        string relation "spouse|child|parent|parent-in-law"
+        date dob "drives age-out BEN-08"
+        bool is_covered
+        string aadhaar_token "opaque token FR-CHR-099 optional"
+        bool disability_flag "SPDI sensitive erasable"
+        string disability_consent_ref "written consent record"
+        string enrollment_ref
+    }
+    nominee {
+        string nominee_id PK
+        string employee_id FK
+        string scheme_ref "EPF|EPS|gratuity|EDLI|GTL|superann|NPS"
+        decimal share_pct "sums to 100 per scheme"
+        bool is_minor
+        string guardian_ref
+        date dob
+        string form_ref "per instrument version"
+    }
+    fbp_component_config {
+        string component_id PK
+        string tenant_id FK
+        string tax_rule_ref "effective-dated"
+        string rule_ref_2026 "null until confirmed"
+        json qualifying_conditions "meal and gift conditions BEN-62 BEN-63"
+        bool new_regime_exempt "per period"
+        string exemption_section
+        decimal annual_cap
+        decimal monthly_cap
+        bool proof_required
+        string valuation_method
+    }
+    fbp_declaration {
+        string declaration_id PK
+        string employee_id FK
+        string component_id FK
+        string tax_year "Form 124 cycle"
+        decimal declared_amount
+        string status "draft|submitted|locked"
+        string regime_at_submit
+    }
+    proof_of_spend {
+        string proof_id PK
+        string declaration_id FK
+        decimal amount_claimed
+        decimal amount_approved "drives exempt split"
+        string document_ref "erasable document"
+        string status "pending|approved|rejected|query"
+        string reject_reason
+    }
+    wallet_config {
+        string wallet_id PK
+        string tenant_id FK
+        string component_id FK
+        string instrument_type "meal|fuel|gift"
+        decimal monthly_cap
+        decimal per_meal_cap
+        bool non_transferable "attested"
+        bool eating_outlet_only "attested"
+        string provider_ref "null=no integrated issuer"
+    }
+    benefit_endorsement {
+        string endorsement_id PK
+        string scheme_id FK
+        string employee_id FK
+        string dependant_ref FK
+        string endorsement_type "add|delete|modify member"
+        string status "drafted|sent|acked|premium-adjusted"
+        string ack_ref
+        string batch_id "append-only"
+    }
+    contribution_instruction {
+        string instr_id PK
+        string scheme_id FK
+        string employee_id FK
+        string vehicle "NPS|superann|VPF"
+        string pran_or_ref
+        decimal employer_amount
+        decimal employee_amount
+        string file_batch_id "append-only"
+    }
+    retiral_contribution_ledger {
+        string ledger_id PK
+        string employee_id FK
+        string tax_year
+        decimal epf_employer "sum of approved ECR returns"
+        decimal nps_employer
+        decimal superann_employer
+        decimal aggregate
+        decimal cap_breach_amount "over 7.5L s.17(2)(vii)"
+        decimal cumulative_excess "stateful PC1"
+        decimal rule3b_accretion "stateful TP1"
+        string source_return_refs "approved returns read"
+    }
+    gratuity_accrual {
+        string accrual_id PK
+        string employee_id FK
+        date as_of_date
+        int completed_years
+        decimal last_drawn_wages "add-back gratuity wage base"
+        decimal accrued_amount
+        string payment_ceiling_ref "unset until notified"
+        string tax_exempt_ceiling_ref "per tax year and Act"
+        bool funded_flag
+        string nominee_ref FK
+    }

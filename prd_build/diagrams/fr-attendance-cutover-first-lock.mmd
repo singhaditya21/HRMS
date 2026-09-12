@@ -1,0 +1,18 @@
+flowchart TB
+    start(["Establishment signs, already running elsewhere"]) --> cut["Record cutover date<br/>name the predecessor<br/>record custody of the prior register"]
+    cut --> split{"Cutover falls mid-month?"}
+    split -->|"Yes"| two["That month renders two provenances<br/>predecessor-record before, our cells after"]
+    split -->|"No"| one["Our register begins on day one of the month"]
+    two & one --> seed["Seed the filing ledger with<br/>months already filed elsewhere"]
+    seed --> lv{"Predecessor can state closing leave balances?"}
+    lv -->|"Yes"| tie["Tie out to the unit<br/>differences become ADJUSTMENT rows"]
+    lv -->|"No, no system of record"| decl["Declared balances, signed off<br/>tagged declared-not-reconciled"]
+    tie & decl --> open["OPENING rows posted<br/>accrual starts at the cutover date"]
+    open --> dev{"Terminal site?"}
+    dev -->|"Yes"| dual["Declare the dual-run window<br/>per-device status<br/>brownfield flow runs separately"]
+    dev -->|"No"| nodev["Kiosk, app or web capture only"]
+    dual & nodev --> gate{"First-lock readiness gate<br/>G1 to G13"}
+    gate -->|"Any hard block open"| fix["Blocked, naming the rows and employments"]
+    fix --> gate
+    gate -->|"Hard blocks clear, warnings listed"| lock["First period lock<br/>warnings recorded on the lock record"]
+    lock --> filed["First statutory generation<br/>reconciles against the seeded ledger"]

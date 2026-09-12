@@ -1,0 +1,43 @@
+stateDiagram-v2
+    [*] --> Ungraded: L1 a claim appears with no register row
+    Ungraded --> Hypothesis: L2 no primary source - kill criterion and V-item written
+    Ungraded --> Open: graded open - the instrument does not exist yet
+    Ungraded --> Blocked: graded blocked - the failing tool is recorded
+    Ungraded --> Undone: graded undone - scoped capture work not done
+
+    Open --> Verified: L3 instrument notified and captured at the issuing host
+    Open --> Hypothesis: L3 instrument notified but not yet read at primary
+    Blocked --> Verified: L4 re-capture by a different method succeeds
+    Undone --> Verified: L5 each captured jurisdiction becomes its own row
+
+    Hypothesis --> Verified: L6 primary source survives a hostile re-check
+    Hypothesis --> Qualified: L6 with a qualifier - mirror, caveat, not in force, negative, posture
+    Hypothesis --> Hypothesis: L8 range tightens - the threshold is never moved
+    Hypothesis --> Killed: L7 kill criterion fires or a primary source contradicts
+
+    Qualified --> Verified: L9 mirror pulled - L10 provision commences - L12 product executed
+    Qualified --> Killed: L11 a law, judgment or designation falsifies a dated negative
+
+    Verified --> Verified: L13 re-verify trigger fires and the source still holds
+    Verified --> Stale: L14 re-verify date passes with no re-check
+    Stale --> Verified: re-check recorded and the source holds
+    Stale --> Killed: re-check finds the claim false
+    Verified --> Split: L16 one component found unsupported
+    Split --> Hypothesis: the unsupported component is re-graded
+    Verified --> Killed: L15 amendment, corrigendum, repeal or event falsifies it
+    Verified --> Qualified: L19 an audit of captures finds a non-primary host or a summary read as the instrument
+
+    Killed --> Killed: L17 a re-proposal is refused and logged
+    Killed --> [*]: terminal - a returning quantity enters by L1 with a new ID
+
+    note right of Stale
+        Planning and customer uses demote.
+        Published rule versions keep enforcing.
+        A priority re-verify task opens.
+    end note
+
+    note right of Killed
+        Every conclusion that rested on the
+        claim gets a Reversed register row - L18.
+        The old rule version is archived, never erased.
+    end note

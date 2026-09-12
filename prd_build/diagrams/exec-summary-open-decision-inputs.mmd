@@ -1,0 +1,81 @@
+flowchart LR
+    classDef counsel fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+    classDef capture fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+    classDef measure fill:#132b4a,stroke:#2f5f9e,color:#e3efff,stroke-width:1px;
+    classDef commercial fill:#4a3a10,stroke:#8a6d1f,color:#fff2cf,stroke-width:1px;
+    classDef opn fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+
+    subgraph NOW["Starts now, unfunded: the desk track"]
+        direction TB
+        subgraph CN["Counsel register, section 23.16"]
+            direction TB
+            CR17["CR-17e and CR-17f<br/>liability, insurability"]:::counsel
+            CR46["CR-46<br/>ICAI Code of Ethics"]:::counsel
+            CR30["CR-30<br/>Aadhaar in filings"]:::counsel
+            CR04["CR-04<br/>who owes SPDI consent"]:::counsel
+            CR21["CR-21<br/>OVSE storage bar"]:::counsel
+            CR11["CR-11<br/>retention periods"]:::counsel
+        end
+        subgraph CP["Capture and specification"]
+            direction TB
+            CH["Section 22 channel specification"]:::capture
+            SES["Design-partner capture sessions, V-23"]:::capture
+        end
+    end
+
+    subgraph LIVE["Needs a prototype or the first live cycles"]
+        direction TB
+        V26["V-26 supervised minutes, FR-OPS-031"]:::measure
+        V15["V-15 migration dry run"]:::measure
+        INS["Section 20 instrumentation of the segment"]:::measure
+        GR["Month-18 graduation rate"]:::measure
+    end
+
+    subgraph MONEY["Commercial programme: gates funding, section 20.7"]
+        direction TB
+        V01["V-01 bureau price"]:::commercial
+        V03["V-03 realised ARPU"]:::commercial
+        V02["V-02 Tally payroll adoption"]:::commercial
+        CQ12["CQ-12 greytHR importer, section 21.14"]:::commercial
+        V05["V-05 CA interviews"]:::commercial
+        V07["V-07 willingness to pay for AI"]:::commercial
+        BR["Buyer research on a capped remedy"]:::commercial
+    end
+
+    O01["OPN-01 PEPM level<br/>before a price reaches a contract"]:::opn
+    O02["OPN-02 registration allowance and line<br/>before the card publishes"]:::opn
+    O03["OPN-03 binding profile<br/>before operator submission is bundled"]:::opn
+    O04["OPN-04 SLA remedy cap<br/>before the first SLA is signed"]:::opn
+    O05["OPN-05 CA channel economics<br/>before any CA reseller launch"]:::opn
+    O06["OPN-06 importer priority<br/>before the importer order freezes"]:::opn
+    O07["OPN-07 metered AI SKU<br/>before v2 packaging"]:::opn
+    O08["OPN-08 migration as product or service<br/>before the first mid-year go-live"]:::opn
+    O09["OPN-09 Aadhaar default<br/>before v1 general availability"]:::opn
+    O10["OPN-10 SPDI consent duty-holder<br/>before notice templates clear"]:::opn
+    O11["OPN-11 corporate structure<br/>before any UIDAI registration"]:::opn
+    O12["OPN-12 retention beyond EV-054<br/>before automatic erasure"]:::opn
+    O13["OPN-13 is 20 to 49 a paid band<br/>month 18"]:::opn
+    O14["OPN-14 availability targets<br/>before a contractual availability SLA"]:::opn
+    O15["OPN-15 annual-return channel<br/>28 February 2027 if R1 is live"]:::opn
+    O16["OPN-16 uncaptured portal behaviours<br/>before Mode C on that portal"]:::opn
+
+    V01 --> O01
+    V03 --> O01
+    V26 --> O03
+    O03 --> O02
+    CR17 --> O04
+    BR --> O04
+    V05 --> O05
+    CR46 --> O05
+    V02 --> O06
+    CQ12 --> O06
+    V07 --> O07
+    V15 --> O08
+    CR30 --> O09
+    CR04 --> O10
+    CR21 --> O11
+    CR11 --> O12
+    GR --> O13
+    INS --> O14
+    CH --> O15
+    SES --> O16

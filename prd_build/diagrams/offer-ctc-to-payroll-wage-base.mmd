@@ -1,0 +1,18 @@
+flowchart TD
+    A["Offer builder (FR-T-R50)<br/>CTC = Basic + HRA + Special Allow.<br/>+ employer PF + gratuity accrual<br/>+ variable/bonus + FBP"] --> B["All remuneration R<br/>gratuity accrual, head (j), left out<br/>employer PF, head (c), in only if<br/>addback.employer_pf_in_test is on"]
+    B --> C["Wage base 1: included<br/>Basic + included allowances"]
+    B --> D["Excluded heads (a)–(i), §06.10<br/>HRA, conveyance, commission,<br/>overtime and similar = sum E<br/>FBP items per §08 catalogue head"]
+    C --> E{"FR-T-R51 add-back test<br/>Is E &gt; t × R ?<br/>t = 0.5 today, a notified variable"}
+    D --> E
+    E -->|"No: structure compliant"| G["PF/gratuity base = Basic-equivalent<br/>(as structured)"]
+    E -->|"Yes: excess is deemed wages"| F["Deem (E − t×R) as wages<br/>Code on Wages s.2(y) /<br/>CoSS s.2(88)"]
+    F --> H["Recompute PF/gratuity base UPWARD<br/>bounded fixed point if employer PF<br/>feeds its own test (FR-PAY-211)<br/>true employer PF cost shown"]
+    H --> I{"Recruiter acknowledges<br/>corrected base?"}
+    I -->|"No"| J["BLOCK 'Issue offer'"]
+    J --> I
+    I -->|"Yes"| K
+    G --> K["Persist corrected CTC structure<br/>+ 3 figures: total CTC / gross /<br/>est. monthly net-in-hand"]
+    K --> L["Offer letter + eSign (FR-T-R53)<br/>revision re-runs add-back"]
+    L --> M["Offer accepted -> Pre-boarding record<br/>(FR-T-R54) carries CTC forward,<br/>no re-keying"]
+    M --> N["Onboarding case (§10.8)"]
+    N --> O["Payroll engine runs SAME structure<br/>Offer letter and payslip 1<br/>reconcile to the rupee"]

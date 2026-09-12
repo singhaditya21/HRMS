@@ -1,0 +1,27 @@
+flowchart LR
+    classDef decline fill:#4a1414,stroke:#7d2626,color:#ffe3e3,stroke-width:1px;
+    classDef acquire fill:#4a3a10,stroke:#8a6d1f,color:#fff2cf,stroke-width:1px;
+    classDef thin fill:#123a2a,stroke:#1f6b4c,color:#daffee,stroke-width:1px;
+    classDef core fill:#0b5c3e,stroke:#17b37a,color:#eafff5,stroke-width:2px;
+    classDef expand fill:#132b4a,stroke:#2f5f9e,color:#e3efff,stroke-width:1px;
+    classDef note fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+
+    B1["&lt;10 &nbsp;|&nbsp; DECLINE<br/>New trigger: TDS s.392 (ex-s.192), S&amp;E reg,<br/>min wages, PT where levied,<br/>POSH Internal Committee (every employer)<br/>Buyer: Founder-or-none &middot; Payroll: CA/self<br/>Wedge: none (funnel)"]:::decline
+    B2["10-20 &nbsp;|&nbsp; ACQUISITION ONLY<br/>+ESI, gratuity accrual, maternity benefit,<br/>appointment letter (10+ workers, state form)<br/>Buyer: Founder &middot; Payroll: CA<br/>Wedge: free funnel"]:::acquire
+    B3["20-50 &nbsp;|&nbsp; BEACHHEAD (thin)<br/>+EPF (ECR), grievance committee (20+ workers)<br/>Buyer: Founder/Vikram &middot; Payroll: CA or Meera<br/>Wedge: portal-accepted artefacts + attended filing"]:::thin
+    B4["50-100 &nbsp;|&nbsp; BEACHHEAD CORE<br/>+Creche (50)<br/>Buyer: Founder to CFO &middot; Meera 1 FTE + CA<br/>Wedge: filing + attendance reconcile"]:::core
+    B5["100-200 &nbsp;|&nbsp; BEACHHEAD CORE<br/>+Works committee (100, only if Govt orders)<br/>Buyer: CFO/COO &middot; Suresh (P2) emerges<br/>Wedge: compliance SLA + CA console"]:::core
+    B6["200-2,000 &nbsp;|&nbsp; EXPANSION<br/>+Retrenchment approval (300)<br/>Buyer: CFO/CHRO &middot; Payroll team<br/>Wedge: same shape, scaled"]:::expand
+
+    B1 -->|"cross 10"| B2
+    B2 -->|"cross 20 = FRONT DOOR<br/>(EPF and statutory bonus, the only<br/>obligations genuinely absent below 20)"| B3
+    B3 -->|"cross 50"| B4
+    B4 -->|"cross 100"| B5
+    B5 -->|"cross 200 / 300"| B6
+
+    LATCH["LATCH RULE: gratuity and maternity<br/>test 'employed on any day of<br/>the preceding 12 months'<br/>so a dip does not switch them off inside<br/>the 12-month look-back. Retirement after that,<br/>and the EPF and ESI latch wording,<br/>are not captured for the Code era (Sec 06)"]:::note
+    ROLE["ROLE SEPARATION scales with band:<br/>&lt;80 = one generalist, four hats<br/>&gt;120 = four specialists (v1 IA constraint)"]:::note
+
+    B2 -.-> LATCH
+    B3 -.-> ROLE
+    B5 -.-> ROLE

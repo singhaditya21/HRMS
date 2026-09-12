@@ -1,0 +1,36 @@
+flowchart TB
+    subgraph TENANT["Per-tenant residency policy (set at tenant creation, NFR-RES-701)"]
+        POL["data_residency=india_pinned<br/>inference_residency=india_only<br/>sector_profile RBI / SEBI / IRDAI: AI default OFF,<br/>sub-processor changes consent-gated<br/>(SMB default: region=ap-south-1, no decision)"]
+    end
+
+    POL --> PAL
+
+    subgraph PAL["Provider-Abstraction Layer (P0, v1) - one build, three constraints"]
+        direction TB
+        NOTE["Selectable per tenant, not per deployment<br/>Residency pin + cost router + failover"]
+        DATA["Layer 1 - Data at rest<br/>Postgres / object store / search index + all backups"]
+        INFER["Layer 2 - LLM inference<br/>Router re-points task class per backend, no deploy, &le; 60s"]
+        EGRESS["Layer 3 - Egress / sub-processors<br/>email, SMS, WhatsApp BSP, e-sign, payment rails"]
+    end
+
+    DATA --> D1["Primary + replicas pinned to ap-south-1 (Mumbai)<br/>DR in ap-south-2 (Hyderabad) - never foreign (§17.14)"]
+
+    INFER --> ROUTE{"Task class needs<br/>India-region inference?"}
+    ROUTE -->|"india_inference_required"| BOK["Route to India-capable backend"]
+    ROUTE -->|"only capable backend is US-only"| REFUSE["REFUSED with typed error<br/>never silently sent abroad (NFR-RES-701)"]
+
+    BOK --> B2["OpenAI - India data-at-rest;<br/>in-country inference via Amazon Bedrock"]
+    BOK --> B3["Vertex - India region"]
+    REFUSE -.blocked.-> B1["Anthropic first-party - us / global inference geo,<br/>US-only immutable workspace"]
+
+    B1 --> DET["Correctness guardrail (NFR-RES-702):<br/>no statutory/monetary figure is model-generated;<br/>backend swap changes only phrasing -<br/>byte-identical pay-run output (§08 I4)"]
+    B2 --> DET
+    B3 --> DET
+
+    EGRESS --> DENY{"Destination on<br/>per-tenant allow-list?"}
+    DENY -->|yes| ALLOW["Allowed sub-processor<br/>region + purpose logged"]
+    DENY -->|no| ALERT["Default-deny + surprise-egress detector<br/>raises alert (NFR-RES-703)<br/>CERT-In detection signal; supports<br/>evidence production for RBI inspection"]
+
+    D1 --> ATTEST["Residency attestation PDF<br/>generated from live config, never hand-authored -<br/>reconciles to network-policy dump (§17.1)"]
+    DET --> ATTEST
+    ALLOW --> ATTEST

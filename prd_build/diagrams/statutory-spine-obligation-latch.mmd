@@ -1,0 +1,28 @@
+stateDiagram-v2
+    direction LR
+    [*] --> NotTriggered
+
+    NotTriggered: NOT TRIGGERED
+    Possible: POSSIBLE - upper bound at or above the line, lower bound below it
+    Triggered: TRIGGERED - lower bound at or above the line and every guard passes
+    Active: ACTIVE - tasks and filing instances scheduled
+    Review: RETIREMENT REVIEW - raised, never an automatic retirement
+    Retired: RETIRED - a named approver recorded the statutory exit basis
+
+    NotTriggered --> Possible: O1 unconfirmed members or an unknown area record
+    Possible --> Triggered: O2 membership resolved and the lower bound crosses
+    Possible --> NotTriggered: O3 resolved below the line
+    NotTriggered --> Triggered: O4 lower bound crosses the line
+    Triggered --> Active: O5 effective date resolved
+    Active --> Active: O6 count dips but the latch holds
+    Active --> Review: O7 no latch holding, or O12 raised by the operator
+    Review --> Retired: O8 approver records the exit basis and citation
+    Review --> Active: O9 review rejected or the count re-crosses
+    Retired --> Triggered: O10 count re-crosses
+    NotTriggered --> Active: O11 voluntary coverage with a recorded basis
+
+    note right of Active
+        latch rule none - review once below the line
+        look back 12m - holds while any day in the window qualified
+        once covered and unconfirmed - never open a review by themselves
+    end note

@@ -1,0 +1,42 @@
+flowchart LR
+    classDef store fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef view fill:#1d3a5a,stroke:#2f5c8f,color:#eaf3ff,stroke-width:1px;
+    classDef gate fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+    classDef src fill:#3d3d3d,stroke:#6b6b6b,color:#ffffff,stroke-width:1px;
+
+    EMP["Employee and identifier store<br/>UAN, PAN, ESIC IP - Aadhaar only by token"]:::src
+    TIME["Punch-level time model<br/>per-day IN and OUT pairs, off-site notes"]:::src
+    PAY["Pay-run ledger<br/>earnings, itemised deductions, fines, damage recoveries"]:::src
+    EVT["Leave and accident events"]:::src
+
+    subgraph CANON["One canonical register set per establishment - period-scoped, closes at period end"]
+        direction TB
+        R1["Employee register"]:::store
+        R2["Attendance-cum-muster roll - monthly sheet"]:::store
+        R3["Wages, overtime, advances, fines, deductions"]:::store
+        R4["Leave with wages"]:::store
+        R5["Accidents and dangerous occurrences"]:::store
+        R6["Women employees"]:::store
+    end
+
+    EMP --> R1
+    TIME --> R2
+    PAY --> R3
+    EVT --> R4
+    EVT --> R5
+    EMP --> R6
+
+    R1 --> V1["Wages Form I - 36 fields<br/>OSH FORM-XIII"]:::view
+    R2 --> V2["Wages Form IX - days 1 to 31, In and Out<br/>OSH FORM-XIV"]:::view
+    R3 --> V3["Wages Form IV - 33 columns<br/>OSH FORM-XV"]:::view
+    R4 --> V4["OSH FORM-XX"]:::view
+    R5 --> V5["OSH FORM-XIX"]:::view
+    R6 --> V6["SS Form XXII - print-and-sign fallback for the in-ink rule"]:::view
+    R3 --> V7["Wage slip - Wages Form V or OSH FORM-XVI"]:::view
+
+    CANON --> G1{{"Retention clock starts at the date of last entry<br/>open register has no running clock"}}:::gate
+    R4 --> G2{{"Leave register destruction gate<br/>released only by a recorded transfer to a new register"}}:::gate
+    V1 --> G3{{"Field 24 Aadhaar and field 35 thumb impression<br/>ship dark until counsel sign-off"}}:::gate
+
+    NOTE["Central-sphere forms shown - each state instance is configuration<br/>form identifiers key on rule-set plus form, never the form string alone"]:::src
+    NOTE -.-> CANON

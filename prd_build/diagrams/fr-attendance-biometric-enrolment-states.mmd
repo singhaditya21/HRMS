@@ -1,0 +1,19 @@
+stateDiagram-v2
+    [*] --> NON_BIOMETRIC: joiner or migrated employee, non-biometric by default
+    NON_BIOMETRIC --> CONSENTED: employee elects a modality and gives written consent
+    CONSENTED --> TICKETED: regime resolved, enrolment ticket issued for named devices
+    CONSENTED --> NON_BIOMETRIC: consent withdrawn before a ticket is issued
+    TICKETED --> ENROLLED: first enrolment evidence inside the ticket window
+    TICKETED --> NON_BIOMETRIC: ticket expires or consent withdrawn before enrolment
+    ENROLLED --> ERASING: written withdrawal, method switch, site transfer, modality disabled or exit
+    ERASING --> ERASED: every device item confirmed or closed by attestation
+    ERASED --> NON_BIOMETRIC: election stays non-biometric, re-enrolment needs a new consent version
+    ERASED --> [*]: exit
+    NON_BIOMETRIC --> UNTICKETED: biometric punch or template upload with no live ticket
+    UNTICKETED --> ERASING: erasure opened for that device, tenant admin alerted
+    ERASING --> ERASING: same serial returns after attestation, item reopened
+    note right of ENROLLED
+        Punches never reference the template.
+        The regime is fixed at capture - SPDI
+        before the switch date, DPDP after it.
+    end note

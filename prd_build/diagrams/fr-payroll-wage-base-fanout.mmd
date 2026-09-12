@@ -1,0 +1,34 @@
+flowchart LR
+    SRC["One employee-period<br/>pay components<br/>FR-PAY-101"]
+    FLAGS{{"Each component carries FIVE wage-base flags, not one:<br/>pf · esi · gratuity · bonus · payment-of-wages<br/>I1 - a single 'wage' field is a design error"}}
+    GATE["No flag set at all =<br/>blocking error FR-PAY-1004:<br/>a silent component files a wrong return"]
+
+    SRC --> FLAGS
+    FLAGS -. "AC-101.4" .-> GATE
+
+    FLAGS --> B1
+    FLAGS --> B2
+    FLAGS --> B3
+    FLAGS --> B4
+    FLAGS --> B5
+
+    subgraph RES["FR-PAY-201 · five separately stored bases per employee-period"]
+        direction TB
+        B1["PF base<br/>s.2(88) wages minus excluded heads a to i<br/>special allowance is wages, not excluded<br/>50% add-back when excluded exceed half<br/>then ₹15,000 ceiling unless actual-wage election"]
+        B2["ESI gross base<br/>INCLUDES HRA, conveyance, overtime<br/>overtime out of the ₹21,000 coverage test,<br/>in the base once covered - TV5<br/>component list and OT split Hypothesis"]
+        B3["Gratuity base<br/>s.2(88) wages WITH the add-back, no ceiling<br/>legacy periods: Basic + DA<br/>15/26 x wages x completed years"]
+        B4["Bonus base<br/>min of actual wage and the higher of<br/>notified amount or minimum wage<br/>legacy ₹7,000 and ₹21,000, Code-era unconfirmed"]
+        B5["Payment-of-wages base<br/>all earnings, gross view<br/>deductions within the Code on Wages cap"]
+    end
+
+    B1 --> F1["ECR return file, EV-035<br/>EPS capped at ₹1,250, EDLI<br/>FR-PAY-701"]
+    B2 --> F2["ESI contribution, attended upload<br/>held to the Apr-Sep or Oct-Mar boundary<br/>FR-PAY-702"]
+    B3 --> F3["Gratuity payout within 30 days<br/>plus the running accrual ledger<br/>FR-PAY-206"]
+    B4 --> F4["Bonus payout and the period's return<br/>bonus.payment_deadline, legacy 30 Nov<br/>FR-PAY-705"]
+    B5 --> F5["Wage register Form IV and wage slip Form V<br/>FR-PAY-601, FR-PAY-709"]
+
+    NOTE["Same rupee routes differently per return:<br/>statutory bonus is INVISIBLE to ECR and ESI<br/>but VISIBLE to Form 138 - §06.12 R12"]
+    B4 -. "routing, not amount" .-> NOTE
+
+    STAMP["Every base independently auditable,<br/>stamped with the wage-definition<br/>rule version used - AC-201.3, I2, I5"]
+    RES -. logs .-> STAMP

@@ -1,0 +1,46 @@
+flowchart TB
+    start(["Month-zero entrant<br/>bids enterprise 2,000+ / PSU / BFSI"])
+
+    start --> G1
+    start --> G2
+    start --> G3
+    start --> G4
+
+    subgraph GATES["Four independent gates — each alone excludes a new entrant"]
+        direction TB
+        G1["<b>Gate 1 — References at scale</b><br/>SBI RFP Feb 2023: prior 30k-seat impl.<br/>Appendix-T: no 30k reference caps a bid at 60 of 150, cut-off 112.5<br/>Earliest: needs 200-999 install base + large reference"]
+        G2["<b>Gate 2 — Startup exemption</b><br/>GFR 2017 Rules 170(i)/173(i)<br/>Only if buyer writes it into the tender - 2 of 4 examined did<br/>Indian Bank still keeps two three-year floors<br/>Earliest: buyer discretion — uncontrollable"]
+        G3["<b>Gate 3 — ISO 27001, 1-yr seasoning</b><br/>Held greater-than 1 yr before RFP publication<br/>6 mo acquire + 12 mo season<br/>Earliest: ~Month 18"]
+        G4["<b>Gate 4 — Sectoral residency plus audit</b><br/>RBI IT-Outsourcing: materiality-gated per entity (EV-087)<br/>SEBI: processing in India, MeitY infra for SaaS (EV-085)<br/>IRDAI: policy records only (EV-086); SBI RFP: in-India<br/>Earliest: ~Month 12-18 (provider matrix)"]
+    end
+
+    G1 --> B1{"Bought or<br/>exempted?"}
+    G2 --> B2{"We can<br/>force it?"}
+    G3 --> B3{"Clock<br/>compressible?"}
+    G4 --> B4{"Threshold<br/>to dodge?"}
+
+    B1 -->|No — scoring, not eligibility| R1["Binds until v2 references exist"]
+    B2 -->|No — buyer's permission| R2["Upside per-tender, never a strategy"]
+    B3 -->|No — cannot buy a held cert retroactively| R3["Binds until ~Month 18"]
+    B4 -->|No — contractual flow-down, judged per customer| R4["Binds until ~Month 12-18"]
+
+    R1 --> MAX
+    R2 --> MAX
+    R3 --> MAX
+    R4 --> MAX
+
+    MAX["<b>Gates do not add — the LATEST binding gate sets the date</b><br/>Gates 3 and 4 clear by ~Month 18<br/>Gate 1 (references) cannot be sprinted"]
+    MAX --> OUT(["First <i>winnable</i> private enterprise bid:<br/><b>Year 3+, and only if v2 references land</b><br/>Public-sector path: months 42-48"])
+
+    OUT -.->|"Load-bearing point"| DEP["Every path to enterprise runs through v2 references;<br/>v2 runs through v1 filing-SLA proof<br/>No capital-only or feature-only shortcut"]
+
+    OUT -.->|"Month-zero action"| M0["Only enterprise spend now:<br/>start ISO 27001 (Gate 3 clock) + CERT-In PoC (a day-one duty, EV-062)<br/>RFP-shaped product (SSO/SCIM, self-host, IR) stays P2/P3"]
+
+    classDef gate fill:#fde2e2,stroke:#c0392b,color:#111
+    classDef decision fill:#fff3cd,stroke:#b8860b,color:#111
+    classDef outcome fill:#e2ecfd,stroke:#2c5aa0,color:#111
+    classDef note fill:#e8f5e9,stroke:#2e7d32,color:#111
+    class G1,G2,G3,G4 gate
+    class B1,B2,B3,B4 decision
+    class MAX,OUT outcome
+    class DEP,M0,R1,R2,R3,R4 note

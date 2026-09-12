@@ -1,0 +1,68 @@
+flowchart TD
+    ENG["Items 1+2 - Rules-first engine + dual wage base<br/>two concurrent wage bases, effective-dated, audited"]
+    HR["Item 10 - Core HR system-of-record<br/>own-roll/contract, IW, regime, establishment flags"]
+
+    ENG --> READY
+    HR --> READY
+    READY(["Prereqs met: engine + master produce audited numbers"])
+
+    subgraph FILING["Filing modules (items 3-9) - build in parallel once prereqs met"]
+        EPF["Item 3 - EPF ECR generator (not fenced, EV-035)"]
+        ESI["Item 4 - ESI contribution upload + challan"]
+        PT["Item 5 - State PT return (gazette-sourced states)"]
+        TDS["Item 6 - TDS s.392 + Form 138 Q1-Q3"]
+        PARTB["Item 6 - Form 138 Q4 + Form 130 Part B generation<br/>certificate itself is TRACES-generated only (EV-048)"]
+        GRAT["Item 7 - Gratuity + LWF accrual"]
+        REG["Item 8 - Six registers + wage slip (EV-053)"]
+        DOC["Item 9 - Appointment letter at 10+ workers, state form"]
+    end
+
+    READY --> EPF
+    READY --> ESI
+    READY --> PT
+    READY --> TDS
+    READY --> GRAT
+    READY --> REG
+    READY --> DOC
+    TDS --> PARTB
+
+    ENG -->|effective-dating yields rule-version model| WATCH["Item 12 - Statutory-change watcher<br/>amendments + corrigenda, not just new instruments"]
+    WATCH -->|writes new rule versions; engine recomputes| ENG
+
+    subgraph SCAFFOLD["Scaffolded first, in parallel (retrofitting is the expensive case)"]
+        ATTR["Item 14 - Cost/token/cache attribution"]
+        SEAM["Item 15 - Residency-selectable provider seam (>=1 backend wired)"]
+    end
+
+    FILING --> AI["Item 13 - Bundled AI assistant + router + rate limits<br/>explains/drafts against filings, never calculates"]
+    ATTR --> AI
+    SEAM --> AI
+
+    ESIBLK{{"FENCE - ESI position after 22 Nov 2026<br/>section 06.9, V-08 - time-critical"}}
+    Q4BLK{{"FENCE - Form 138 Q4 regular + correction formats<br/>unreleased, re-checked Sep 2026 (EV-046)"}}
+
+    ESIBLK -.->|blocks v1-complete| ESI
+    Q4BLK -.->|blocks| PARTB
+
+    ESIBLK -.->|interim: build vs current scheme<br/>behind rule-version seam - version bump| ESI
+    Q4BLK -.->|interim: ship Q1-Q3, prepare Annexure II data;<br/>Q4 + Part B follow the format| PARTB
+
+    classDef foundation fill:#1f4e79,stroke:#0b2b45,color:#ffffff;
+    classDef gate fill:#2e7d32,stroke:#194d1c,color:#ffffff;
+    classDef blocker fill:#b71c1c,stroke:#7a0f0f,color:#ffffff;
+    classDef scaffold fill:#5b3a86,stroke:#33205a,color:#ffffff;
+
+    class ENG,HR foundation;
+    class READY gate;
+    ARRBLK{{"FENCE - ECR arrear layout unpublished (EV-043)"}}
+    PTBLK{{"FENCE - state PT/LWF slabs until gazette-sourced (V-09)"}}
+    LEGBLK{{"FENCE - attended submission until counsel clears it (section 23)"}}
+    ARRBLK -.->|arrear returns only| EPF
+    PTBLK -.->|per state| PT
+    PTBLK -.->|per state, LWF| GRAT
+    LEGBLK -.->|attended submission of every artefact| FILING
+    TPLBLK{{"FENCE - ESIC upload template unconfirmed - capture from portal"}}
+    TPLBLK -.->|upload file only, not the computation| ESI
+
+    class ESIBLK,Q4BLK,ARRBLK,PTBLK,LEGBLK,TPLBLK blocker;
+    class ATTR,SEAM,AI scaffold;

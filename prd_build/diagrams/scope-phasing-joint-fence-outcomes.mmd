@@ -1,0 +1,28 @@
+flowchart TD
+    classDef q fill:#fff3cd,stroke:#997404,color:#5c4708;
+    classDef rel fill:#d1e7dd,stroke:#146c43,color:#0a3622;
+    classDef side fill:#e2e3e5,stroke:#6c757d,color:#343a40;
+
+    START(["R2 reaches GATE_REVIEW"])
+    Q8{"F-08 shipped for at least one portal?"}:::q
+    Q1A{"F-01 cleared?"}:::q
+    Q1B{"F-01 cleared?"}:::q
+
+    J1["As planned<br/>R2X-02 met by release<br/>R3 = C-48 and C-49 on F-01, then C-51"]:::rel
+    J2["C-48 and C-49 pulled into R2 by SC-A if they can finish before the gate<br/>R3 = C-51, the first full year"]:::rel
+    J3["R2X-02 met by the declared carve-out<br/>C-45 ships per portal whenever F-08 clears<br/>R3 = C-48 and C-49 on F-01, then C-51"]:::rel
+    J4["C-48 and C-49 pulled into R2 by SC-A<br/>R3 = the counsel-cleared attended launch plus C-51"]:::rel
+
+    CON["Every branch: the Q4 family enters the SLA only on a real Q4 submission<br/>F-04 moves only A-09 and C-46<br/>no branch moves a P0 row"]:::side
+
+    START --> Q8
+    Q8 -->|"yes"| Q1A
+    Q8 -->|"no, carve-out declared"| Q1B
+    Q1A -->|"no"| J1
+    Q1A -->|"yes"| J2
+    Q1B -->|"no"| J3
+    Q1B -->|"yes"| J4
+    J1 -.-> CON
+    J2 -.-> CON
+    J3 -.-> CON
+    J4 -.-> CON

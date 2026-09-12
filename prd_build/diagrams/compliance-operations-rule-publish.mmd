@@ -1,0 +1,38 @@
+stateDiagram-v2
+    direction TB
+    [*] --> DETECTED: R1 watcher hit, drift report or rejection pattern
+    DETECTED --> TRIAGED: R2 source captured raw and rendered, classified
+    TRIAGED --> NO_CHANGE: R3 no impact, a second analyst concurs
+    TRIAGED --> DRAFTING: R4 change needed
+    DRAFTING --> IN_REVIEW: R5 citation, corrigendum check, impact and golden cases attached
+    IN_REVIEW --> DRAFTING: R6 returned with reasons
+    IN_REVIEW --> REJECTED: R7 rejected with reasons
+    IN_REVIEW --> CERTIFYING: R8 independent qualified reviewer approves
+    CERTIFYING --> DRAFTING: R9 a golden case or portal fixture diverges
+    CERTIFYING --> STAGED: R10 every case reproduces, signed pack built
+    STAGED --> PUBLISHED: R11 canary clean, live before first use
+    PUBLISHED --> SUPERSEDED: R12 newer version for the same scope
+    PUBLISHED --> ROLLED_BACK: R13 defect found, two approvers
+    TRIAGED --> WITHDRAWN: R14 instrument withdrawn or stayed
+    DRAFTING --> WITHDRAWN: R14 instrument withdrawn or stayed
+    IN_REVIEW --> WITHDRAWN: R14 instrument withdrawn or stayed
+    CERTIFYING --> WITHDRAWN: R14 instrument withdrawn or stayed
+    STAGED --> WITHDRAWN: R14 instrument withdrawn or stayed
+    STAGED --> DRAFTING: R15 canary shows a defect
+    NO_CHANGE --> [*]
+    REJECTED --> [*]
+    WITHDRAWN --> [*]
+    SUPERSEDED --> [*]
+    ROLLED_BACK --> [*]
+
+    note right of TRIAGED
+      Amendments and corrigenda are change
+      requests, not news items - every
+      published rule watches its base instrument.
+    end note
+
+    note right of PUBLISHED
+      Old versions stay queryable forever.
+      A rollback publishes a superseding
+      version, never a deletion.
+    end note

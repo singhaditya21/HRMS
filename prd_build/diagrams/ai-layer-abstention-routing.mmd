@@ -1,0 +1,48 @@
+flowchart TB
+    Q["One claim-bearing part of a turn<br/>the unit of outcome is the part,<br/>never the whole message"]
+    C1{"Is a control off or a<br/>provider unavailable?"}
+    C2{"Is the caller entitled to<br/>what the answer needs?"}
+    C3{"Does a source exist - an engine<br/>ledger line or a rule row for<br/>this subject, period and scope?"}
+    C4{"Does a resolvable citation<br/>support every claim?"}
+    C5{"Does every figure match<br/>the source that may supply it?"}
+
+    AO["ai_off, degraded_budget or<br/>provider_unavailable<br/>the deterministic surface answers"]
+    RS["refused_scope - the answer exists,<br/>the caller may not have it<br/>an access signal, not a coverage gap"]
+    AN["abstained_no_source<br/>gap_kind names what is absent -<br/>rule_version_absent, rule_fenced,<br/>ledger_absent"]
+    AC["abstained_no_citation<br/>gap_kind policy_missing<br/>or policy_ambiguous"]
+    SU["answered_substituted<br/>the engine value with its basis line"]
+    AA["answered"]
+    ESC["escalated - a UC-D4 draft to a human,<br/>signed off before it reaches the asker"]
+
+    GAP[("Coverage backlog - the tenant's own<br/>policy store, or &sect;22's rule pipeline<br/>for a state and period we do not hold")]
+    MET[("Abstention rate per use case - &sect;19.8<br/>a gap to fill, never a guardrail to loosen")]
+
+    Q --> C1
+    C1 -->|"yes"| AO
+    C1 -->|"no"| C2
+    C2 -->|"no"| RS
+    C2 -->|"yes"| C3
+    C3 -->|"no"| AN
+    C3 -->|"yes"| C4
+    C4 -->|"no"| AC
+    C4 -->|"yes"| C5
+    C5 -->|"no"| SU
+    C5 -->|"yes"| AA
+    AN --> GAP
+    AC --> GAP
+    AN --> ESC
+    AC --> ESC
+    AN --> MET
+    AC --> MET
+    AO --> MET
+
+    classDef gate fill:#fff8e1,stroke:#f9a825,color:#6d4c00;
+    classDef ok fill:#e9f7ef,stroke:#1e8449,color:#0b3d22;
+    classDef warn fill:#fff3e0,stroke:#ef6c00,color:#6d3200;
+    classDef deny fill:#ffebee,stroke:#c62828,color:#5b160d;
+    classDef store fill:#e6f2ff,stroke:#1b6ca8,color:#083b5c;
+    class C1,C2,C3,C4,C5 gate;
+    class AA,SU,Q ok;
+    class AN,AC,AO,ESC warn;
+    class RS deny;
+    class GAP,MET store;

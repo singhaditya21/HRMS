@@ -1,0 +1,95 @@
+flowchart LR
+    classDef ver fill:#132b4a,stroke:#2f5f9e,color:#e3efff,stroke-width:1px;
+    classDef hyp fill:#4a3a10,stroke:#8a6d1f,color:#fff2cf,stroke-width:1px;
+    classDef open fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+    classDef frame fill:#3a3a3a,stroke:#6b6b6b,color:#f0f0f0,stroke-width:1px,stroke-dasharray: 4 3;
+    classDef dec fill:#0b5c3e,stroke:#17b37a,color:#eafff5,stroke-width:2px;
+    classDef opn fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+    classDef pc fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+
+    subgraph CLAIMS["Thesis claims, coloured by marker"]
+        direction TB
+        T01["T-01 every surface an attended portal"]:::ver
+        T02["T-02 no priced vendor claims to submit"]:::ver
+        T03["T-03 liability non-delegable, the frame"]:::frame
+        T04["T-04 attended filing lawful and insurable"]:::open
+        T05["T-05 computation priced at zero"]:::ver
+        T06["T-06 state layer greenfield in Tally and Frappe"]:::ver
+        T07["T-07 the state dataset comes first"]:::ver
+        T08["T-08 six of six bill a 50-seat block"]:::ver
+        T09["T-09 our price inside the band"]:::hyp
+        T10["T-10 a premium for submission and SLA"]:::hyp
+        T11["T-11 the CA as a channel"]:::hyp
+        T12["T-12 HR AI priced at zero"]:::ver
+        T13["T-13 inference the smallest line"]:::open
+        T14["T-14 supervised minutes fit the price"]:::open
+        T15["T-15 enterprise closed about 3 years"]:::ver
+        T16["T-16 a late filing is a felt pain"]:::hyp
+    end
+
+    subgraph DECS["Decisions and fences"]
+        direction TB
+        DEC01["DEC-01 unit of delivery"]:::dec
+        DEC02["DEC-02 beachhead bands"]:::dec
+        DEC03["DEC-03 assistant bundled"]:::dec
+        DEC05["DEC-05 price shape"]:::dec
+        DEC06["DEC-06 tenancy, CA as grantee"]:::dec
+        FEN05["FEN-05 state PT and LWF rows"]:::dec
+        FEN06["FEN-06 operator-attended submission"]:::dec
+    end
+
+    subgraph OPNS["Open items"]
+        direction TB
+        OPN01["OPN-01 PEPM level"]:::opn
+        OPN02["OPN-02 registration allowance"]:::opn
+        OPN03["OPN-03 binding profile"]:::opn
+        OPN04["OPN-04 SLA remedy cap"]:::opn
+        OPN05["OPN-05 CA economics"]:::opn
+        OPN07["OPN-07 metered AI"]:::opn
+    end
+
+    subgraph PCS["Positioning claims"]
+        direction TB
+        PC1["PC-1 we carry the filing"]:::pc
+        PC2["PC-2 nobody else submits"]:::pc
+        PC3["PC-3 state layer against Tally, Frappe"]:::pc
+        PC4["PC-4 no seat floor"]:::pc
+        PC5["PC-5 format-current guarantee"]:::pc
+        PC7["PC-7 the assistant is bundled"]:::pc
+    end
+
+    LEG["Solid edge: a registered falsifier moves the item in one step, AC-01.16<br/>Dotted edge: no falsifier registered, a frame, a floor or a build dependency"]:::frame
+
+    T01 --> DEC01
+    T01 --> FEN06
+    T01 --> PC1
+    T02 --> PC2
+    T02 --> OPN01
+    T03 -.-> DEC01
+    T03 -.-> OPN04
+    T03 -.-> PC1
+    T04 --> FEN06
+    T04 --> OPN04
+    T04 --> PC1
+    T04 --> PC5
+    T05 -.-> DEC05
+    T06 --> PC3
+    T07 -.-> FEN05
+    T08 --> DEC05
+    T08 --> PC4
+    T08 --> OPN01
+    T09 --> OPN01
+    T10 --> OPN01
+    T10 --> OPN04
+    T11 --> OPN05
+    T11 --> DEC06
+    T12 --> DEC03
+    T12 --> OPN07
+    T12 --> PC7
+    T13 --> DEC03
+    T14 --> OPN03
+    T14 --> OPN02
+    T14 --> DEC05
+    T15 --> DEC02
+    T16 --> DEC01
+    T16 --> OPN01

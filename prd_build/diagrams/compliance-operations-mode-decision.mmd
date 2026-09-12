@@ -1,0 +1,52 @@
+flowchart TD
+    classDef gate fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef stop fill:#5a1a1a,stroke:#a33,color:#ffecec,stroke-width:2px;
+    classDef fallback fill:#4a3a10,stroke:#a08020,color:#fff6dc,stroke-width:1px;
+    classDef guided fill:#35224a,stroke:#7a55a8,color:#f3eaff,stroke-width:1px;
+    classDef operator fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:2px;
+
+    REQ["Session requested for one registration,<br/>one portal, one filing instance or portal task"]:::gate
+    MR2{"MR-1 instance BLOCKED, or the artefact<br/>hash is not the approved hash?"}
+    NOSESS["No session. The blocker and its owner<br/>are shown with the due date"]:::stop
+    MR1{"MR-2 registration configured Mode A,<br/>or the tenant elected employer-only?"}
+    MR3{"MR-3 fence F-08 for this portal cleared,<br/>and CR-17c cleared for the income-tax upload?"}
+    MR4{"MR-4 ACTIVE authority covering this<br/>registration, action code and date?"}
+    MR6{"MR-6 credential ACTIVE and validated<br/>within the freshness window?"}
+    MR7{"MR-7 runbook PUBLISHED for this portal<br/>with no open unknowns?"}
+    MR8{"MR-8 an operator certified on this<br/>runbook version is rostered in the window?"}
+    MR9{"MR-9 lead time above<br/>ops.min_lead_minutes_for_mode_c?"}
+    MR10{"MR-10 a named OTP contact<br/>on duty in the window?"}
+    MR11{"MR-11 CA grant in force and<br/>Mode D elected for this registration?"}
+    FIRST{"MR-12 first live submission of this<br/>artefact type for this tenant?"}
+
+    A["Mode A - employer attended.<br/>Artefact, form values, checklist,<br/>deadline clock, evidence import"]:::fallback
+    B["Mode B - co-attended.<br/>Employer drives, our operator guides<br/>and reconciles at every gate"]:::guided
+    C["Mode C - operator attended<br/>in the managed workspace"]:::operator
+    D["Mode D - CA attended,<br/>same runbooks, same log"]:::guided
+
+    REQ --> MR2
+    MR2 -->|"yes"| NOSESS
+    MR2 -->|"no"| MR1
+    MR1 -->|"yes"| A
+    MR1 -->|"no"| MR3
+    MR3 -->|"no - fence_open"| B
+    MR3 -->|"yes"| MR4
+    MR4 -->|"no - authority_not_in_force<br/>or authority_suspended"| B
+    MR4 -->|"yes"| MR6
+    MR6 -->|"no - credential_not_usable"| B
+    MR6 -->|"yes"| MR7
+    MR7 -->|"no - runbook_not_publishable"| B
+    MR7 -->|"yes"| MR8
+    MR8 -->|"no - no_certified_operator"| B
+    MR8 -->|"yes"| MR9
+    MR9 -->|"no - insufficient_lead"| A
+    MR9 -->|"yes"| MR10
+    MR10 -->|"no - no_otp_contact"| A
+    MR10 -->|"yes"| MR11
+    MR11 -->|"yes - ca_channel"| D
+    MR11 -->|"no"| FIRST
+    FIRST -->|"yes - first_submission_protocol"| B
+    FIRST -->|"no - resolved_mode_c"| C
+
+    B -.->|"guidance declined, or no<br/>operator available"| A
+    C -.->|"any gate fails mid-session"| A

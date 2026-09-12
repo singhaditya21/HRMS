@@ -1,0 +1,46 @@
+flowchart LR
+    subgraph V1["v1 records - figures only, no money moves, BEN-52"]
+        direction TB
+        COV["dependant_coverage + benefit_enrollment<br/>confirmed lives, reconciled, BEN-72"]
+        CI["contribution_instruction<br/>per CRA per month"]
+        WT["wallet_transaction issues<br/>rupees loaded, recorded not issued"]
+        HC["Billed headcount"]
+    end
+
+    subgraph L1["Line 1 - software PEPM, owned by section 18"]
+        direction TB
+        SW["Price card, two anchors EV-027<br/>billed actual headcount"]
+        SWC["Software cost stack, four lines EV-088"]
+    end
+
+    subgraph L2["Line 2 - attach, one sub-line per product, each in its own unit"]
+        direction TB
+        GMC["Broker override<br/>per covered life per month<br/>v1: 0, unverified, B8"]
+        POP["NPS POP fee<br/>per contribution<br/>v1: 0, unverified, B4"]
+        CARD["Card interchange or float<br/>per rupee<br/>out of scope, no India rate"]
+        EWA["EWA referral<br/>Rs 0 to the employer, Verified"]
+        AXC["Attach cost lines<br/>give-back, incentives, servicing"]
+    end
+
+    HC --> SW
+    COV -->|"AX5: confirmed lives, never headcount"| GMC
+    CI --> POP
+    WT --> CARD
+
+    SW --> R1["Reported: software revenue and ARPU"]
+    GMC --> R2["Reported: attach revenue per product, as a range"]
+    POP --> R2
+    CARD --> R2
+    EWA --> R2
+    SWC -.-> R1
+    AXC -.-> R2
+
+    R1 -. "AX1 to AX3: never summed per employee,<br/>never netted, never a hidden subsidy" .- R2
+
+    MOR["Money-of-record<br/>PayrollResult, Filing"]
+    R2 -. "AX7: no reference, D9" .- MOR
+
+    classDef bar fill:#f8d7da,stroke:#a33,color:#000;
+    classDef zero fill:#eee,stroke:#999,color:#333,stroke-dasharray:4 3;
+    class MOR bar;
+    class GMC,POP,CARD zero;

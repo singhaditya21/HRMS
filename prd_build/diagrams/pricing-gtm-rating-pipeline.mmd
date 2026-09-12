@@ -1,0 +1,35 @@
+flowchart TB
+    classDef src fill:#3a3a3a,stroke:#6b6b6b,color:#f0f0f0,stroke-width:1px;
+    classDef eng fill:#0b5c3e,stroke:#17b37a,color:#eafff5,stroke-width:2px;
+    classDef out fill:#132b4a,stroke:#2f5f9e,color:#e3efff,stroke-width:1px;
+    classDef ctl fill:#f2f2f2,stroke:#c0392b,color:#111111,stroke-width:1px,stroke-dasharray:4 3;
+
+    A["<b>Payroll and filing ledgers</b><br/>employment events, pay runs,<br/>filing instances - sections 07, 08, 22"]:::src
+    B["<b>Registration set</b><br/>PF code, ESI code, PTRC and PTEC,<br/>TAN - section 06.4"]:::src
+    C["<b>Add-on subscriptions</b><br/>per-user and per-recruiter units"]:::src
+
+    D["<b>1. Billable-headcount census</b><br/>derived, immutable, hashed<br/>one row per billable person-period"]:::eng
+    E["<b>2. Price book version resolution</b><br/>by contract, not by clock:<br/>the version in force on the period"]:::eng
+    F["<b>3. Rate components</b><br/>base fee, included quantity, overage,<br/>per-unit rate, minimum billable quantity"]:::eng
+    G["<b>4. Registration line</b><br/>registrations above the allowance"]:::eng
+    H["<b>5. Proration</b><br/>joiners, leavers, mid-period plan change"]:::eng
+    I["<b>6. Discount and credit grants</b><br/>term discount, partner-funded credit,<br/>SLA credit note"]:::eng
+
+    J["<b>7. Invoice draft</b><br/>line items reference rate components"]:::out
+    K["<b>8. Tax resolution</b><br/>place of supply from the recipient GSTIN,<br/>IGST or CGST plus SGST"]:::out
+    L["<b>9. IRN and signed QR</b><br/>once our own turnover crosses the threshold"]:::out
+    M["<b>10. Issue, mandate debit, collection</b>"]:::out
+    N["<b>11. Commission accrual</b><br/>on revenue actually collected, ex-GST"]:::out
+
+    A --> D
+    B --> G
+    C --> F
+    D --> E --> F --> G --> H --> I --> J --> K --> L --> M --> N
+
+    R1["<b>Replay invariant</b><br/>re-rating a closed period with the stored<br/>price book version reproduces the invoice<br/>to the paisa, or a reconciliation defect is raised"]:::ctl
+    R2["<b>No-seat-floor invariant</b><br/>on the File plan, included quantity and<br/>minimum billable quantity are both zero<br/>- readable as data, not as code"]:::ctl
+    R3["<b>Derivation invariant</b><br/>no census row is hand-entered.<br/>Every row cites its source event"]:::ctl
+
+    J -.- R1
+    F -.- R2
+    D -.- R3

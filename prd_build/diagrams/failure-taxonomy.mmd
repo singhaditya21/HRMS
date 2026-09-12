@@ -1,0 +1,27 @@
+flowchart TB
+    F["Integration failure<br/>(any of N integrations)"]
+
+    F --> T["TRANSIENT<br/>timeout / 5xx /<br/>portal maintenance"]
+    F --> P["PERMANENT<br/>bad data / rejected file /<br/>invalid IFSC / PAN / UAN"]
+    F --> PT["PARTIAL<br/>batch settles some lines /<br/>ECR filed without flagged members,<br/>added later by Supplementary return"]
+    F --> SD["SCHEMA DRIFT<br/>bank release / FVU version /<br/>EPFO layout / PT slab"]
+    F --> EU["EXTERNAL UNAVAILABLE<br/>device offline / IdP down /<br/>portal down near due date"]
+
+    T --> Tr["Exponential backoff + jitter,<br/>bounded retries, then queue.<br/>Deadline clock surfaced, not hidden"]
+    P --> Pr["Pre-flight validation catches<br/>before emission; if it slips,<br/>opens exception worklist item"]
+    PT --> PTr["Line-level status; re-queue only<br/>failures via per-line idempotency key;<br/>parent held in *-with-exceptions"]
+    SD --> SDr["Versioned schema object updated<br/>as data; watcher flags change;<br/>old + new versions coexist"]
+    EU --> EUr["Fallback path: manual upload /<br/>web check-in / break-glass login.<br/>Primary is never a single point of failure"]
+
+    Tr --> G["Shared guarantee:<br/>no silent failure;<br/>idempotent (a duplicate is worse than a miss);<br/>pay + filing always land"]
+    Pr --> G
+    PTr --> G
+    SDr --> G
+    EUr --> G
+
+    classDef fail fill:#fde2e2,stroke:#c0392b,color:#000;
+    classDef resp fill:#e2f0fd,stroke:#2471a3,color:#000;
+    classDef goal fill:#e2fde8,stroke:#1e8449,color:#000;
+    class T,P,PT,SD,EU fail;
+    class Tr,Pr,PTr,SDr,EUr resp;
+    class G goal;

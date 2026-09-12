@@ -1,0 +1,33 @@
+stateDiagram-v2
+    [*] --> drafted : CI1, an active retiral enrollment and a period close
+
+    drafted --> held : CI2, no PRAN for an NPS enrollment, BEN-22
+    held --> drafted : CI3, PRAN supplied or issued
+    drafted --> void : CI4, the enrollment was suspended for the whole period, no amount arises
+
+    drafted --> validated : CI5, employer and employee amounts resolved against the wage basis and the regime rate
+    validated --> batched : CI6, a period batch assembles the validated instructions for one scheme
+    batched --> handed_over : CI7, the manifest is handed to the employer for upload while the file layout stays fenced on B11
+    handed_over --> acknowledged : CI8, the CRA or trustee reference is recorded, only now is the period remitted
+    handed_over --> rejected : CI9, the CRA or trustee rejects the line, the reason is stored as received
+
+    rejected --> superseded : CI10, a correcting instruction names the one it replaces
+    validated --> superseded : CI11, a retro wage or rate correction re-values the period
+    acknowledged --> superseded : CI11
+
+    superseded --> [*]
+    acknowledged --> [*]
+    void --> [*]
+
+    note right of handed_over
+        No CRA file layout is specified in this PRD.
+        The product emits an internal manifest and records
+        the employer's own upload, B11. Nothing is marked
+        remitted without an acknowledgement reference, BEN-21.
+    end note
+
+    note left of validated
+        Tier II is tagged and never produces an instruction.
+        VPF rides the ECR and never produces one either.
+        Only the employer share reaches the retiral cap ledger.
+    end note

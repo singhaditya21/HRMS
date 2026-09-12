@@ -1,0 +1,24 @@
+flowchart TD
+    START(["Resolve rule_type R for employment M,<br/>period P, as-known-at time T"]) --> W["Resolve the WorkLocation in force for M in P<br/>&#40;effective-dated assignment&#41; &rarr;<br/>state J, sphere S, Code-regime commencement C<br/>never residence, HQ or registered office"]
+
+    W --> RUN{"Retro / corrigendum<br/>run?"}
+    RUN -->|"Yes"| RETRO["Set T = now, keep P = corrected period<br/>&rarr; picks up latest knowledge<br/>&#40;corrigenda&#41; for the historical period"]
+    RUN -->|"No"| NORMAL["T = as-of time,<br/>P = the run period"]
+
+    RETRO --> SELECT
+    NORMAL --> SELECT
+
+    SELECT["Select EffectiveDatedRule rows where:<br/>rule_type = R<br/>AND jurisdiction &isin; &#123;J, Central&#125;<br/>AND applies_to_sphere &isin; &#123;all, S&#125;<br/>AND regime = legacy before C, code from C &#40;state-sphere Code rule types&#41;<br/>AND effective_from &le; P.end<br/>AND &#40;effective_to IS NULL OR effective_to &ge; P.start&#41; &nbsp;&#40;business time&#41;<br/>AND recorded_at &le; T<br/>AND &#40;superseded_at IS NULL OR superseded_at &gt; T&#41; &nbsp;&#40;knowledge time&#41;<br/>over published versions only, plus staged versions<br/>for a tenant in the canary cohort &#40;RO1&#41;"] --> SPEC{"State row exists for J<br/>and state legislates<br/>this field?<br/>&#40;PT / LWF / S&amp;E / state-sphere Code rules&#41;"}
+
+    SPEC -->|"Yes: state row"| STATEROW["Use most-specific-jurisdiction row<br/>&#40;state overrides Central&#41;"]
+    SPEC -->|"No state row"| CENTRALROW["Use Central row<br/>&#40;PF / ESI / TDS / gratuity&#41;"]
+
+    STATEROW --> REG{"Establishment holds<br/>a registration in J?<br/>&#40;e.g. pt_reg_no&#41;"}
+    REG -->|"Yes"| RESOLVED
+    REG -->|"No"| PENDING["Return liability tagged<br/>registration_pending<br/>&rarr; readiness report flags<br/>'due, no registration'<br/>&#40;never a zero-liability line&#41;"]
+
+    CENTRALROW --> RESOLVED
+
+    PENDING --> RESOLVED["Selected rule_id&#40;s&#41; resolved"]
+    RESOLVED --> LINEAGE["Record rule_id&#40;s&#41;, work_location_id<br/>and regime on PayrollResult lineage &#40;D4&#41;<br/>&rarr; result is replayable &amp; auditable"]
+    LINEAGE --> DONE(["Rule version bound to the computed figure"])

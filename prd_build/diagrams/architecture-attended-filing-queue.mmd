@@ -1,0 +1,32 @@
+stateDiagram-v2
+    direction TB
+    [*] --> ARTEFACT_READY: AQ1 generator produced a locally validated artefact from a locked run
+    ARTEFACT_READY --> QUEUED: AQ2 job enqueued against its registration, filing type and due date
+    QUEUED --> BLOCKED_BY_LEDGER: AQ3 the per-establishment ledger has an unfiled earlier month
+    BLOCKED_BY_LEDGER --> QUEUED: AQ4 the earlier month reaches FILED
+    QUEUED --> CLAIMED: AQ5 an operator claims the job, lease starts
+    CLAIMED --> QUEUED: AQ6 lease expires or the operator releases the job
+    CLAIMED --> IN_SESSION: AQ7 credential checked out from the vault, portal session opened
+    IN_SESSION --> AWAITING_PORTAL: AQ8 portal unreachable or rejecting at the gateway
+    AWAITING_PORTAL --> QUEUED: AQ9 backoff elapsed, artefact unchanged, same idempotency key
+    IN_SESSION --> AWAITING_APPROVAL: AQ10 return statement obtained, verification gate presented to the approver
+    AWAITING_APPROVAL --> IN_SESSION: AQ11 approver confirms, payment may be initiated
+    AWAITING_APPROVAL --> WITHDRAWN: AQ12 approver refuses before payment initiation
+    WITHDRAWN --> ARTEFACT_READY: AQ13 corrected artefact regenerated with a new idempotency key
+    IN_SESSION --> ACKNOWLEDGED: AQ14 portal receipt captured and stored
+    IN_SESSION --> REJECTED_AT_PORTAL: AQ15 portal rejection captured with its error file
+    REJECTED_AT_PORTAL --> ARTEFACT_READY: AQ16 errors mapped to employee records and corrected
+    ACKNOWLEDGED --> [*]: AQ17 filing state machine advances and the ledger month closes
+
+    note right of AWAITING_APPROVAL
+      This is the verification gate. It sits
+      immediately before payment initiation
+      because a downward correction is
+      impossible afterwards.
+    end note
+
+    note right of QUEUED
+      A job carries one idempotency key for the
+      whole of its life. Re-queueing never mints
+      a new key, so a retry cannot double-file.
+    end note

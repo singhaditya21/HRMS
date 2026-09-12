@@ -1,0 +1,25 @@
+flowchart TD
+    S["Draft statement about law or compliance<br/>website, deck, MSA or DPA, security questionnaire,<br/>in-app copy, notice text, assistant answer, support macro"] --> R{"Cleared entry in the<br/>legal-claim register?<br/>FR-LEG-001"}
+    R -->|"Yes, cleared and in date"| USE["Use the registered wording verbatim<br/>citation, capture date and marker attached"]
+    R -->|"No, or re-check due"| C{"Classify the evidence state"}
+
+    C -->|"Killed, or matches the banned list"| X["BLOCK<br/>banned-claim lint, FR-LEG-003"]
+    C -->|"Open counsel-register item"| F["Only the sanctioned formula:<br/>statutory basis under counsel review"]
+    C -->|"Hypothesis"| INT["Internal use only<br/>carries its kill criterion"]
+    C -->|"Not yet in force"| NF["Commencement stated in the same sentence<br/>never compliant, never a warranty"]
+    C -->|"Verified - mirror, or provenance caveat"| PULL["Pull the primary instrument<br/>and run the corrigendum check"]
+    C -->|"Verified, primary source"| CL["Named owner drafts<br/>counsel clears<br/>register entry created"]
+
+    PULL --> CL
+    NF --> CL
+    F --> CL
+    CL --> PUB["Publish with citation, capture date,<br/>marker and re-check trigger"]
+    PUB --> W["Legal watch item fires, or an EV row is re-graded<br/>entry suspended, dependent copy withdrawn"]
+    W --> R
+
+    classDef block fill:#fde2e2,stroke:#c0392b,color:#3a0d0d;
+    classDef caution fill:#fff3cd,stroke:#b8860b,color:#3a2f00;
+    classDef ok fill:#e8f5e9,stroke:#2e7d32,color:#0d2a12;
+    class X block;
+    class F,INT,NF,PULL,W caution;
+    class USE,CL,PUB ok;

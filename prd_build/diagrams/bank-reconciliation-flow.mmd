@@ -1,0 +1,35 @@
+flowchart TD
+    PR["LOCKED payroll month (FR-PAY-301 M8)<br/>Net Pay Payable = Sigma payslip net"] --> BATCH["Build disbursement batch<br/>net-pay lines: acct, IFSC, name, amount"]
+
+    BATCH --> PF{"Pre-flight validation<br/>IFSC in maintained directory - account non-empty<br/>amount = payslip net - no zero/negative<br/>hash-total + record-count trailer match"}
+    PF -->|"any line fails"| BLOCK["BLOCKED pre-emission<br/>blocking error, not silent drop<br/>(AC-BNK-1 / AC-BNK-5)"]
+    BLOCK --> BATCH
+
+    PF -->|"all lines pass"| CUTOFF{"Cut-off + rail check<br/>after the bank's salary cut-off? - holiday or outside the rail window?<br/>line below the provider's RTGS minimum routed to NEFT<br/>limits and windows are data per provider and bank"}
+    CUTOFF -->|"warn, do not silently slip payday"| EMIT
+
+    EMIT{"Emit batch"} -->|"the floor, every bank"| FILE["Per-bank bulk-upload file<br/>customer uploads in net-banking"]
+    EMIT -->|"upsell, partner-gated"| API["Connected banking<br/>corporate current account + RM verification<br/>post-launch BD track"]
+    EMIT -->|"upsell, API"| AGG["Aggregator payout API<br/>Cashfree or RazorpayX<br/>idempotency key per line"]
+
+    FILE --> BAPP["Approval outside our product<br/>bank portal or payout dashboard maker-checker<br/>run shows pending-bank-approval<br/>an API 200 is never settlement"]
+    API --> BAPP
+    AGG --> BAPP
+    BAPP --> RAIL["Bank rails: NEFT / RTGS / IMPS"]
+
+    RAIL --> SETTLE["Settlement status per line<br/>via API status, the bank statement per its captured schema, or manual<br/>(batch is NOT atomic)"]
+
+    SETTLE --> RECON["Reconciliation engine<br/>match settlement lines to pay-run lines by UTR/reference"]
+    RECON --> CLASS{"Per-line outcome"}
+    CLASS -->|"credited"| OK["Settled - idempotency key<br/>payrun_id + employee_id"]
+    CLASS -->|"returned by beneficiary bank, reason as reported"| EXC["Exception worklist<br/>reason code + assignee"]
+    CLASS -->|"failed pre-network (IFSC decommissioned)"| EXC
+
+    EXC --> REQ["Re-queue ONLY failed lines into a NEW batch<br/>settled employees never paid twice (AC-BNK-2)"]
+    REQ --> BATCH
+
+    OK --> TIE{"Three-way tie<br/>Sigma credited = Sigma net-pay = Sigma payslips<br/>AND every exception cleared?"}
+    EXC -.->|"holds run"| DWE["disbursed-with-exceptions<br/>run cannot reach complete (AC-BNK-3)"]
+    DWE -.-> TIE
+    TIE -->|"no"| DWE
+    TIE -->|"yes"| DONE(["complete<br/>pay-path analogue of FILED"])

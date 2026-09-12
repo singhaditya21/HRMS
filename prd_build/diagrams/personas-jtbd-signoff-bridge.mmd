@@ -1,0 +1,27 @@
+flowchart LR
+    N0["July net pay<br/>locked"]
+    J["+ Joiner J<br/>+₹48,000.00"]
+    L["- Leaver L<br/>-₹38,000.00"]
+    E["- LOP E, 2 days<br/>calendar-day method<br/>-₹2,580.65"]
+    REV["+ Revisions K and G<br/>+₹6,557.50"]
+    ARR["+ Arrear K, July<br/>+₹3,760.00<br/>PF via the fenced arrear flow"]
+    N1["August net pay<br/>= July + ₹17,736.85"]
+    RES{"Residual<br/>must be ₹0.00"}
+
+    N0 --> J --> L --> E --> REV --> ARR --> N1 --> RES
+    RES -->|"₹0.00"| OK["Artefact presented<br/>to the approver"]
+    RES -->|"not zero"| DEF["Defect - not presented<br/>operator sees the unexplained amount"]
+
+    EC["Employer cost bridge<br/>+₹51,875.00 - ₹41,875.00 - ₹2,580.65<br/>+ ₹7,535.00 + ₹4,250.00 = +₹19,204.35"]
+    N1 -.-> EC
+
+    classDef start fill:#e8f0fe,stroke:#1a56db,color:#111827;
+    classDef up fill:#ecfdf5,stroke:#047857,color:#111827;
+    classDef down fill:#fef2f2,stroke:#b91c1c,color:#111827;
+    classDef check fill:#fef3c7,stroke:#b45309,color:#111827;
+    classDef note fill:#f3f4f6,stroke:#9ca3af,color:#374151,font-style:italic;
+    class N0,N1 start;
+    class J,REV,ARR,OK up;
+    class L,E,DEF down;
+    class RES check;
+    class EC note;

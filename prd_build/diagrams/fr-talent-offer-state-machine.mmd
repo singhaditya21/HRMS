@@ -1,0 +1,35 @@
+stateDiagram-v2
+    direction TB
+
+    state "Draft, add-back re-run on every save" as DRAFT
+    state "Pending approval" as PENDING
+    state "Approved" as APPROVED
+    state "Issued to the candidate" as ISSUED
+    state "Accepted" as ACCEPTED
+    state "Declined by the candidate" as DECLINED
+    state "Expired" as EXPIRED
+    state "Rescinded by the employer" as RESCINDED
+    state "Superseded by a revision" as SUPERSEDED
+    state "Joined, handed to onboarding" as JOINED
+    state "Not joined" as NOT_JOINED
+
+    [*] --> DRAFT: O1 created when the application reaches the offer stage
+    DRAFT --> PENDING: O3 submitted, add-back evaluated, fixed point converged
+    PENDING --> DRAFT: O5 returned, or a rule version it used is superseded
+    PENDING --> APPROVED: O4 last approver approves, approver is not the maker
+    APPROVED --> DRAFT: O13 a rule version it used is superseded before issue
+    APPROVED --> ISSUED: O6 letter rendered, bound figures match the engine
+    ISSUED --> ACCEPTED: O7 candidate accepts the current version
+    ISSUED --> DECLINED: O8 candidate declines
+    ISSUED --> EXPIRED: O9 validity date passes
+    ISSUED --> RESCINDED: O11 employer rescinds, confirmer rule applies
+    ISSUED --> SUPERSEDED: O10 revised, a new version starts in draft
+    APPROVED --> SUPERSEDED: O10 revised before issue
+    ACCEPTED --> JOINED: O12 onboarding register commit
+    ACCEPTED --> NOT_JOINED: O12n candidate does not join, requisition reopens
+    JOINED --> [*]
+    DECLINED --> [*]
+    EXPIRED --> [*]
+    RESCINDED --> [*]
+    NOT_JOINED --> [*]
+    SUPERSEDED --> [*]

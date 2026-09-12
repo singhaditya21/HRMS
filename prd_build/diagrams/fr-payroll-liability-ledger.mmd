@@ -1,0 +1,26 @@
+stateDiagram-v2
+    direction LR
+    state "Interest under s.7Q - cannot be deferred" as INTEREST {
+        [*] --> FORECAST: L1 due date passes unpaid
+        FORECAST --> ASSESSED: L2 Due Deposit Balance Summary captured
+        ASSESSED --> IN_CHALLAN: L3 challan generated with the contribution
+        IN_CHALLAN --> PAID: L4 receipt captured
+        PAID --> [*]
+    }
+    state "Damages under s.14B - payable now or later" as DAMAGES {
+        [*] --> OPEN: L5 portal shows damages
+        OPEN --> OPEN: L6 employer defers, choice recorded
+        OPEN --> DAMAGES_IN_CHALLAN: L7 employer chooses to pay
+        DAMAGES_IN_CHALLAN --> DAMAGES_PAID: L8 receipt captured
+        DAMAGES_PAID --> [*]
+    }
+
+    note right of FORECAST
+      The engine forecasts, the portal governs.
+      A difference is a reconciling item, never an overwrite.
+    end note
+
+    note right of OPEN
+      Open damages never fail a gate.
+      They stay on every later gate view.
+    end note

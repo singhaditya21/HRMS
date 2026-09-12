@@ -1,0 +1,57 @@
+flowchart TB
+    intake["Single joiner intake<br/>(one form, e.g. Rs 50,000/mo)"]
+
+    intake --> consent["Written consent captured BEFORE collecting<br/>financial info (bank) or biometrics<br/>SPDI r.5(1) - EV-060"]
+    consent --> gate{"Threshold-aware engine<br/>tests each artefact's<br/>headcount / wage trigger"}
+
+    subgraph MAND["Mandatory subset - gates the DEPENDENT statutory artefact, never salary"]
+        direction TB
+        a1["1. UAN: prompt + chase employee's own UMANG activation<br/>(employer generates only for IWs, Nepal/Bhutan)<br/>trigger: 20+ employees (EPF) or voluntary"]
+        a2["2. ESI IP registration<br/>trigger: 10+ persons, wage <= Rs 21,000"]
+        a3["3. Prescribed-format appointment letter<br/>trigger: establishment of 10+ workers, state-prescribed form"]
+        a8["8. Declaration Form 124 (ex-12BB) + regime election<br/>absent an election, default new regime applies"]
+    end
+
+    subgraph WARN["Optional-but-consequential - WARN, not a hard stop"]
+        direction TB
+        a6["6. EPF/EPS nomination<br/>trigger: on EPF enrolment"]
+        a7["7. Gratuity nomination<br/>trigger: on completing one year of service"]
+        a9["9. Previous-employer income Form 122 (ex-12B/12BAA)<br/>trigger: mid-year joiners"]
+    end
+
+    subgraph OPT["Optional everywhere - never a block"]
+        direction TB
+        a5["5. PAN; Aadhaar OPTIONAL<br/>only seeding status tracked"]
+    end
+
+    subgraph OPS["Operational"]
+        direction TB
+        a4["4. Bank + IFSC capture for NEFT salary batch"]
+    end
+
+    gate --> a1 & a2 & a3 & a8
+    gate --> a6 & a7 & a9
+    gate --> a5
+    gate --> a4
+
+    a1 & a2 & a3 & a8 --> ready_chk{"Mandatory items<br/>present?"}
+    ready_chk -->|No| hold["Hold employee out of the dependent artefact<br/>ECR line / ESI line / letter register<br/>open chase task + operator and employee notices"]
+    ready_chk -->|Yes| ready["Statutory-ready for first filing"]
+
+    a5 -->|declined| excl["Exclude-and-flag where seeding is needed<br/>never 'no Aadhaar, no payroll'"]
+    a6 & a7 & a9 --> flag["Flag as warnings<br/>e.g. missing gratuity nominee<br/>does not break first ECR"]
+    a4 --> pay["Salary paid on schedule<br/>regardless of artefact gaps"]
+    hold -.-> pay
+    excl -.-> pay
+    flag -.-> ready
+
+    ready --> ecr["First ECR clean / no gap surfaces at exit"]
+
+    classDef mand fill:#fde2e2,stroke:#c0392b,color:#111
+    classDef warn fill:#fff3cd,stroke:#b8860b,color:#111
+    classDef ops fill:#e2e8f0,stroke:#475569,color:#111
+    classDef opt fill:#dbeafe,stroke:#1d4ed8,color:#111
+    class a1,a2,a3,a8 mand
+    class a6,a7,a9 warn
+    class a4 ops
+    class a5 opt

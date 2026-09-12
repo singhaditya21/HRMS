@@ -1,0 +1,31 @@
+flowchart LR
+    classDef fail fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+    classDef keep fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef queue fill:#4a3a0b,stroke:#8a6d14,color:#fff6da,stroke-width:1px;
+    classDef stop fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+
+    F1["Statutory portal unreachable"]:::fail
+    F2["Bank host-to-host down"]:::fail
+    F3["Biometric device offline"]:::fail
+    F4["Model provider unavailable"]:::fail
+    F5["Rules engine returns no rule in force"]:::fail
+    F6["Event backbone write fails"]:::fail
+
+    Q1["Attended-filing queue holds the job<br/>artefact already validated locally"]:::queue
+    Q2["Per-beneficiary retry queue<br/>partial batch handled"]:::queue
+    Q3["Device buffers, replays on reconnect"]:::queue
+    Q4["AI feature degrades to unavailable<br/>with a stated reason"]:::keep
+
+    K1["Pay run continues"]:::keep
+    K2["Payslips and registers unaffected"]:::keep
+    K3["Every deterministic figure unaffected"]:::keep
+
+    S1["Pay run blocks with a named reason<br/>never a zero, never a nearest version"]:::stop
+    S2["The originating write is refused<br/>no monetary mutation without its event"]:::stop
+
+    F1 --> Q1 --> K1
+    F2 --> Q2 --> K2
+    F3 --> Q3 --> K1
+    F4 --> Q4 --> K3
+    F5 --> S1
+    F6 --> S2

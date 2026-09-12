@@ -1,0 +1,27 @@
+gantt
+    title Statutory filing calendar - Tax Year 2026-27, state as of September 2026
+    dateFormat YYYY-MM-DD
+    axisFormat %b %y
+
+    section Monthly
+    TDS deposit by the 7th - dates to confirm against r.218   :active, tds, 2026-04-01, 2027-03-31
+    EPF ECR return approved then challan paid by the 15th    :active, ecr, 2026-04-01, 2027-03-31
+    ESI contribution by the 15th                             :active, esi, 2026-04-01, 2027-03-31
+
+    section Form 138 and Form 130
+    Form 138 Q1 - 31 Jul                                     :milestone, q1, 2026-07-31, 0d
+    Form 138 Q2 - 31 Oct                                     :milestone, q2, 2026-10-31, 0d
+    Form 138 Q3 - 31 Jan                                     :milestone, q3, 2027-01-31, 0d
+    Form 138 Q4 - 31 May - BLOCKED, format unpublished       :crit, milestone, q4, 2027-05-31, 0d
+    Form 130 via TRACES - 15 Jun - BLOCKED on Q4             :crit, milestone, f130, 2027-06-15, 0d
+
+    section ESI periods and the cliff
+    ESI contribution period Apr to Sep                       :esip1, 2026-04-01, 2026-09-30
+    ESI contribution period Oct to Mar                       :esip2, 2026-10-01, 2027-03-31
+    One-year saving ends - EPF Scheme 1952 and ESI subordinate law :crit, milestone, cliff, 2026-11-21, 0d
+
+    section Annual labour returns
+    Bonus payout - Code-era deadline UNCONFIRMED, shown at the legacy 30 Nov practice :milestone, bonus, 2026-11-30, 0d
+    Form XXIII unified return - Ch V and VI employers only   :milestone, f23, 2027-02-28, 0d
+    OSH Form XVII annual return - last day of Feb            :milestone, f17, 2027-02-28, 0d
+    Form XVII Part III principal-employer contract-labour return - last day of Feb :milestone, f17p3, 2027-02-28, 0d

@@ -1,0 +1,30 @@
+flowchart TD
+    A["Statutory claim to grade<br/>(e.g. EPF 12% rate, Nov-2026 cliff)"] --> B["1. Fix the base handle:<br/>instrument no. + issuing ministry (MoLE)<br/>+ publication date"]
+    B --> C["2. Search egazette.gov.in<br/>by ministry + date window<br/>(base date -> present)<br/>NOT by instrument number"]
+
+    C -.->|"WRONG surface"| X["indiacode.nic.in / vendor bare-Act<br/>consolidated view LAGS the corrigendum"]
+    X --> XErr["Reproduces stale S.O. 5319(E)<br/>footnote enumeration, missing S.O. 5936(E)<br/>= the round-two report's error, repeated in round five"]
+    XErr --> KILL(["Silent wrong [Verified]<br/>-> opposite conclusion on the cliff"])
+
+    C --> D{"Later entry cites the same<br/>scheme/section as base?"}
+    D -->|No amending entry| E["Record: corrigendum search run [date],<br/>none found"]
+    D -->|Candidate found| F["3. Read the operative line:<br/>compare effective date vs publication date"]
+
+    F --> G{"Effective date precedes<br/>publication date?"}
+    G -->|"Yes - retrospective fingerprint"| H["Corrigendum / re-notification confirmed<br/>e.g. corrigendum S.O. 5936(E): publ. 19.12.2025, operative 21.11.2025<br/>re-notification S.O. 3582(E): publ. 01.07.2026, eff. 21.11.2025"]
+    G -->|"No - dates coincide"| I["Plain new notification,<br/>not a backdated correction"]
+
+    H --> J["4. Record all three dates separately:<br/>publication / effective / amendment"]
+    E --> J
+    I --> J
+
+    J --> K["5. Check savings/sunset clause<br/>(CoSS s.164(2)(b): EPF/ESI window<br/>expires ~21.11.2026)"]
+    K --> L["6. Check applicable STATE divergence<br/>(grade central + state as separate claims)"]
+    L --> M["7. Cross-check a 2nd independent<br/>rendering; confirm consolidated view<br/>has caught up"]
+    M --> V(["8. Apply [Verified]<br/>+ set re-verification date"])
+
+    style KILL fill:#c0392b,color:#ffffff
+    style X fill:#e67e22,color:#ffffff
+    style XErr fill:#e67e22,color:#ffffff
+    style V fill:#27ae60,color:#ffffff
+    style H fill:#2e86c1,color:#ffffff

@@ -1,0 +1,53 @@
+flowchart LR
+    subgraph SRC["Live, mutable sources - never read at replay"]
+      P["Punch<br/>erasable class"]
+      DECL["Declarations,<br/>variable pay, joins and exits"]
+      MAST["Master data<br/>identifiers, structures, assignments"]
+    end
+
+    subgraph SNAP["InputSnapshot - frozen at INPUTS_CLOSED"]
+      direction TB
+      S1["Attendance facts by employment<br/>paid days, LOP days, NCP days,<br/>OT hours by band"]
+      S2["Variable pay and reimbursement inputs"]
+      S3["Identifier linkage state as at lock<br/>UAN seeding, PAN availability,<br/>bank verification"]
+      S4["Assignment and eligibility rows<br/>by reference plus knowledge time"]
+      S5["Manifest: content hash per part,<br/>snapshot_sha256 over the manifest"]
+    end
+
+    subgraph EVAL["Pure evaluation - 08 I4 and I6"]
+      CTX["Evaluation context<br/>disbursal date, as-of decision time,<br/>jurisdiction set, tax-regime election"]
+      RULES["Resolved rule versions<br/>published set only - RO1"]
+      ENG["Engine<br/>bounded fixed point where needed"]
+    end
+
+    RES["PayrollResult<br/>figure plus rule lineage"]
+    ART["Filing artefact<br/>artefact_sha256 kept on the Filing"]
+    SLIP["Payslip render<br/>erasable class"]
+
+    P --> S1
+    DECL --> S2
+    MAST --> S3
+    MAST --> S4
+    S1 --> S5
+    S2 --> S5
+    S3 --> S5
+    S4 --> S5
+
+    SNAP --> ENG
+    CTX --> ENG
+    RULES --> ENG
+    ENG --> RES --> ART
+    RES --> SLIP
+
+    REPLAY["Replay at any later time"] -.->|"reads snapshot plus B-class rows plus context"| ENG
+    REPLAY -.->|"never reads"| SRC
+
+    ERASE["Punches erased under their retention class"] -.-> P
+    ERASE -.->|"no replayed figure changes - AC-DM-34"| RES
+
+    classDef frozen fill:#e8eaf6,stroke:#3949ab,color:#000
+    classDef live fill:#fff3cd,stroke:#b8860b,color:#000
+    classDef out fill:#e2f0d9,stroke:#2e7d32,color:#000
+    class S1,S2,S3,S4,S5 frozen
+    class P,DECL,MAST live
+    class RES,ART,SLIP out

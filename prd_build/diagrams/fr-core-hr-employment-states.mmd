@@ -1,0 +1,51 @@
+stateDiagram-v2
+    direction LR
+
+    state "Record created, not activated" as DRAFT
+    state "Activated, joining date in the future" as PRE_JOINING
+    state "In service" as ACTIVE
+    state "Absent without pay for a whole period" as UNPAID
+    state "Suspended pending enquiry" as SUSPENDED
+    state "Serving notice" as NOTICE
+    state "Absconding, notice to return issued" as ABSCOND
+    state "Last working day passed, settlement due" as EXITED
+    state "Settlement paid and statutory closure done" as SETTLED
+    state "Death in service" as DECEASED
+
+    [*] --> DRAFT: ST1 record created from offer or import
+    DRAFT --> PRE_JOINING: ST2 activated with a future joining date
+    DRAFT --> ACTIVE: ST3 activated on or after the joining date
+    PRE_JOINING --> ACTIVE: ST4 joining date reached and joining confirmed
+    PRE_JOINING --> DRAFT: ST5 joiner does not report, activation reversed before any wage
+    ACTIVE --> UNPAID: ST6 approved unpaid absence covering a whole wage period
+    UNPAID --> ACTIVE: ST7 return to work recorded
+    ACTIVE --> SUSPENDED: ST8 suspension ordered, recorded with its authority
+    SUSPENDED --> ACTIVE: ST9 suspension revoked or enquiry closed without separation
+    SUSPENDED --> NOTICE: ST10 separation decided at the end of the enquiry
+    ACTIVE --> NOTICE: ST11 resignation or termination notice accepted
+    ACTIVE --> ABSCOND: ST12 unauthorised absence past the tenant policy threshold
+    ABSCOND --> ACTIVE: ST13 employee returns and the absence is regularised
+    ABSCOND --> EXITED: ST14 abandonment concluded after the recorded notice to return
+    NOTICE --> ACTIVE: ST15 resignation withdrawn before the last working day, accepted
+    NOTICE --> EXITED: ST16 last working day passed
+    ACTIVE --> EXITED: ST17 exit without notice, including end of a fixed term
+    ACTIVE --> DECEASED: ST18 death in service recorded
+    NOTICE --> DECEASED: ST18 the same during notice
+    EXITED --> SETTLED: ST19 settlement paid and date of exit marked at the portal
+    DECEASED --> SETTLED: ST20 nominee settlement paid and claims raised
+    SETTLED --> [*]
+
+    note right of ABSCOND
+        Wages follow the days actually paid.
+        Unpaid days become NCP days in the
+        month's ECR line. No status is set by
+        a side effect of any other action.
+    end note
+
+    note right of EXITED
+        A rehire is a new employment under the
+        same person, never a return to ACTIVE.
+        Corrections to the exit date follow the
+        typed-change rules and may need a
+        joint declaration at EPFO.
+    end note

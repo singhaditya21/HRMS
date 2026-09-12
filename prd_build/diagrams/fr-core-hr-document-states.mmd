@@ -1,0 +1,47 @@
+stateDiagram-v2
+    direction LR
+
+    state "Assembled, not issued" as DRAFT
+    state "Issued with its manifest and hash" as ISSUED
+    state "Receipt or signature recorded" as ACK
+    state "Replaced by a later version" as SUPERSEDED
+    state "Inside a statutory retention window" as HELD
+    state "Under legal hold" as LEGAL_HOLD
+    state "Clock expired, disposal allowed" as ERASABLE
+    state "Content gone, tombstone kept" as TOMBSTONE
+
+    [*] --> DRAFT: DS1 generator assembles from the master and the template in force
+    DRAFT --> ISSUED: DS2 issued, manifest and hash written, bytes frozen
+    DRAFT --> [*]: DS3 discarded before issue, nothing retained
+    ISSUED --> ACK: DS4 acknowledgement or signature recorded
+    ISSUED --> SUPERSEDED: DS5 a later version issued for the same subject and period
+    ACK --> SUPERSEDED: DS5 the same after acknowledgement
+    ISSUED --> HELD: DS6 a statutory retention clock applies
+    ACK --> HELD: DS6 the same
+    SUPERSEDED --> HELD: DS6 the same
+    HELD --> LEGAL_HOLD: DS7 a legal hold is placed
+    ISSUED --> LEGAL_HOLD: DS7 the same before any clock starts
+    LEGAL_HOLD --> HELD: DS8 hold released, checked
+    HELD --> ERASABLE: DS9 the longest applicable clock expires from the date of last entry
+    ERASABLE --> TOMBSTONE: DS10 disposal under the tenant policy, audited
+    TOMBSTONE --> [*]
+
+    note right of ISSUED
+        Bytes never change. A correction is a new
+        version, and the superseded version is kept
+        for its own retention class.
+    end note
+
+    note right of HELD
+        An erasure request inside the window is
+        deferred with the governing instrument
+        named. Destruction is barred even after
+        five years unless a register was carried
+        forward into a new one.
+    end note
+
+    note right of TOMBSTONE
+        Replay returns the tombstone: id, class,
+        dates, basis and actor. Never a
+        reconstruction of the content.
+    end note

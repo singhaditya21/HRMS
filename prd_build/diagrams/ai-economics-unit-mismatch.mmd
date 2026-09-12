@@ -1,0 +1,21 @@
+flowchart LR
+    subgraph PROF["Three tenant profiles, same PEPM, no seat floor"]
+        direction TB
+        F["Floor profile<br/>20 employees · 1 PF · 1 ESI · 1 TAN<br/>29 central instances a year"]
+        P2["Profile 2<br/>60 employees · 2 entities · 3 states<br/>70 central instances a year (§22.7)"]
+        P1["Profile 1<br/>150 employees · single registration<br/>29 central instances a year (§22.7)"]
+    end
+
+    F --> RF["₹662 revenue per instance at ₹80 PEPM"]
+    P2 --> R2["₹823 revenue per instance at ₹80 PEPM"]
+    P1 --> R1["₹4,966 revenue per instance at ₹80 PEPM"]
+
+    RF --> BIND{"Binding profile =<br/>lowest revenue per supervised instance<br/>the price card admits"}
+    R2 --> BIND
+    R1 --> BIND
+
+    INF["Inference line: same share of revenue<br/>for all three · 0.4% Lean to 6.0% Rich at ₹80"] -.-> NOTE["Size-invariant ·<br/>does not move the binding profile"]
+
+    BIND --> TGT["max_supervised_minutes_per_filing_cycle =<br/>target_supervised_cogs_share × R_inst binding ÷ c_min<br/>all three inputs unsized · routed to §20"]
+    TGT --> S18["§18: allowance, multi-registration line<br/>or a card change that moves the bind"]
+    TGT --> S22["§22: minutes per instance engineered<br/>below the target · FR-OPS-031 measures"]

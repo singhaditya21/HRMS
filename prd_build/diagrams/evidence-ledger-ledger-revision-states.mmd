@@ -1,0 +1,26 @@
+stateDiagram-v2
+    [*] --> Collecting: LR1 the previous revision closes and a new one opens
+    Collecting --> Drafted: LR2 the ledger owner freezes the intake and proposes IDs
+    Drafted --> Collecting: LR3 a proposed row is sent back for capture work
+    Drafted --> Reviewed: LR4 each new row has a grader and a separate re-checker
+    Reviewed --> Published: LR5 the revision is issued with its number and date
+    Published --> Reconciled: LR6 census re-counted, crosswalk re-run, guards written, backlog re-sorted
+    Reconciled --> [*]: the revision closes and LR1 opens the next
+    Reconciled --> Collecting: LR7 a post-conditions check fails and its item returns to intake
+
+    note right of Drafted
+        IDs are proposed here and nowhere else.
+        A section that mints one fails lint L-03.
+    end note
+
+    note right of Published
+        Identity is permanent from this point.
+        A published ID is never edited, reused
+        or renumbered, even if the row is later killed.
+    end note
+
+    note right of Reconciled
+        The revision is not done when the rows land.
+        It is done when the counts, the crosswalk,
+        the guards and the backlog agree with it.
+    end note

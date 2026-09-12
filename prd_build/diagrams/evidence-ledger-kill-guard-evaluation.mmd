@@ -1,0 +1,19 @@
+flowchart TD
+    IN["Artefact text bound for a surface<br/>deck, site copy, contract, questionnaire answer,<br/>assistant template, model, export"] --> Q{"Inside a block annotated<br/>as quoting a dead claim to kill it?"}
+    Q -->|"yes"| KF{"Kill framing on the same line?<br/>Killed, Reversed, false, withdrawn"}
+    KF -->|"yes"| PASSQ(["Pass · quoted to kill"])
+    KF -->|"no"| BLOCKQ(["Block · annotation without framing"])
+    Q -->|"no"| M{"Claim key matches a KillGuard<br/>subject and predicate, not a bare value?"}
+    M -->|"no"| PASS0(["Pass · not this guard's claim"])
+    M -->|"yes"| P{"Does the sentence meet the guard's<br/>permitted look-alike condition?<br/>basis named, qualifier present, clock stated"}
+    P -->|"yes"| S{"Does the surface allow the<br/>look-alike's register row?<br/>§02.14 usage matrix"}
+    S -->|"yes"| PASSL(["Pass · legitimate look-alike<br/>e.g. Qandle ₹49.00 at 50 employees, annual billing"])
+    S -->|"no"| BLOCKS(["Block · row not licensed for this surface<br/>names the row and the column"])
+    P -->|"no"| BLOCKK(["Block · killed claim<br/>names the EV-K row and its replacement"])
+
+    classDef q fill:#1f2a44,stroke:#0b1220,color:#ffffff;
+    classDef bad fill:#7f1d1d,stroke:#450a0a,color:#ffffff;
+    classDef good fill:#1f5f2f,stroke:#0f3f1f,color:#ffffff;
+    class IN,Q,KF,M,P,S q;
+    class BLOCKQ,BLOCKS,BLOCKK bad;
+    class PASSQ,PASS0,PASSL good;

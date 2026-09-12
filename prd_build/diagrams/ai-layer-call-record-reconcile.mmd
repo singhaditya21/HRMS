@@ -1,0 +1,52 @@
+flowchart TB
+    R["Router plan<br/>use case, provider configuration,<br/>eligible-set version"]
+    CP{"Chokepoint gates - &sect;12.8.5"}
+    BLK["Blocked before egress<br/>LLM log block row only<br/>no disclosure record, no cost"]
+
+    P1[["Phase 1 - INTENT commit<br/>call record, per-subject dispositions,<br/>payload hash, eligible-set version<br/>AND the disclosure records, one commit,<br/>before the first byte leaves"]]
+    TX["Transmit the tokenised payload"]
+    P2[["Phase 2 - OUTCOME commit<br/>outcome, completion hash,<br/>guardrail results, block reason"]]
+
+    DISC[("Disclosure records - &sect;12.8.8<br/>one per subject")]
+    ATTR[("Attribution record - &sect;13.9<br/>tokens and cost")]
+    LOG[("LLM call record - India<br/>store and retention per &sect;15.7.5")]
+
+    REC{"Reconciler, every<br/>ai.disclosure.reconcile_interval_minutes"}
+    OK["Three streams agree on the window"]
+    D1["Orphan intent - no phase 2 past<br/>ai.reconcile.orphan_intent_minutes"]
+    D2["Missing disclosure - DET-AI-15<br/>use case suspended platform-wide"]
+    D3["Orphan disclosure - a write outside<br/>the chokepoint, so a second egress<br/>path exists - the severe class"]
+    D4["Plan and egress diverge<br/>eligibility defect, configuration refused"]
+    HO["Incident candidate to &sect;17<br/>with the evidence extract,<br/>categories not values"]
+
+    R --> CP
+    CP -->|"a gate fails"| BLK
+    CP -->|"payload final"| P1
+    P1 --> DISC
+    P1 --> TX
+    TX --> P2
+    P2 --> ATTR
+    P1 --> LOG
+    P2 --> LOG
+    BLK --> LOG
+    LOG --> REC
+    DISC --> REC
+    ATTR --> REC
+    REC --> OK
+    REC --> D1
+    REC --> D2
+    REC --> D3
+    REC --> D4
+    D1 --> HO
+    D2 --> HO
+    D3 --> HO
+    D4 --> HO
+
+    classDef store fill:#e6f2ff,stroke:#1b6ca8,color:#083b5c;
+    classDef gate fill:#fff8e1,stroke:#f9a825,color:#6d4c00;
+    classDef deny fill:#ffebee,stroke:#c62828,color:#5b160d;
+    classDef ok fill:#e9f7ef,stroke:#1e8449,color:#0b3d22;
+    class DISC,ATTR,LOG store;
+    class CP,REC gate;
+    class BLK,D1,D2,D3,D4,HO deny;
+    class P1,P2,TX,OK,R ok;

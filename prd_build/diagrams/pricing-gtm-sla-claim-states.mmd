@@ -1,0 +1,40 @@
+stateDiagram-v2
+    direction TB
+    [*] --> RAISED: C1 tenant, operator or a portal rejection raises a claim
+    RAISED --> TRIAGED: C2 covered obligation and covered period confirmed
+    RAISED --> OUT_OF_SCOPE: C3 obligation not in the tenant SLA schedule
+    TRIAGED --> EVIDENCE_PENDING: C4 causation record incomplete
+    EVIDENCE_PENDING --> TRIAGED: C5 missing artefact supplied
+    EVIDENCE_PENDING --> OUT_OF_SCOPE: C6 evidence window lapses
+    TRIAGED --> CAUSATION_REVIEW: C7 causation record complete and sealed
+    CAUSATION_REVIEW --> ATTRIBUTED_TO_US: C8 defect in our artefact, our schedule or a submission we contracted to make
+    CAUSATION_REVIEW --> ATTRIBUTED_TO_CUSTOMER: C9 customer data, customer delay or unremitted funds
+    CAUSATION_REVIEW --> ATTRIBUTED_TO_EXTERNAL: C10 portal outage, unreleased format or a carve-out event
+    ATTRIBUTED_TO_US --> REMEDIATION: C11 refile, revise or supplement, per the filing machine
+    REMEDIATION --> REMEDY_COMPUTED: C12 portal acknowledgement captured
+    REMEDY_COMPUTED --> CAPPED: C13 per-incident and annual caps applied
+    CAPPED --> SETTLED: C14 credit note issued against the next invoice
+    ATTRIBUTED_TO_CUSTOMER --> CLOSED_NO_REMEDY: C15 findings and evidence returned to the tenant
+    ATTRIBUTED_TO_EXTERNAL --> CLOSED_NO_REMEDY: C16 carve-out recorded and the fence cross-referenced
+    OUT_OF_SCOPE --> CLOSED_NO_REMEDY: C17 closed with reasons
+    CLOSED_NO_REMEDY --> DISPUTED: C18 tenant disputes the attribution
+    CAPPED --> DISPUTED: C18 tenant disputes the cap
+    DISPUTED --> CAUSATION_REVIEW: C19 reopened with new evidence
+    DISPUTED --> ESCALATED: C20 escalation to the named commercial owner
+    ESCALATED --> SETTLED: C21 settled above or below the computed remedy, with reasons recorded
+    ESCALATED --> CLOSED_NO_REMEDY: C22 escalation upholds the attribution
+    SETTLED --> [*]
+    CLOSED_NO_REMEDY --> [*]
+
+    note left of CAUSATION_REVIEW
+      Runs only on the sealed causation record.
+      Who supplied the data, when we generated,
+      who submitted under which written authority,
+      and the acknowledgement identifier.
+    end note
+
+    note right of CAPPED
+      The remedy is contractual.
+      The statutory liability stays with
+      the employer and the deductor.
+    end note

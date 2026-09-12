@@ -1,0 +1,26 @@
+gantt
+    title Filing calendar the SLA is measured against - Tax Year 2026-27 (Apr 2026 - Jun 2027)
+    dateFormat YYYY-MM-DD
+    axisFormat %b %y
+
+    section Monthly
+    TDS deposit - 7th, r.218 dates to confirm            :active, tds7, 2026-04-01, 365d
+    EPF ECR then challan - 15th                          :active, epf15, 2026-04-01, 365d
+    ESI contribution - 15th                              :active, esi15, 2026-04-01, 365d
+    PT and LWF - per state from gazette rows only        :done, ptlwf, 2026-04-01, 365d
+
+    section ESI contribution periods
+    Period Apr to Sep                                    :esip1, 2026-04-01, 2026-09-30
+    Period Oct to Mar                                    :esip2, 2026-10-01, 2027-03-31
+    ESI after 22 Nov 2026 - fenced, V-08                 :crit, milestone, esicliff, 2026-11-22, 0d
+
+    section Form 138 quarterly, Rule 219
+    Q1 - 31 Jul 2026                                     :milestone, q1, 2026-07-31, 0d
+    Q2 - 31 Oct 2026                                     :milestone, q2, 2026-10-31, 0d
+    Q3 - 31 Jan 2027                                     :milestone, q3, 2027-01-31, 0d
+    Q4 - 31 May 2027, format unreleased, fenced          :crit, milestone, q4, 2027-05-31, 0d
+
+    section Annual
+    OSH FORM-XVII and SS Form XXIII - end Feb 2027       :milestone, annret, 2027-02-28, 0d
+    Form 130 from TRACES - 15 Jun 2027, fenced on Q4     :crit, milestone, f130, 2027-06-15, 0d
+    Gratuity - within 30 days of becoming payable        :done, grat, 2026-04-01, 365d

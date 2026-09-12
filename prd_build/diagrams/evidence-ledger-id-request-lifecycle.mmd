@@ -1,0 +1,17 @@
+stateDiagram-v2
+    [*] --> Requested: IR1 a fact is cited to its research file and needs a row
+    Requested --> Triaged: IR2 ledger owner confirms the fact is not already a row
+    Triaged --> Merged: IR3 the fact is a component of an existing row
+    Triaged --> Assigned: IR4 a ledger revision assigns an EV or EV-K ID
+    Triaged --> Declined: IR5 no load-bearing use - the citation is removed
+    Assigned --> Registered: IR6 row written with its grade, qualifiers and capture
+    Registered --> Citable: IR7 citations re-pointed from the research file to the ID
+    Merged --> Citable: IR7 citations re-pointed to the named component
+    Citable --> [*]
+    Declined --> [*]
+
+    note right of Requested
+        A rule version resting on the fact
+        may be drafted, never published,
+        while the request is open.
+    end note

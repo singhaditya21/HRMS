@@ -1,0 +1,70 @@
+flowchart TB
+    subgraph Capture["1. Capture sources"]
+        direction LR
+        BIO["Biometric<br/>face / fingerprint<br/>only if employee elected + written consent"]
+        GEO["Geo-fenced<br/>mobile punch"]
+        KIOSK["Shared kiosk /<br/>tablet"]
+        WEB["Web / desktop<br/>web check-in"]
+        SWIPE["Card / PIN / RFID<br/>non-biometric path"]
+    end
+
+    BIO --> INGEST
+    GEO --> INGEST
+    KIOSK --> INGEST
+    WEB --> INGEST
+    SWIPE --> INGEST
+
+    subgraph Offline["Deskless / low-connectivity path"]
+        direction TB
+        LOCAL["On-device buffer<br/>signed punch + timestamp"]
+        SYNC["Store-and-forward<br/>sync on reconnect"]
+        LOCAL --> SYNC
+    end
+
+    GEO -. offline .-> LOCAL
+    KIOSK -. offline .-> LOCAL
+    SYNC --> INGEST
+
+    INGEST["Ingest queue<br/>(idempotency key)"]
+
+    subgraph Validate["2. Dedup & validate"]
+        direction TB
+        DEDUP["Dedup<br/>device_sn + user + ts + direction<br/>+ payload_hash"]
+        SPOOF["Liveness if selfie elected, geo<br/>and clock-skew checks - flag, never reject<br/>for the verify method"]
+        DEDUP --> SPOOF
+    end
+    INGEST --> DEDUP
+
+    SPOOF --> MAP
+
+    subgraph Roster["3. Shift / roster mapping"]
+        direction TB
+        SHIFT["Match to assigned<br/>shift & roster"]
+        NIGHT["Night / cross-midnight<br/>anchored to shift-start date,<br/>never split at midnight, grace"]
+        SHIFT --> NIGHT
+    end
+    MAP["Resolve employee<br/>+ location + calendar"] --> SHIFT
+
+    NIGHT --> RULES
+
+    subgraph Rules["4. Notified OT & leave rules"]
+        direction TB
+        OT["OT at not less than 2x the normal<br/>rate of wages, Code on Wages s.14<br/>normal hours by wage period:<br/>8h/day if daily, else 48h/week<br/>quarterly ceiling: warn only, Hypothesis"]
+        LEAVE["Leave & holiday<br/>EL/CL/SL, weekly-off,<br/>state festival holidays"]
+        REG["Regularisation<br/>+ approval workflow"]
+        OT --> REG
+        LEAVE --> REG
+    end
+    RULES["Apply policy engine"] --> OT
+    RULES --> LEAVE
+
+    REG --> ATTN["Attendance ledger<br/>present / absent / LOP days"]
+
+    ATTN --> PAYROLL["5. Payroll input<br/>paid days, OT hrs, LOP,<br/>arrears feed"]
+    ATTN --> FORMIX["Form IX register<br/>per-day IN / OUT timestamps<br/>retained per EV-054"]
+    PAYROLL --> FILING["Statutory compute<br/>EPF / ESI / PT / TDS"]
+
+    EXC["Exceptions<br/>missing punch, mismatch"]
+    SPOOF -. flag .-> EXC
+    SHIFT -. unmapped .-> EXC
+    EXC -.-> REG

@@ -1,0 +1,13 @@
+flowchart LR
+    F["Forecast · T-100, January 2027<br/>default mix, post-increase rows, ₹94.43<br/>₹78.39"]
+    V["Volume effect<br/>40 extra helpdesk turns at forecast prices and FX<br/>plus ₹2.80"]
+    P["Price effect<br/>no price row changed in the period<br/>plus ₹0.00"]
+    X["FX effect<br/>actual volumes re-costed at ₹100<br/>plus ₹4.79"]
+    R["Routing effect<br/>5 escalated A1 turns on the mid tier at ₹100<br/>plus ₹5.81"]
+    A["Actual · ₹91.79<br/>variance plus ₹13.40, about 17%"]
+
+    F --> V --> P --> X --> R --> A
+
+    ORD["Fixed order: volume, price, FX, routing, one-off.<br/>Each effect is evaluated with the preceding factors at actual<br/>and the following at forecast, so the effects sum to the variance"] -.-> F
+    READ["Five escalated turns, 2.1% of the turns, are 43% of the variance.<br/>FX, the effect a risk register watches, is 36%"] -.-> A
+    DEF["A variance that does not decompose into the five effects<br/>is a metering defect (§13.24.1), not a forecasting error"] -.-> A

@@ -1,0 +1,54 @@
+flowchart LR
+    subgraph INDIA["India jurisdiction perimeter -- CERT-In log residency for every tenant; SEBI and RBI-where-material overlays apply to primary, backups and DR alike"]
+        direction LR
+        subgraph PRI["PRIMARY -- Mumbai ap-south-1"]
+            direction TB
+            PG[("Postgres primary<br/>RLS-scoped, AES-256")]
+            OBJ[("Object store")]
+            IDX[("Search index")]
+            LOG[("ICT log store<br/>rolling 180 days, India")]
+            KMS["KMS master key<br/>per-tenant DEKs"]
+            PG --- OBJ --- IDX
+        end
+        subgraph DR["DR -- Hyderabad ap-south-2 (second India region)"]
+            direction TB
+            PGR[("Postgres replica")]
+            OBJR[("Object store replica")]
+            BK[("Backups<br/>WAL + daily full<br/>PITR >= 35 days")]
+            KMS2["Backup keys<br/>DISTINCT from primary"]
+            PGR --- OBJR --- BK
+        end
+        PG -->|"streaming / sync replication"| PGR
+        OBJ -->|"cross-region copy"| OBJR
+        PG -.->|"continuous WAL archiving + daily full"| BK
+        KMS -. wraps DEKs .-> PG
+        KMS2 -. restore requires KMS access .-> BK
+    end
+
+    FOREIGN["Any foreign region -- BLOCKED"]
+    INDIA -.->|"non-India DR breaks sectoral profiles, log residency and the India-default attestation (NFR-DR-1403)"| FOREIGN
+
+    subgraph RECOVER["Recovery + continuity drills"]
+        direction TB
+        FO["Failover to Hyderabad<br/>served entirely from India"]
+        RTO["RPO/RTO by phase (NFR-DR-1401)<br/>provisional - replaced by measured values<br/>P0 <= 15 min / <= 4 h<br/>P1 <= 5 min / <= 1 h<br/>P2 <= 1 min / <= 30 min"]
+        DRILL["Restore drill >= 1x per quarter<br/>timed vs RTO/RPO (NFR-DR-1402)"]
+        MANUAL["Statutory-window continuity (NFR-DR-1404)<br/>ECR / ESI / PT / Form 138 Q1-Q3 always exportable;<br/>attended filing continues from the export"]
+        RUNBOOK["One incident runbook (NFR-DR-1405)<br/>CERT-In 6 h live today;<br/>DPDP r.7 intimations armed ~May 2027"]
+    end
+
+    PGR --> FO
+    BK --> FO
+    FO --> RTO
+    BK --> DRILL
+    OBJ --> MANUAL
+    FO --> RUNBOOK
+
+    classDef primary fill:#0b6e4f,stroke:#063d2c,color:#fff;
+    classDef dr fill:#1d4e89,stroke:#0f2c4d,color:#fff;
+    classDef blocked fill:#8a1c1c,stroke:#4d0f0f,color:#fff;
+    classDef ops fill:#7a5b00,stroke:#403000,color:#fff;
+    class PG,OBJ,IDX,LOG,KMS primary;
+    class PGR,OBJR,BK,KMS2 dr;
+    class FOREIGN blocked;
+    class FO,RTO,DRILL,MANUAL,RUNBOOK ops;

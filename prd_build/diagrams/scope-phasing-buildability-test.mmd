@@ -1,0 +1,38 @@
+flowchart TD
+    classDef q fill:#fff3cd,stroke:#997404,color:#5c4708;
+    classDef ok fill:#d1e7dd,stroke:#146c43,color:#0a3622;
+    classDef fence fill:#f8d7da,stroke:#b02a37,color:#5c161c;
+    classDef side fill:#e2e3e5,stroke:#6c757d,color:#343a40;
+    classDef warn fill:#cfe2ff,stroke:#0a58ca,color:#052c65;
+
+    START(["Artefact row, for the period it serves"])
+    S0{"Outside v1 by a scope decision?<br/>module at P2 or later, or in the deferred register"}:::q
+    DEF["Deferred - re-enters on its trigger, section 05.22<br/>A-24, A-25, A-27, A-28"]:::side
+    B4{"BC-4 Producer - prepared on the tenant's side?"}:::q
+    NOT["Not ours - a contractor's return, or TRACES-generated<br/>A-26, the generation leg of A-14"]:::side
+    B1{"BC-1 Specification - layout, form or rule shape<br/>for the period read at Verified grade?"}:::q
+    F1["Fenced - the fence class names who can supply it<br/>A-06, A-08, A-09, A-13, A-16, A-17, A-29"]:::fence
+    B3{"BC-3 Legality - does a counsel question<br/>gate the act itself?"}:::q
+    F3["Fenced - counsel class<br/>A-23"]:::fence
+    B2{"BC-2 Channel - submission channel open<br/>for the period, or a maintained record?"}:::q
+    HELD["Buildable now - generation ships,<br/>submission held on an authority-portal fence<br/>A-12"]:::ok
+    OKN["Buildable now<br/>A-01, A-11, A-18 and the rest"]:::ok
+    OR{"Independent oracle before<br/>the first real submission?"}:::q
+    RISK["Rule text only - seeded fixtures,<br/>first genuine occurrence co-attended"]:::warn
+    GO["Oracle recorded on the family readiness record<br/>fixture, authority validator or notified form"]:::ok
+
+    START --> S0
+    S0 -->|"yes"| DEF
+    S0 -->|"no"| B4
+    B4 -->|"no"| NOT
+    B4 -->|"yes"| B1
+    B1 -->|"no"| F1
+    B1 -->|"yes"| B3
+    B3 -->|"yes"| F3
+    B3 -->|"no"| B2
+    B2 -->|"no"| HELD
+    B2 -->|"yes"| OKN
+    HELD --> OR
+    OKN --> OR
+    OR -->|"none"| RISK
+    OR -->|"yes"| GO

@@ -1,0 +1,58 @@
+flowchart LR
+    classDef pipe fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef core fill:#2a2a2a,stroke:#777,color:#f0f0f0,stroke-width:1px;
+    classDef desk fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef cust fill:#4a3a10,stroke:#a08020,color:#fff6dc,stroke-width:1px;
+    classDef gov fill:#5a1a1a,stroke:#a33,color:#ffecec,stroke-width:2px;
+    classDef rec fill:#35224a,stroke:#7a55a8,color:#f3eaff,stroke-width:1px;
+
+    subgraph PIPE["Compliance data pipeline - 22.8"]
+        direction TB
+        W["Watcher: gazettes, EPFO, ESIC,<br/>Protean, CBDT, state portals"]:::pipe
+        T["Triage: new instrument,<br/>amendment or corrigendum"]:::pipe
+        A["Authoring with citation<br/>and impact analysis"]:::pipe
+        R["Two-person review"]:::pipe
+        C["Certification against golden<br/>cases and portal fixtures"]:::pipe
+        S["Staged publish to a canary cohort"]:::pipe
+        P["Published: rule pack, format<br/>schema, due dates, runbook"]:::pipe
+        W --> T --> A --> R --> C --> S --> P
+    end
+
+    subgraph CORE["Deterministic core - 08 and 15"]
+        direction TB
+        E["Rules engine and payroll engine"]:::core
+        F["Filing orchestrator: artefact<br/>generated and validated"]:::core
+        E --> F
+    end
+
+    subgraph DESK["Filing desk - 22.3 to 22.6"]
+        direction TB
+        Q["Due-date queue and window capacity"]:::desk
+        SS["Attended session<br/>Mode A, B, C or D"]:::desk
+        V["Credential vault<br/>Mode C only"]:::desk
+        Q --> SS
+        V -.-> SS
+    end
+
+    subgraph CUST["Employer - liability stays here"]
+        direction TB
+        AP["Named approver:<br/>instructs irreversible acts"]:::cust
+        PY["Payer: bank leg on<br/>own authentication"]:::cust
+        SG["Signatory: every<br/>DSC-bound act"]:::cust
+    end
+
+    GOV["Government portals:<br/>EPFO, ESIC, income-tax and TRACES,<br/>state PT and LWF"]:::gov
+    L["On-behalf log and<br/>causation record"]:::rec
+    CL["Cost ledger:<br/>supervised minutes per registration"]:::rec
+
+    P --> E
+    P -->|"runbook versions"| SS
+    F -->|"artefact plus in-product approval"| Q
+    AP --> SS
+    SS --> GOV
+    PY --> GOV
+    SG --> GOV
+    GOV -->|"acknowledgements, receipts, error files"| L
+    SS --> L
+    SS -->|"minutes"| CL
+    GOV -.->|"rejections and portal drift"| W

@@ -1,0 +1,19 @@
+flowchart TB
+    classDef free fill:#3a3a3a,stroke:#6b6b6b,color:#f0f0f0,stroke-width:1px;
+    classDef parity fill:#132b4a,stroke:#2f5f9e,color:#e3efff,stroke-width:1px;
+    classDef gap fill:#0b5c3e,stroke:#17b37a,color:#eafff5,stroke-width:2px;
+    classDef note fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+
+    L1["Layer 1 - Computation, gross-to-net<br/>priced at zero: Kredily, Zoho to 10 employees, Frappe<br/>Frappe is genuinely strong here, EV-031"]:::free
+    L2["Layer 2 - Central statutory artefacts<br/>ECR, ESI, TDS return, certificate data<br/>Tally ships them, greytHR publishes generation<br/>freemium players paywall challans and certificate<br/>parity, not differentiation, EV-029, EV-030, EV-032"]:::parity
+    L3["Layer 3 - State PT slabs and LWF<br/>neither Frappe nor Tally ships them, EV-031, EV-032<br/>greytHR and Keka pages claim it, untested"]:::gap
+    L4["Layer 4 - Attended submission under written authority<br/>no vendor in the priced set claims to submit, EV-030<br/>legality under counsel review"]:::gap
+    L5["Layer 5 - Format-current guarantee and SLA<br/>statutory liability stays with the employer"]:::gap
+
+    N["MYND and Qandle<br/>self-serve HRMS plus outsourced filing operation<br/>unpriced, demo-sold, EV-030, EV-034"]:::note
+
+    L1 --> L2
+    L2 --> L3
+    L3 --> L4
+    L4 --> L5
+    N -.-> L4

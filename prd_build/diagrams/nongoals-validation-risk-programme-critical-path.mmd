@@ -1,0 +1,74 @@
+flowchart LR
+    T0(["T plus 0 - programme starts"])
+
+    subgraph DESK["Desk, build blocking - no customer, no field budget"]
+        direction TB
+        D1["V-17 OT cap - 1 wk"]
+        D2["V-18 meal perquisite - 1 wk"]
+        D3["V-20 Act 2025 and Rules 2026 reads"]
+        D4["V-21 Code era mappings"]
+        D5["V-09 state PT and LWF - 6 to 10 wk"]
+        D6["V-08 and V-22 ESI and EPS or EDLI<br/>successors - continuous to 21 Nov 2026"]
+        D7["V-19 Form 138 Q4 watch -<br/>continuous to 31 May 2027"]
+        D8["V-24 EPF Scheme 2026 para 25"]
+        D9["V-25 attended filing counsel -<br/>per portal, fees unsized"]
+        D10["V-23 portal facts -<br/>needs one live partner session"]
+    end
+
+    subgraph COMM["Commercial - needs buyers, gates money"]
+        direction TB
+        C1["V-01 bureau mystery shop - 3 to 4 wk"]
+        C2["V-16 filing baseline - 3 to 4 wk"]
+        C3["V-02 Tally enablement - 4 to 6 wk"]
+        C4["V-03 realised ARPU - 4 to 8 wk"]
+        C5["V-05 CA channel - 6 to 8 wk"]
+        C6["V-07 willingness to pay - 6 to 10 wk"]
+    end
+
+    subgraph SPIKE["Spikes - need code or a live cycle"]
+        direction TB
+        S1["V-11 ADMS push - 1 to 2 eng wk"]
+        S2["V-10 device fleet - 2 to 4 eng wk"]
+        S3["V-04 token profile - 2 to 3 eng wk"]
+        S4["V-15 mid year cutover - 2 to 3 wk plus a partner"]
+        S5["V-14 and V-26 live cost lines -<br/>first paying cycles"]
+    end
+
+    T0 --> DESK
+    T0 --> COMM
+    T0 --> SPIKE
+
+    DESK --> G0{"Gate 0 - desk complete"}
+    C1 --> G1{"Gate 1 - pricing and channel viable"}
+    C2 --> G1
+    C3 --> G1
+    C4 --> G1
+    C5 --> G1
+    G0 --> G1
+
+    G1 --> G2{"Gate 2 - unit economics and buildability"}
+    C6 --> G2
+    S1 --> G2
+    S2 --> G2
+    S3 --> G2
+    S4 --> G2
+    S5 --> G2
+
+    D9 --> LG{"Launch gate - attended submission,<br/>opened per portal"}
+    D10 --> LG
+
+    G1 --> SEED["Seed raise may be made here,<br/>never earlier"]
+    G2 --> SCALE["Statutory and engineering team<br/>scales beyond a founding core"]
+    LG --> SUB["Attended submission operates<br/>on that portal only"]
+
+    CP["Critical path to Gate 1 is the longest<br/>commercial item, V-05 at 6 to 8 weeks,<br/>plus the weeks spent scheduling it.<br/>Every desk item runs underneath it for free"]
+    G1 -.-> CP
+
+    classDef desk fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
+    classDef comm fill:#fff3cd,stroke:#b7950b,color:#5c4408;
+    classDef spike fill:#e9d8fd,stroke:#7c3aed,color:#4c1d95;
+    classDef gate fill:#d4edda,stroke:#27ae60,color:#14532d;
+    class D1,D2,D3,D4,D5,D6,D7,D8,D9,D10 desk;
+    class C1,C2,C3,C4,C5,C6 comm;
+    class S1,S2,S3,S4,S5 spike;
+    class G0,G1,G2,LG,SEED,SCALE,SUB gate;

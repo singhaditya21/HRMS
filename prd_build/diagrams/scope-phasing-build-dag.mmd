@@ -1,0 +1,83 @@
+flowchart LR
+    classDef crit fill:#f8d7da,stroke:#b02a37,color:#5c161c;
+    classDef lane fill:#cfe2ff,stroke:#0a58ca,color:#052c65;
+    classDef plat fill:#e2e3e5,stroke:#6c757d,color:#343a40;
+    classDef gate fill:#fff3cd,stroke:#997404,color:#5c4708;
+
+    subgraph RULES["Lane 1 - Rules"]
+        direction TB
+        WP01["WP-01 Rule object and parameter registry"]:::crit
+        WP25["WP-25 Fence register and parameter holds"]:::lane
+        WP02["WP-02 Rule pipeline minimum<br/>review, golden cases, publish, rollback"]:::lane
+        WP03["WP-03 Watcher and watch-source register"]:::lane
+        WP01 --> WP25
+        WP01 --> WP02 --> WP03
+    end
+
+    subgraph ENGINE["Lane 2 - Engine and pay"]
+        direction TB
+        WP08["WP-08 Component catalogue and structures"]:::crit
+        WP09["WP-09 Engine core - pure, enumerated context"]:::crit
+        WP10["WP-10 Wage-base resolver, bounded fixed point"]:::crit
+        WP11["WP-11 Statutory computations"]:::crit
+        WP12["WP-12 Payroll-month machine and maker-checker"]:::lane
+        WP18["WP-18 Bank file, payment approver, reconciliation"]:::lane
+        WP08 --> WP09 --> WP10 --> WP11
+        WP09 --> WP12 --> WP18
+    end
+
+    subgraph FILING["Lane 3 - Filing"]
+        direction TB
+        WP13["WP-13 Validators at authority severity"]:::crit
+        WP14["WP-14 Generators - ECR, Form 138 Q1-Q3, registers"]:::crit
+        WP16["WP-16 Filing-instance machine and ECR ledger"]:::crit
+        WP17["WP-17 Modes A and B, on-behalf log, minute metering"]:::crit
+        WP13 --> WP14 --> WP16 --> WP17
+    end
+
+    subgraph OBLIG["Lane 4 - Obligations"]
+        direction TB
+        WP04["WP-04 Statutory hierarchy and registrations"]:::lane
+        WP15["WP-15 Per-registration calendar"]:::lane
+        WP24["WP-24 Coverage statement and admission rules"]:::lane
+        WP04 --> WP15 --> WP24
+    end
+
+    subgraph PEOPLE["Lane 5 - People and time"]
+        direction TB
+        WP05["WP-05 Employee master, identifiers, token store"]:::lane
+        WP06["WP-06 Consent record and SPDI capture"]:::lane
+        WP07["WP-07 Onboarding import and YTD tie-out"]:::lane
+        WP19["WP-19 ADMS receiver and Form IX time model"]:::lane
+        WP20["WP-20 Attendance to payroll inputs"]:::lane
+        WP05 --> WP06 --> WP07
+        WP05 --> WP19 --> WP20
+    end
+
+    subgraph PLATFORM["Lane 6 - Platform, from day one"]
+        direction TB
+        WP21["WP-21 Isolation, audit, CERT-In controls"]:::plat
+        WP22["WP-22 Cost attribution and provider seam"]:::plat
+        WP23["WP-23 Assistant with every rail in the call path"]:::plat
+        WP21 --> WP22 --> WP23
+    end
+
+    WP01 --> WP08
+    WP01 --> WP04
+    WP04 --> WP05
+    WP11 --> WP13
+    WP12 --> WP14
+    WP15 --> WP16
+    WP02 --> WP15
+    WP25 --> WP24
+    WP10 --> WP07
+    WP12 --> WP20
+    WP16 --> WP23
+    WP02 --> WP23
+
+    PL{{"Pre-launch gate PL-01 to PL-05<br/>R1 exit - section 05.8"}}:::gate
+    WP17 --> PL
+    WP18 --> PL
+    WP07 --> PL
+    WP24 --> PL
+    WP21 --> PL

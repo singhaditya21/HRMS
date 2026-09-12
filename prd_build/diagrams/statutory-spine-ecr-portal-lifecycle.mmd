@@ -1,0 +1,41 @@
+stateDiagram-v2
+    direction TB
+    [*] --> Uploaded
+
+    Uploaded: P1 Upload - one txt file, or a zip holding one, plus five portal controls
+    ErrorFile: Error file returned - schema undocumented
+    Validated: P2 Validated
+    Statement: P3 Return statement generated
+    Approved: P4 Approved - can never be cancelled
+    RejectedByEmployer: P4 Rejected by the employer at statement review
+    DDBS: P5 Due Deposit Balance Summary - interest auto-calculated
+    Challan: P6 Challan with TRRN - treated as payment initiated
+    Paid: P7 Paid
+    Receipt: P8 Receipt downloaded
+    Supplementary: Supplementary return - repeatable
+    Revised: Revised return - overwrites the portal data
+
+    Uploaded --> Validated: validations pass
+    Uploaded --> ErrorFile: validations fail
+    ErrorFile --> Uploaded: fix at source and upload again
+    Validated --> Statement
+    Statement --> Approved: employer approves
+    Statement --> RejectedByEmployer: employer rejects
+    RejectedByEmployer --> Uploaded: new upload
+    Approved --> DDBS
+    DDBS --> Challan: one or more challans
+    Challan --> Paid
+    Paid --> Receipt
+    Receipt --> [*]
+
+    Approved --> Revised: no other return in process and no payment initiated
+    Approved --> Supplementary: only members absent from every prior return
+    Receipt --> Supplementary: new members for the month, after payment
+    Revised --> Uploaded
+    Supplementary --> Uploaded
+
+    note right of Challan
+        From here a Revised return is barred
+        so a downward correction is no longer possible
+        a Supplementary for absent members stays open
+    end note

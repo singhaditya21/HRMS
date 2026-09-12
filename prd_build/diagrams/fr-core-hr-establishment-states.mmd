@@ -1,0 +1,38 @@
+stateDiagram-v2
+    direction LR
+
+    state "Recorded, nothing mapped to it" as DRAFT
+    state "Registrations being obtained" as PENDING
+    state "Filing scope, employments mapped" as ACTIVE
+    state "No mapped employment, ledger open" as DORMANT
+    state "Retired, history and registers kept" as CLOSED
+
+    [*] --> DRAFT: EST1 establishment recorded with state, sphere and addresses
+    DRAFT --> PENDING: EST2 a registration task opens for a scheme the master shows as due
+    DRAFT --> ACTIVE: EST3 every registration the recorded obligations need is on file, checked
+    PENDING --> ACTIVE: EST4 a registration code recorded as an addition and checked
+    ACTIVE --> PENDING: EST5 a new obligation turns on and its registration is not yet held
+    ACTIVE --> DORMANT: EST6 last mapped employment ends and no month is open beyond the ledger
+    DORMANT --> ACTIVE: EST7 an employment is mapped again
+    DORMANT --> CLOSED: EST8 filing ledger shows no open month and closure is checked
+    CLOSED --> [*]
+
+    note right of PENDING
+        Liabilities compute and show while a
+        registration is missing. Payroll is never
+        blocked. The member line for the scheme
+        is non-fileable until the code is held.
+    end note
+
+    note right of DORMANT
+        Registers keep their own retention clocks
+        from their last entry. Closing never
+        shortens a clock and never deletes a row.
+    end note
+
+    note right of CLOSED
+        Refused while any month on the filing
+        ledger is open, while any mapping is
+        live, or while a gated change on the
+        establishment is waiting for its checker.
+    end note

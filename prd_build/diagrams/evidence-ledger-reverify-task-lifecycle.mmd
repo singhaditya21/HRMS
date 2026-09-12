@@ -1,0 +1,25 @@
+stateDiagram-v2
+    [*] --> Armed: RT1 trigger arms at its lead time or its event fires
+    Armed --> Assigned: RT2 assigned to a re-checker who is not the last grader
+    Assigned --> InProgress: RT3 re-checker opens the source
+    InProgress --> BlockedFetch: RT4 the fetch fails - tool and vantage recorded
+    BlockedFetch --> InProgress: RT5 retry with a different method or tool
+    BlockedFetch --> Escalated: RT6 attempts exhausted or band deadline passes
+    InProgress --> OutcomeRecorded: RT7 held, changed, killed or no successor
+    InProgress --> Escalated: RT6 band deadline passes with no outcome
+    Escalated --> InProgress: RT8 owner role reassigns or supplies a method
+    OutcomeRecorded --> Closed: RT9 grading event written and consumers acknowledge
+    Closed --> Armed: RT10 the trigger re-arms with its next date or event
+    Closed --> [*]: the row is killed and the trigger retires
+
+    note right of BlockedFetch
+        A blocked fetch never closes a task.
+        The row keeps its grade.
+        The daily lint reports it.
+    end note
+
+    note right of OutcomeRecorded
+        Silence is a recorded outcome.
+        No successor found is written,
+        with the date and the re-checker.
+    end note

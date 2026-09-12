@@ -1,0 +1,47 @@
+flowchart TB
+    classDef north fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:2px;
+    classDef lead fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef lag fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+    classDef cost fill:#4a3a0b,stroke:#8a6d14,color:#fff6da,stroke-width:1px;
+    classDef guard fill:#2a2a2a,stroke:#555,color:#f0f0f0,stroke-width:1px;
+
+    subgraph INPUT["Input layer · leading by weeks to months"]
+        direction TB
+        I1["Activation rate<br/>tenants reaching a first accepted filing"]:::lead
+        I2["Time-to-first-filing"]:::lead
+        I3["Migration completeness<br/>YTD, TDS deducted, UAN and IP continuity"]:::lead
+        I4["Registration linkage<br/>PF, ESI, PT and TAN captured"]:::lead
+    end
+
+    subgraph PROCESS["Process layer · leading by days"]
+        direction TB
+        P1["Payroll-run success"]:::lead
+        P2["Pre-filing validation pass rate<br/>ECR format and severity checks, FVU"]:::lead
+        P3["Statutory-change lead time<br/>and corrigendum-catch rate"]:::lead
+        P4["Supervised minutes per filing cycle<br/>per registration · the dominant COGS line · unsized"]:::cost
+        P5["AI deflection and model mix<br/>inference · the smallest COGS line"]:::cost
+    end
+
+    subgraph OUTPUT["Output layer · the north star"]
+        direction TB
+        NS["OTAF · count of IN_SLA filing instances per month<br/>GENERATED from the locked snapshot<br/>FILED by the due date<br/>no REJECTED attempt<br/>no REVISED or SUPPLEMENTARY in the settlement window<br/>read off the §08 filing state machine"]:::north
+        G1["Guardrail · Filing-Integrity Rate<br/>OTAF over IN_SLA instances due"]:::guard
+        G2["Guardrail · Penalty incidence<br/>count and rupees · any event is Sev-1<br/>liability stays with the employer"]:::guard
+        G3["Guardrail · Filing coverage<br/>external blocks go to the coverage-gap register"]:::guard
+    end
+
+    subgraph OUTCOME["Outcome layer · lagging by months to quarters"]
+        direction TB
+        O1["Filing-cohort retention"]:::lag
+        O2["NRR, never without its decomposition<br/>seats, band-crossing, attach, churn"]:::lag
+        O3["Band-crossing from 20-49 into 50+"]:::lag
+        O4["CAC payback<br/>stated before COGS until gross margin is sized"]:::lag
+    end
+
+    INPUT --> PROCESS
+    PROCESS --> NS
+    NS --> OUTCOME
+    G1 -. guards .-> NS
+    G2 -. guards .-> NS
+    G3 -. guards .-> NS
+    P4 -. decides gross margin .-> O4

@@ -1,0 +1,18 @@
+stateDiagram-v2
+    [*] --> OPEN
+    OPEN --> PROVISIONAL: C1 month ends
+    PROVISIONAL --> PROVISIONAL: C3 reconciliation fails and exceptions are listed
+    PROVISIONAL --> PROVISIONAL: C4 close lag passes and the period is flagged overdue
+    PROVISIONAL --> CLOSE_READY: C2 invoices and minutes reconcile within tolerance
+    CLOSE_READY --> CLOSED: C5 approved by someone other than the preparer
+    CLOSED --> CLOSED: C6 correction written as a restatement in the open period
+
+    note right of CLOSED
+        Closed figures are never edited.
+        A correction is a diff, never a mutation.
+    end note
+
+    note left of PROVISIONAL
+        New calls land in the next period.
+        Late events for this period queue as pending.
+    end note

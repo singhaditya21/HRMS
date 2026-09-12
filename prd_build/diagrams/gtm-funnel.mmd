@@ -1,0 +1,28 @@
+flowchart TD
+    R["<b>Reach</b><br/>Statutory-intent search &#47; Zoho-cliff trigger &#47; importer landing<br/><i>event: page or tool visit</i>"]
+    S["<b>Signup &#40;Free, &lt; 20 emp&#41;</b><br/>Tenant created &#8212; product-led, no EPF yet<br/><i>event: account created</i>"]
+    A["<b>Activation</b><br/>First real calculation run on real employees<br/><i>event: payroll computed &#8212; leading indicator, not signup</i>"]
+    C["<b>Statutory conversion &#40;Free &#8594; File&#41;</b><br/>Firm crosses 20 &#8594; EPF turns on &#8594; File tier<br/><i>event: first portal-accepted filing under SLA, attended submission</i><br/><b>THE MONEY MOMENT &#8212; a headcount event we do not time</b>"]
+    E["<b>Expansion &#40;within File &#47; File &#8594; Scale&#41;</b><br/>Headcount growth, band graduation, add-on attach<br/><i>event: NRR events &#8212; target NRR &gt; 100&#37; &#40;H-P9&#41;</i>"]
+    V["<b>Advocacy &#47; channel</b><br/>CA refers additional clients into the funnel<br/><i>event: CA-invited tenant activated &#8212; validates &#167;18.7</i>"]
+
+    R --> S --> A --> C --> E --> V
+    V -.->|"CA referral re-seeds Reach"| R
+
+    C -.->|"Kill: if beachhead will not pay a premium<br/>at conversion &#40;&#167;20 V-01&#47;V-03&#41;, funnel fills but never monetises"| K["Thesis narrows to<br/>bureau displacement only"]
+
+    classDef reach fill:#1e3a5f,stroke:#0d1b2a,color:#fff
+    classDef sign fill:#2a5d7c,stroke:#0d1b2a,color:#fff
+    classDef act fill:#3a7d99,stroke:#0d1b2a,color:#fff
+    classDef conv fill:#c0392b,stroke:#0d1b2a,color:#fff
+    classDef exp fill:#5aa0b8,stroke:#0d1b2a,color:#000
+    classDef adv fill:#7fc4d6,stroke:#0d1b2a,color:#000
+    classDef kill fill:#f2f2f2,stroke:#c0392b,color:#000,stroke-dasharray:4 3
+
+    class R reach
+    class S sign
+    class A act
+    class C conv
+    class E exp
+    class V adv
+    class K kill

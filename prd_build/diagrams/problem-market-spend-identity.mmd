@@ -1,0 +1,37 @@
+flowchart TB
+    classDef inp fill:#e8eef7,stroke:#41618c,color:#1b2a44;
+    classDef core fill:#fff4d6,stroke:#b8891f,color:#5a4208;
+    classDef read fill:#eef7e8,stroke:#5a8c41,color:#24401b;
+    classDef bias fill:#f7f7f7,stroke:#999999,color:#333333;
+    classDef out fill:#f7dede,stroke:#a83232,color:#4d1414;
+
+    S["Real software spend S<br/>Rs 2,100-3,900 Cr a year<br/>EV-005: filed inputs, modelled gross-up"]:::inp
+    M["Contributing members M<br/>7,37,39,204 UANs, EPFO FY2023-24"]:::inp
+    ID{{"pi x P = S / 12M<br/>= Rs 23.73-44.07 per member-month<br/>whole market, not the beachhead alone"}}:::core
+    S --> ID
+    M --> ID
+
+    PEN["Penetration reading<br/>P near list, Rs 49 to Rs 200<br/>pi between about 12 and 90 pct"]:::read
+    DIS["Discounting reading<br/>pi near 100 pct<br/>P about Rs 24-44, below every list card"]:::read
+    ID --> PEN
+    ID --> DIS
+
+    B1["Seat floor lifts P above list<br/>greytHR card across the fit's 20-199:<br/>Rs 64.45 per member-month"]:::bias
+    B2["Platform users above billed seats<br/>lowers measured realised P - EV-006"]:::bias
+    B1 -.-> PEN
+    B2 -.-> DIS
+
+    V3["V-03 realised price vs list"]:::inp
+    V2["V-02 status-quo distribution"]:::inp
+    DEC{"Which reading holds?"}:::core
+    PEN --> DEC
+    DIS --> DEC
+    V3 --> DEC
+    V2 --> DEC
+
+    O1["Penetration: SAM stands as a potential<br/>wedge is conversion from Tally, bureau, spreadsheet"]:::out
+    O2["Blended: re-run every grid at 0.70-0.85 x P"]:::out
+    O3["Discounting: re-base toward the Rs 50 value floor<br/>R-9 fires"]:::out
+    DEC --> O1
+    DEC --> O2
+    DEC --> O3

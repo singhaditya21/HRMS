@@ -1,0 +1,14 @@
+flowchart TB
+    p["Punch arrives from any channel<br/>verify mode kept on the Punch"] --> vm{"Verify mode"}
+    vm -->|"card, PIN, kiosk PIN, geo, web"| nb["Accepted and counted<br/>no election check for a non-biometric method"]
+    vm -->|"supervisor-attested"| sup["Accepted, routed to approval<br/>FR-ATT-016"]
+    vm -->|"missing or unmapped code"| unk["Accepted, verify_mode null with a reason code<br/>verify-mode-unknown to the site admin"]
+    vm -->|"fingerprint or face at a terminal"| el{"Modality elected<br/>and a live written ConsentRecord?"}
+    el -->|"Yes"| ok["Accepted and counted"]
+    el -->|"No"| bwc["Accepted and counted<br/>biometric-without-consent exception<br/>erasure item opened for that device"]
+    vm -->|"selfie face-match on app or kiosk"| sf{"Modality elected<br/>and live consent?"}
+    sf -->|"No"| never["Camera never opened for matching<br/>worker uses an elected non-biometric method"]
+    sf -->|"Yes, match"| ok
+    sf -->|"Yes, no match or low confidence"| fa["Accepted as flagged-for-approval<br/>face-match-review, never blocks pay"]
+    ok & bwc & nb & sup & unk & fa --> ds["Day status, OT and pay computed identically<br/>whatever the method - FR-ATT-026"]
+    never --> nb

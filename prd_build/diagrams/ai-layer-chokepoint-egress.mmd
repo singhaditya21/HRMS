@@ -1,0 +1,74 @@
+flowchart TB
+    IN["Egress envelope from the router<br/>call_id, tenant, actor, use_case_id,<br/>provider choice, subjects, typed context, free text"]
+
+    subgraph G1["1 - Gates re-checked at egress, not trusted from the router"]
+        direction TB
+        KS{"Tenant master switch ON<br/>and use case not opted out?"}
+        EL{"Provider in the tenant's eligible set<br/>consented + residency + current terms?"}
+        UC{"use_case_id registered<br/>and manifest version current?"}
+        AT{"attachments empty?<br/>(binary never crosses)"}
+    end
+
+    subgraph G2["2 - Typed context, by ai_egress_class"]
+        direction TB
+        MF["Drop every field outside<br/>the use case's manifest"]
+        HD["hard_deny: Aadhaar, VID, templates,<br/>images, credentials &rarr; drop;<br/>refuse the call if the manifest needs it"]
+        DD["default_deny_tokenise: PAN, bank account, IFSC<br/>&rarr; reversible token unless allowlisted<br/>for this use case AND provider infers in India"]
+        RR["restricted_redact: health, disability,<br/>FR-T-D004 attributes &rarr; category marker"]
+        DI["direct_identifier: name, code, contact,<br/>UAN, IP &rarr; reversible token"]
+        PC["personal_clear / reference &rarr; pass<br/>to an eligible provider only"]
+    end
+
+    subgraph G3["3 - Free text, after normalisation"]
+        direction TB
+        NM["Normalise: NFKC, Indic digits to 0-9,<br/>zero-width and spacing folded"]
+        KV["Known-value match against<br/>subjects' and tenant's held values"]
+        FM["Format match on id_format masks (&sect;14.9)<br/>12-digit spans &rarr; withheld marker, never stored"]
+        DR["Digit run in the account window<br/>&rarr; account-candidate token"]
+        UI{"Anything uninspectable?<br/>detector error, timeout,<br/>unsupported script"}
+    end
+
+    TM[("Token map - India<br/>subject key or per-scope key<br/>egress identity only")]
+    MP["Model provider<br/>tokenised payload only"]
+
+    subgraph G4["4 - Response path"]
+        direction TB
+        RS["Scan completion with the same pipeline<br/>unsent identifier or foreign token &rarr; redact + signal"]
+        RH["Rehydrate this scope's tokens<br/>for the caller's matrix cell only"]
+        GR["Interceptor + guardrails (&sect;12.8.1)"]
+    end
+
+    LOG[("India: tokenised LLM log,<br/>attribution, disclosure records")]
+    BLK["BLOCK and surface<br/>deterministic surface offered (&sect;12.2)"]
+
+    IN --> KS
+    KS -->|"no"| BLK
+    KS -->|"yes"| EL
+    EL -->|"no"| BLK
+    EL -->|"yes"| UC
+    UC -->|"no"| BLK
+    UC -->|"yes"| AT
+    AT -->|"no"| BLK
+    AT -->|"yes"| MF
+    MF --> HD --> DD --> RR --> DI --> PC
+    PC --> NM --> KV --> FM --> DR --> UI
+    UI -->|"yes"| BLK
+    UI -->|"no"| MP
+    DD -.-> TM
+    DI -.-> TM
+    KV -.-> TM
+    MP --> RS --> RH --> GR
+    TM -.-> RH
+    GR --> LOG
+    BLK --> LOG
+
+    classDef gate fill:#fff8e1,stroke:#f9a825,color:#6d4c00;
+    classDef deny fill:#ffebee,stroke:#c62828,color:#5b160d;
+    classDef tok fill:#f3e9ff,stroke:#7b3fbf,color:#2e0d54;
+    classDef ok fill:#e9f7ef,stroke:#1e8449,color:#0b3d22;
+    classDef store fill:#e6f2ff,stroke:#1b6ca8,color:#083b5c;
+    class KS,EL,UC,AT,UI gate;
+    class HD,BLK deny;
+    class DD,RR,DI,KV,FM,DR tok;
+    class PC,NM,MF,RS,RH,GR ok;
+    class TM,LOG store;

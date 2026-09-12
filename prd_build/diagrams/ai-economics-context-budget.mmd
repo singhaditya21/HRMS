@@ -1,0 +1,23 @@
+flowchart TB
+    IN["A routed call is composed"] --> CHK{"Composed input at or below<br/>the class input ceiling of the contract (§13.3.1)?"}
+    CHK -->|"yes"| CALL["Call made · costed from the price row (§13.6.1)"]
+    CHK -->|"no"| SEG
+
+    subgraph SEG["Truncation order · only these segments give way"]
+        direction TB
+        T1["1 · conversation_history<br/>down to the A5 window turns (§13.8.3)"]
+        T2["2 · policy_retrieval<br/>lowest-ranked chunks first, down to the retrieval floor"]
+        T3["3 · tool_definitions<br/>trimmed to the tools the use case registers (§12.9.6)"]
+        T1 --> T2 --> T3
+    end
+
+    NEV["Never truncated · system_prompt · class_instruction ·<br/>engine_context · the user's own turn"] -.-> SEG
+
+    SEG --> RE{"Within the ceiling after every<br/>truncatable segment reached its floor?"}
+    RE -->|"yes"| FLAG["Call made · retrieval_truncated recorded<br/>a rising rate is a corpus problem to fix with<br/>retrieval hygiene, not a model problem (§13.4)"]
+    RE -->|"no"| DEG["Call not made · the degraded path answers<br/>fallback_reason = context_ceiling (§13.7)"]
+
+    DEG -.-> WHY["Engine context is never traded for retrieval:<br/>the post-check's set of valid monetary tokens is<br/>exactly the engine-supplied values (§13.4)"]
+
+    CALL --> PC["Deterministic post-check on the output (§13.4)"]
+    FLAG --> PC

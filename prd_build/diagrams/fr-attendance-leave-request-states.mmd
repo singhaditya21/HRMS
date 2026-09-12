@@ -1,0 +1,34 @@
+stateDiagram-v2
+    [*] --> DRAFT: created by the worker, or by HR on their behalf
+    DRAFT --> [*]: abandoned before submission
+    DRAFT --> PENDING: submitted, no BLOCK in V1 to V12, HOLD posted
+    PENDING --> PENDING: a level approves, further levels remain
+    PENDING --> APPROVED: final level approves, AVAIL rows posted per day
+    PENDING --> REJECTED: any level rejects with a recorded reason
+    PENDING --> WITHDRAWN: worker withdraws before the first leave day
+    PENDING --> ESCALATED: leave_timeout_hours elapses, no auto-decision
+    ESCALATED --> APPROVED: decided at the escalation level
+    ESCALATED --> REJECTED: decided at the escalation level
+    ESCALATED --> UNDECIDED_AT_DAY: the first leave day begins undecided
+    UNDECIDED_AT_DAY --> APPROVED: decided late, elapsed days re-derive
+    UNDECIDED_AT_DAY --> REJECTED: decided late, the absence stands
+    APPROVED --> CANCELLED: every day still in the future
+    APPROVED --> PART_CANCELLED: some days elapsed, future days reverse
+    APPROVED --> CONSUMED: the last leave day passes
+    PART_CANCELLED --> CONSUMED: the remaining days pass
+    CONSUMED --> RETRO_AMENDED: retro diff for a locked day
+    REJECTED --> [*]
+    WITHDRAWN --> [*]
+    CANCELLED --> [*]
+    CONSUMED --> [*]
+    RETRO_AMENDED --> [*]
+    note right of UNDECIDED_AT_DAY
+        Lock gating. The engine never auto
+        approves and never auto rejects.
+        A queue delay must not become an LOP day.
+    end note
+    note right of PENDING
+        A HOLD reduces available only.
+        Balance as at any past date is
+        unaffected by approval latency.
+    end note

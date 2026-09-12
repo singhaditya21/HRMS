@@ -1,0 +1,39 @@
+flowchart TB
+    EV["Assignment change event<br/>transfer, CTC revision, remote relocation,<br/>deductor-TAN change, org move"] --> W{"Effective date inside<br/>an OPEN period?"}
+
+    W -->|"Yes - period still OPEN"| SPLIT["Split the range in place<br/>close prior row at [.., D)<br/>open new row at [D, ..)<br/>no gap, no overlap - T3"]
+    W -->|"No - period INPUTS_CLOSED or later"| LATE["Late-known change<br/>new knowledge-time version<br/>routed to a correction run - Part E-1"]
+
+    SPLIT --> CHK{"Which assignment type?"}
+    LATE --> CHK
+
+    CHK -->|"EstablishmentMapping"| A1["Re-points EPF, ESIC and PTRC routing<br/>new PF Member ID under the same UAN<br/>prior establishment returns untouched"]
+    CHK -->|"WorkLocationAssignment"| A2["Re-points jurisdiction - state, sphere,<br/>Code-regime date<br/>PT and LWF resolve per sub-period"]
+    CHK -->|"CompensationAssignment"| A3["Re-bases every wage base<br/>s.2 y add-back re-evaluated<br/>balance figure is a bounded fixed point"]
+    CHK -->|"OrgAssignment"| A4["Reporting only<br/>no statutory effect<br/>no filing consequence"]
+    CHK -->|"Deductor-TAN assignment"| A5["Re-points the Form 138 series<br/>the tax year splits across two TANs"]
+
+    A1 --> NEST{"Nesting holds?<br/>child range inside parent range - T1"}
+    A2 --> NEST
+    A3 --> NEST
+    A5 --> NEST
+
+    NEST -->|No| REJ["Write refused<br/>conflicting range returned<br/>no partial write"]
+    NEST -->|Yes| COV{"Covering registration active<br/>for every eligible scheme - T2?"}
+
+    COV -->|No| PEND["registration_pending<br/>liability computed and held<br/>surfaced on the readiness report<br/>payroll never blocked"]
+    COV -->|Yes| OK["Assignment committed<br/>AuditEvent written<br/>filing fan-out recomputed for the period"]
+
+    PEND --> OK
+    A4 --> OK
+
+    OK --> STRAD{"Period straddles<br/>the effective date?"}
+    STRAD -->|Yes| FLAG["Resolve per sub-period - 14.6.3 step 1<br/>flag for operator review - T7<br/>never guess a part-month split"]
+    STRAD -->|No| DONE["Single-jurisdiction period<br/>normal fan-out"]
+
+    classDef bad fill:#fde2e2,stroke:#c0392b,color:#000
+    classDef good fill:#e2f0d9,stroke:#2e7d32,color:#000
+    classDef warn fill:#fff3cd,stroke:#b8860b,color:#000
+    class REJ bad
+    class OK,DONE good
+    class PEND,FLAG,LATE warn

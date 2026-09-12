@@ -1,0 +1,31 @@
+flowchart LR
+    classDef step fill:#132b4a,stroke:#2f5f9e,color:#e3efff,stroke-width:1px;
+    classDef done fill:#0b5c3e,stroke:#17b37a,color:#eafff5,stroke-width:2px;
+    classDef stop fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+
+    S0["Locked payroll month<br/>one snapshot feeds the artefact"]:::step
+    C1{"1 Format for the period<br/>published and resolved?"}:::step
+    C2{"2 Validated at the<br/>portal's own severity?"}:::step
+    C3{"3 Submitted in an attended session<br/>mode and authority recorded?"}:::step
+    C4{"4 Acknowledgement and<br/>payment receipt captured?"}:::step
+    C5{"5 Snapshot, artefact and<br/>challans agree to the rupee?"}:::step
+    C6{"6 Retention class set<br/>nothing erasable while unset?"}:::step
+    D["Complete<br/>on time if the authority's timestamp<br/>is on or before the due date"]:::done
+
+    B["BLOCKED<br/>reason, owner, unblocking trigger<br/>deadline stays visible"]:::stop
+    R["REJECTED<br/>a new linked attempt, never an edit"]:::stop
+    P["Short of FILED<br/>missing receipt or reconciliation break"]:::stop
+
+    S0 --> C1
+    C1 -- yes --> C2
+    C1 -- no --> B
+    C2 -- yes --> C3
+    C2 -- blocking check fails --> B
+    C3 -- accepted --> C4
+    C3 -- rejected --> R
+    R -- regenerate --> C2
+    C4 -- yes --> C5
+    C4 -- no --> P
+    C5 -- yes --> C6
+    C5 -- no --> P
+    C6 -- yes --> D

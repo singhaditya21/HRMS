@@ -1,0 +1,28 @@
+flowchart TB
+    subgraph DEVICE["On-device (mobile / kiosk) - low or no connectivity"]
+        cap["Worker action<br/>punch or leave application"]
+        skew["Stamp capture time<br/>device-local + tz, skew-corrected (FR-DEV-003)"]
+        hash["Build normalized punch + payload_hash<br/>(FR-ATT-010)"]
+        queue[("Durable on-device queue<br/>persists across app restart")]
+        conf["Local confirmation to worker<br/>visual / haptic - AC2"]
+        cap --> skew --> hash --> queue --> conf
+    end
+
+    net{"Network<br/>reachable?"}
+    conf --> net
+    net -->|No| wait["Stay queued - punch is never lost (AC1)<br/>retry on next connectivity"]
+    wait -.-> net
+    net -->|Yes| sync["Bandwidth-frugal sync (AC3)<br/>deltas, compressed, 2G/3G / metered"]
+
+    subgraph SERVER["Server-side receiver"]
+        dedup{"Duplicate?<br/>dedup on payload_hash +<br/>(device_sn, user, ts, direction)"}
+        anchor["Attribute to CAPTURE date, not sync date<br/>(AC1, capture-time not sync-time)"]
+        recompute["Recompute affected day-status / worked hours<br/>(FR-ATT-001); locked period -> retro run"]
+        ledger[("Effective-dated event ledger<br/>+ audit entry")]
+        dedup -->|Yes| drop["Count once, discard replay"]
+        dedup -->|No| anchor --> ledger --> recompute
+    end
+
+    sync --> dedup
+    recompute --> ack["ACK to device -> mark queue item delivered"]
+    ack -.-> queue

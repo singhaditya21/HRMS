@@ -1,0 +1,36 @@
+stateDiagram-v2
+    [*] --> OPEN: TK1 raised by a machine event, a validator or a person, with a named holder and a due moment
+    OPEN --> WAITING: TK2 the act passes to someone outside the product - an employee, an authority, a counterparty
+    WAITING --> OPEN: TK3 the awaited fact arrives and is recorded
+    OPEN --> BLOCKED: TK4 a precondition the holder cannot clear
+    BLOCKED --> OPEN: TK5 the blocker clears, with its evidence
+    OPEN --> DONE: TK6 closure evidence recorded
+    WAITING --> DONE: TK7 the awaited artefact itself is the closure evidence
+    OPEN --> WAIVED: TK8 waivable class only, typed reason, named waiver, one period
+    OPEN --> VOID: TK9 the obligation ceases before the act is owed
+    WAITING --> VOID: TK9 the obligation ceases before the act is owed
+    BLOCKED --> VOID: TK9 the obligation ceases before the act is owed
+    OPEN --> SUPERSEDED: TK10 re-raised on a new subject, holder or period
+    WAITING --> SUPERSEDED: TK10 re-raised on a new subject, holder or period
+    BLOCKED --> SUPERSEDED: TK10 re-raised on a new subject, holder or period
+    DONE --> [*]
+    WAIVED --> [*]
+    VOID --> [*]
+    SUPERSEDED --> [*]
+
+    note right of OPEN
+        A holder is always a named person, never a role with no holder
+        Re-derived on a role change - never reassigned to the maker
+        Escalation finds a second person, never a waiver
+    end note
+
+    note right of BLOCKED
+        The blocker and its owner are on the face of the item
+        A blocked item is still visible and still counted
+        A due date passing never closes an item
+    end note
+
+    note right of DONE
+        Terminal - a closed item is never reopened
+        A recurrence is a new item linked to this one
+    end note

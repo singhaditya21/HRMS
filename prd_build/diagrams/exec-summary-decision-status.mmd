@@ -1,0 +1,13 @@
+stateDiagram-v2
+    [*] --> Open
+    [*] --> Fenced
+    Open --> Decided: result or counsel answer recorded
+    Open --> Killed: pre-registered kill criterion fires
+    Fenced --> Live: blocker clears and the artefact ships
+    Fenced --> CarvedOut: blocker still open at its gate
+    CarvedOut --> Live: blocker clears and the artefact ships later
+    Decided --> Reopened: registered watch trigger fires
+    Live --> Reopened: registered watch trigger fires
+    Reopened --> Decided: re-verification complete
+    Reopened --> Killed: kill criterion fires
+    Killed --> [*]

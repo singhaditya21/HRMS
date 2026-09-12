@@ -1,0 +1,24 @@
+stateDiagram-v2
+    direction TB
+    [*] --> PROPOSED: S1 provider configuration registered with a current terms record
+    PROPOSED --> NOTICE_PERIOD: S2 notice sent to a tenant with no sector profile
+    PROPOSED --> CONSENT_PENDING: S3 consent requested from an RBI, SEBI or IRDAI tenant
+    NOTICE_PERIOD --> ELIGIBLE: S4 notice period elapses with no objection
+    NOTICE_PERIOD --> OBJECTED: S5 tenant objects
+    CONSENT_PENDING --> ELIGIBLE: S6 prior written consent recorded by the signatory
+    CONSENT_PENDING --> OBJECTED: S7 tenant declines
+    OBJECTED --> ELIGIBLE: S11 tenant withdraws its objection in writing
+    ELIGIBLE --> SUSPENDED: S8 terms lapse, security hold, or a provider-imposed change
+    SUSPENDED --> ELIGIBLE: S9 terms renewed or hold lifted with no change in location or data classes
+    SUSPENDED --> PROPOSED: S12 the imposed change is accepted as a new configuration
+    ELIGIBLE --> WITHDRAWN: S10 tenant withdraws consent or the provider is removed
+    ELIGIBLE --> CONSENT_PENDING: S13 tenant profile becomes regulated without prior written consent on record
+    OBJECTED --> [*]
+    WITHDRAWN --> [*]
+
+    note right of ELIGIBLE
+      Only ELIGIBLE receives traffic.
+      Failover stays inside the ELIGIBLE set.
+      Every transition is kept append-only
+      so the set on any past date is a query.
+    end note

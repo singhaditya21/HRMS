@@ -1,0 +1,34 @@
+flowchart TD
+    START(["Evaluate row or field at time T<br/>(erasure request, purpose spent, exit, or scheduled sweep)"]) --> Q1{"1. Active RetentionHold?<br/>litigation / investigation /<br/>dispute / tax scrutiny"}
+
+    Q1 -->|Yes| R1["RETAIN<br/>basis: hold<br/>beats every floor & ceiling<br/>re-eval on released_at"]
+    Q1 -->|No| Q2{"2. Statutory floor elapsed<br/>for the retention_class?<br/>EV-054 registers, or counsel-set parameter<br/>(longer floor wins on overlap)"}
+
+    Q2 -->|"No, or parameter unset"| R2["RETAIN, DEFER erasure<br/>tell the requester the basis and<br/>the erasable date, or that it is under confirmation"]
+    Q2 -->|Yes| Q3{"3. Live processing purpose?<br/>active employment /<br/>open pay run / pending filing"}
+
+    Q3 -->|Yes| R3["RETAIN<br/>basis: active purpose"]
+    Q3 -->|No| Q4{"4. Analytics-relevant<br/>& anonymisable?"}
+
+    Q4 -->|Yes| R4A["ANONYMISE / AGGREGATE<br/>strip direct + quasi identifiers,<br/>keep de-identified facts<br/>(headcount / cost trends)"]
+    Q4 -->|No| MECH{"Encrypted under<br/>the subject key?"}
+
+    MECH -->|Yes| R4B["ERASE by crypto-shredding<br/>the subject key<br/>(backups unreadable, key never restorable)"]
+    MECH -->|No| R4C["ERASE by tombstone<br/>id, class, dates, basis, actor"]
+
+    R1 --> AUD["Write AuditEvent<br/>(decision + basis + mechanism + actor + NTP ts)<br/>never the erased content"]
+    R2 --> AUD
+    R3 --> AUD
+    R4A --> AUD
+    R4B --> AUD
+    R4C --> AUD
+
+    AUD --> RESP["Reasoned response recorded, tenant-configured SLA<br/>(DPDP rights reach under counsel review - Part D-1)"]
+    R2 -.->|"schedule re-evaluation at floor expiry"| Q1
+
+    classDef retain fill:#fde2e2,stroke:#c0392b,color:#000
+    classDef erase fill:#e2f0d9,stroke:#2e7d32,color:#000
+    classDef audit fill:#e8eaf6,stroke:#3949ab,color:#000
+    class R1,R2,R3 retain
+    class R4A,R4B,R4C erase
+    class AUD,RESP audit

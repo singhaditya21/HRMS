@@ -1,0 +1,48 @@
+stateDiagram-v2
+    direction TB
+
+    state "Candidate - consent under both regimes" as Candidate
+    state "Talent pool - extended consent" as TalentPool
+    state "Pre-boarding - consent" as PreBoarding
+    state "Employee - basis recorded per regime" as Employee
+    state "Purged or erased - tombstone kept" as Purged
+    state "Held for a complaint or proceeding" as Held
+
+    [*] --> Candidate: Apply via career site or board ingest, FR-T-X02
+
+    Candidate --> PreBoarding: Offer accepted, FR-T-R54
+    Candidate --> TalentPool: Rejected but good, explicit extended re-consent, FR-T-R26
+    Candidate --> Purged: Retention horizon reached, no hire, FR-T-X03
+    Candidate --> Purged: Consent revoked or erasure request, FR-T-X03
+    Candidate --> Held: Complaint opened or notice of proceedings, FR-LEG-026
+    Held --> Purged: Hold released by the tenant on counsel instruction
+
+    TalentPool --> Candidate: Re-applies to a new requisition
+    TalentPool --> Purged: Extended horizon reached or erasure, FR-T-X03
+
+    PreBoarding --> Employee: Onboarding commit, basis recorded per regime, FR-T-X06
+    PreBoarding --> Purged: Offer reneged or withdrawn, then retention horizon, FR-T-X03
+
+    Employee --> [*]: Same person entity persists to payslip N
+    Purged --> [*]
+
+    note right of Candidate
+        Consent, named purpose and retention horizon
+        captured, logged and revocable at application, FR-T-X02.
+        Whether the DPDP employment ground, s.7 clause i, reaches
+        candidates is a counsel question, so the product never relies on it here.
+    end note
+
+    note right of PreBoarding
+        Accepted candidate, not yet on the payroll register.
+        Still on consent. CTC structure carried forward
+        with zero re-keying, FR-T-R54 to FR-T-O01.
+    end note
+
+    note right of Employee
+        Today the SPDI Rules 2011 require written consent
+        for sensitive data such as bank details, for employees too.
+        From on or about 13 May 2027 DPDP s.7 clause i may cover
+        employment purposes, and the s.8 duties still apply.
+        The basis per regime is recorded at each point, FR-T-X06.
+    end note

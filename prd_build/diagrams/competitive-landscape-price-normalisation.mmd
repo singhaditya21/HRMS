@@ -1,0 +1,41 @@
+flowchart TD
+    classDef step fill:#e8eef7,stroke:#41618c,color:#1b2a44;
+    classDef gate fill:#fff4d6,stroke:#b8891f,color:#5a4208;
+    classDef stop fill:#f9e3e3,stroke:#a04040,color:#4a1515;
+    classDef ok fill:#eef7e8,stroke:#5a8c41,color:#24401b;
+
+    IN["Inputs - a price point row, a headcount n,<br/>a cadence, an entity count and a registration count"]:::step --> Q0{"Is the price point live or archived,<br/>and is its capture inside the age window?"}:::gate
+    Q0 -->|unrendered config value| X1["REFUSE - an unrendered config value is not a published price"]:::stop
+    Q0 -->|suppressed in an HTML comment| X2["REFUSE for a current-price claim<br/>usable only as a dated commented-rate finding"]:::stop
+    Q0 -->|archived| A1["Compute, label archived with the snapshot date<br/>never presented as a current price"]:::step
+    Q0 -->|live and inside the window| Q1{"Is the billing unit the same as ours -<br/>employee, user, recruiter or licence?"}:::gate
+    Q0 -->|capture expired| X3["REFUSE - re-capture first"]:::stop
+
+    Q1 -->|different unit| N1["Normalise or refuse - a per-recruiter or per-licence<br/>add-on is never folded into a per-employee comparison"]:::step
+    Q1 -->|same unit| Q2{"Is the block size known?"}:::gate
+    N1 --> Q2
+
+    Q2 -->|no| X4["REFUSE - block unknown<br/>Keka live floor - INR 6,999 divided by INR 90 is 77.8,<br/>which matches no round number - question CQ-01"]:::stop
+    Q2 -->|yes| Q3{"Classify the model - is the base equal to<br/>block seats times the marginal rate, inside the tolerance?"}:::gate
+
+    Q3 -->|yes| M1["FLAT WITH MINIMUM<br/>bill equals rate times the greater of n and the block<br/>effective price stops falling at the block"]:::step
+    Q3 -->|no, base exceeds the block value| M2["BASE PLUS OVERAGE<br/>bill equals base plus marginal times any excess over the block<br/>effective price keeps falling toward the marginal rate"]:::step
+    Q3 -->|minimum billing on a per-user card| M3["PER USER WITH MINIMUM BILLING<br/>same arithmetic as flat with minimum, unit is the user"]:::step
+    Q3 -->|free below a ceiling| M4["FREE TO N THEN PAID<br/>piecewise - state the cliff at the boundary"]:::step
+
+    M1 --> C1{"Cadence matched on both sides?"}:::gate
+    M2 --> C1
+    M3 --> C1
+    M4 --> C1
+    C1 -->|no| X5["REFUSE - never compare a monthly card with an annual card"]:::stop
+    C1 -->|yes| C2{"Tax treatment stated and identical?"}:::gate
+    C2 -->|no| X6["REFUSE - publish ex-GST on both sides or add 18 percent to both"]:::stop
+    C2 -->|yes| C3{"Does the vendor license per legal entity?"}:::gate
+    C3 -->|yes| E1["Multiply by the entity count and split headcount by entity<br/>a single-licence read understates a multi-entity group"]:::step
+    C3 -->|no| E2["Single licence"]:::step
+    E1 --> OUT
+    E2 --> OUT["Emit - monthly bill, effective price per employee per month,<br/>annual total, dead-seat cost, the formula used,<br/>the capture date and the list-not-realised label"]:::ok
+    A1 --> OUT
+    OUT --> G{"Is the output going outside the company?"}:::gate
+    G -->|yes| CL["Clear as a price claim - vendor's own page only,<br/>normalisation stated, capture inside the window"]:::ok
+    G -->|no| INT["Internal use - still carries its capture and formula"]:::ok

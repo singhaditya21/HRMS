@@ -1,0 +1,27 @@
+stateDiagram-v2
+    direction LR
+    [*] --> Open
+
+    Open: OPEN - entries accrue for the period
+    Closed: CLOSED - date of last entry fixed, renders frozen
+    Eligible: ELIGIBLE - the latest rule-set clock has run
+    TransferRequired: TRANSFER REQUIRED - leave register only, OSH r.76 sub-rule 2
+    Held: HELD - inquiry, dispute or reopened assessment
+    Destroyed: DESTROYED - a destruction record is kept
+
+    Open --> Closed: L2 period ends and every source run is locked
+    Closed --> Closed: L3 amendment appended, may restart the clock
+    Closed --> Eligible: L4 clock expires on the later reading
+    Eligible --> TransferRequired: L5 destruction asked for FORM-XX
+    TransferRequired --> Eligible: L6 transfer to a new register recorded
+    Eligible --> Destroyed: L7 no hold and every longer floor has run
+    Closed --> Held: L8 hold placed
+    Eligible --> Held: L8 hold placed
+    Held --> Closed: L9 hold released and the clock re-evaluated
+    Destroyed --> [*]
+
+    note right of Closed
+        Wages r.51 sub-rule 4 - five years after the last entry
+        OSH and SS - five calendar years from the last entry
+        until counsel reads the divergence, the later date applies
+    end note

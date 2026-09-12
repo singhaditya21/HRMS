@@ -1,0 +1,34 @@
+flowchart TD
+    classDef input fill:#3d3d3d,stroke:#6b6b6b,color:#ffffff,stroke-width:1px;
+    classDef out fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef ask fill:#5a3a1e,stroke:#8f5c2f,color:#fff3ea,stroke-width:1px;
+    classDef stop fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+
+    IN["Input - a form or section string<br/>plus the period it refers to and the context"]:::input
+    LAB{"A labour form string<br/>such as FORM-XXIII?"}
+    RS{"Rule-set known?"}
+    CANONL["Form keyed on rule-set plus form"]:::out
+    ASKRS["Ask for the rule-set<br/>SS unified annual return or OSH experience certificate"]:::ask
+    PER{"Period up to FY 2025-26?"}
+    LEG["Legacy artefact in 1961-Act vocabulary<br/>statements on RPU 6.0 and FVU 9.5"]:::out
+    F16{"Is the string Form 16?"}
+    CTX{"Salary context?"}
+    F130["Form 130, shown as Form 130 - earlier Form 16"]:::out
+    ASK16["Ask - Form 130 salary certificate<br/>or FORM NO. 16, the donation certificate"]:::ask
+    MAP{"In the CBDT form and section mapping?"}
+    CANON["Canonical new form or section<br/>both labels shown"]:::out
+    UNM["Successor unmapped<br/>never a guessed number"]:::stop
+
+    IN --> LAB
+    LAB -->|"yes"| RS
+    RS -->|"yes"| CANONL
+    RS -->|"no"| ASKRS
+    LAB -->|"no"| PER
+    PER -->|"yes"| LEG
+    PER -->|"no, Tax Year 2026-27 or later"| F16
+    F16 -->|"yes"| CTX
+    CTX -->|"yes"| F130
+    CTX -->|"no"| ASK16
+    F16 -->|"no"| MAP
+    MAP -->|"yes"| CANON
+    MAP -->|"no"| UNM

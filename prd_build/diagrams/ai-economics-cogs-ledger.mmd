@@ -1,0 +1,37 @@
+flowchart LR
+    subgraph SRC["Metering sources"]
+        direction TB
+        I["Attribution records §13.9.1<br/>provider tokens · price_row_id · FX at call"]
+        W["WhatsApp message records §13.22<br/>Meta-assigned category · window state"]
+        S["FR-OPS-010 session minutes<br/>through the §22 cost ledger"]
+        C["Pipeline log §22.9<br/>change requests per state"]
+    end
+
+    subgraph RATE["Unit costs"]
+        direction TB
+        PB["Price book §13.6.1<br/>captured"]
+        RC["WhatsApp rate rows<br/>low and high until V-12"]
+        CM["c_min §22.7<br/>unsized"]
+        CS["cost_per_state_per_year §22.9<br/>unsized"]
+    end
+
+    I --> L1["Inference line<br/>MEASURED"]
+    PB --> L1
+    W --> L2["WhatsApp line<br/>RANGE"]
+    RC --> L2
+    S --> L3["Supervised filing line<br/>QUANTITY_ONLY"]
+    CM --> L3
+    C --> L4["Curation line<br/>NOT_SIZED, later ALLOCATED"]
+    CS --> L4
+
+    REV["Tenant revenue<br/>headcount × PEPM plus any registration line · ex-GST<br/>metered and attach revenue kept out"] --> G
+
+    L1 --> G{"Gross-margin gate<br/>all four lines computable?"}
+    L2 --> G
+    L3 --> G
+    L4 --> G
+
+    G -->|"yes"| GM["Gross margin for the tenant-period<br/>a range while WhatsApp is a range"]
+    G -->|"no"| NC["Not computable · names the unsized lines<br/>each computable line as a share of revenue"]
+    NC -.-> K02["No figure from a subset of lines<br/>is ever labelled margin (EV-K13)"]
+    G --> FL["Flags F-RINST · F-INF · F-WA · F-SUP · F-STATE<br/>to their owners · never a service block"]

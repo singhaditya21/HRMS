@@ -1,0 +1,23 @@
+stateDiagram-v2
+    [*] --> Proposed: a figure is computed from register rows
+    Proposed --> Refused: the basis, the units or the denominators do not match
+    Proposed --> Current: DV1 inputs name rows, components, values and basis
+    Refused --> [*]: the refusal is recorded with its reason and never re-derived silently
+    Current --> Stale: DV2 a new capture of any input lands
+    Stale --> Current: DV3 re-evaluated and reproduced under its stated rounding
+    Current --> Current: DV5 an input qualifier changes and the output qualifiers recompute
+    Stale --> Broken: DV4 an input is killed
+    Current --> Broken: DV4 an input is killed
+    Broken --> [*]: the output is withdrawn from every surface and framed as dead
+
+    note right of Current
+        The grade is computed, never typed.
+        It is the weakest input's grade
+        with every input qualifier carried.
+    end note
+
+    note right of Stale
+        Release uses block while stale.
+        An archived input never goes stale
+        because its source is frozen.
+    end note

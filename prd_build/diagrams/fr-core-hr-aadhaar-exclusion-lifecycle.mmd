@@ -1,0 +1,32 @@
+stateDiagram-v2
+    direction LR
+
+    state "Flagged before generation" as FLAGGED
+    state "Excluded from the Regular return" as EXCLUDED
+    state "Escalated before the M plus 4 deadline" as ESCALATED
+    state "Seeded, Supplementary prepared" as SEEDED
+    state "Closed" as CLOSED
+
+    [*] --> FLAGGED: EX1 readiness finds an unseeded or missing UAN in a locked month
+    FLAGGED --> CLOSED: EX3 seeding evidence approved before generation, line included
+    FLAGGED --> EXCLUDED: EX2 Regular return generated without the line
+    EXCLUDED --> SEEDED: EX4 seeding evidence recorded and checked
+    EXCLUDED --> ESCALATED: EX6 escalation lead reached, still unseeded
+    ESCALATED --> ESCALATED: EX7 approver decision recorded
+    ESCALATED --> SEEDED: EX4 seeding evidence recorded and checked
+    SEEDED --> CLOSED: EX5 Supplementary approved and paid, interest captured
+    EXCLUDED --> EXCLUDED: EX8 member exits, record stays open with a leaver flag
+
+    note right of EXCLUDED
+        The employee is paid in the same run.
+        Operator and employee notices go out.
+        The employee share follows the tenant
+        setting chosen at setup.
+    end note
+
+    note right of ESCALATED
+        Month M plus 4 Regular return cannot be
+        filed until a Supplementary for month M
+        carries the member. The product shows it,
+        records the decision, never blocks payroll.
+    end note

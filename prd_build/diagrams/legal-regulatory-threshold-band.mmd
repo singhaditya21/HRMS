@@ -1,0 +1,26 @@
+flowchart TD
+    H["Tenant headcount changes, or the month closes"] --> F["Compute the FLOOR<br/>populations certainly within this instrument's counting unit:<br/>permanent, probation, fixed-term and part-time employees on the rolls"]
+    F --> C["Compute the CEILING<br/>floor plus every unresolved population:<br/>apprentices, contract labour, consultants,<br/>interns, group-company workers at the same premises"]
+    C --> Q{"Where does the statutory line fall?"}
+
+    Q -->|"Below the floor"| ABOVE["State ABOVE<br/>duties attach - open the review tasks<br/>record the crossing date"]
+    Q -->|"Inside the band"| IND["State INDETERMINATE<br/>show both counts and the reason for each exclusion<br/>offer the workflow and its clock<br/>never state an exemption"]
+    Q -->|"Above the ceiling"| BELOW["State BELOW<br/>band recorded so growth re-evaluates it<br/>excluded populations named"]
+
+    IND --> R{"Is the exclusion resolvable?"}
+    R -->|"A §20 parameter, e.g. apprentices"| P["Statutory route - value enters as rule data<br/>band recomputed for every tenant"]
+    R -->|"A counsel item, e.g. contract labour, CR-48"| K["Default holds - the wider band stands<br/>no answer is assumed in the tenant's favour"]
+    P --> Q
+    K --> IND
+
+    ABOVE --> CASE{"An open case or a legal hold<br/>under this instrument?"}
+    BELOW --> CASE
+    CASE -->|"Yes"| STICK["The instrument stays ABOVE for that case<br/>a complaint received while above keeps its clock<br/>published EOP and records are not deleted"]
+    CASE -->|"No"| FREE["State follows the band<br/>artefacts already published stay published"]
+
+    classDef ok fill:#e8f5e9,stroke:#2e7d32,color:#0d2a12;
+    classDef caution fill:#fff3cd,stroke:#b8860b,color:#3a2f00;
+    classDef firm fill:#e3f2fd,stroke:#1565c0,color:#0d1b2a;
+    class ABOVE,STICK firm;
+    class IND,K caution;
+    class BELOW,FREE,P ok;

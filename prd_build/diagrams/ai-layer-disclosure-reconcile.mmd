@@ -1,0 +1,24 @@
+sequenceDiagram
+    autonumber
+    participant RT as Router
+    participant CK as Chokepoint
+    participant DB as India LLM log and disclosure store
+    participant NP as Network egress path
+    participant MP as Model provider
+    participant RJ as Reconciliation job
+    participant IN as Incident channel
+    RT->>CK: Envelope with subjects and typed context
+    CK->>CK: Manifest filter, classification and tokenisation
+    CK->>DB: One commit - tokenised log line plus one record per surviving subject
+    DB-->>CK: Committed
+    Note over CK,DB: No commit, no send. A failed commit blocks the call.
+    CK->>NP: Request to the provider, tagged with the call id
+    NP->>NP: Connection-level egress record, written outside the application code
+    NP->>MP: Tokenised payload
+    MP-->>CK: Completion, or an error after receipt
+    CK->>DB: Outcome completed - answered, abstained, draft created or provider error
+    loop Every reconcile interval
+        RJ->>NP: Reads connection-level egress records
+        RJ->>DB: Reads committed records for the same call ids
+        RJ->>IN: A transmitted call with missing records raises DET-AI-15
+    end

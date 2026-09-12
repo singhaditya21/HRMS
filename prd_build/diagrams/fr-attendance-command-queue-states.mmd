@@ -1,0 +1,25 @@
+stateDiagram-v2
+    [*] --> QUEUED: a flow creates the command, type supported by the model
+    QUEUED --> SERVED: device poll, one in flight per device user, creation order
+    SERVED --> SUCCEEDED: result success, id and serial match
+    SERVED --> FAILED: result failure, or no result within the source timeout
+    FAILED --> QUEUED: source retry interval elapses, below the source ceiling
+    FAILED --> SUCCEEDED: late success for an earlier attempt
+    QUEUED --> SUCCEEDED: late success for an earlier attempt of a re-queued command
+    QUEUED --> SUPERSEDED: later update for the same device user, no delete between
+    QUEUED --> EXPIRED: clock set unserved past its time to live, or replaced
+    QUEUED --> CANCELLED: device decommissioned, delete types excepted
+    SUCCEEDED --> [*]
+    SUPERSEDED --> [*]
+    EXPIRED --> [*]
+    CANCELLED --> [*]
+    note right of QUEUED
+        Delete-user and delete-template are never
+        superseded, expired or cancelled.
+        A suspended device is served deletes only.
+    end note
+    note right of FAILED
+        At the source ceiling the erasure item
+        becomes EXHAUSTED or the provisioning
+        is marked pending. A punch is never blocked.
+    end note

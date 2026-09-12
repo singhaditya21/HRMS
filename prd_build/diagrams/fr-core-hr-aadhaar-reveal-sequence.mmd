@@ -1,0 +1,27 @@
+sequenceDiagram
+    autonumber
+    actor E as Employee
+    participant K as Kiosk or ESS
+    participant V as Aadhaar token store
+    actor C as Compliance checker
+    participant P as ESIC portal
+    participant A as Audit log
+
+    E->>K: Chooses to let the employer seed Aadhaar at IP registration
+    K->>E: Regulation 5 notice with purpose, voluntary status and the alternative
+    E->>K: Grants in writing for AADHAAR_ESIC_IP_SEEDING
+    E->>K: Types the number in a private session
+    K->>V: PUT over an encrypted channel with the grant id
+    V->>A: PUT recorded with token and purpose, never the number
+    V-->>K: Opaque token and last four digits
+    C->>V: REVEAL_FOR_PURPOSE naming the open IP registration task
+    V->>A: Reveal recorded with actor, role, task, grant and NTP time
+    V-->>C: Number shown in the task view for the reveal window only
+    C->>P: Keys the number during IP registration, an employer act
+    P-->>C: IP number allotted after the portal authenticates
+    C->>V: IP number recorded and approved, purpose spent
+    V->>V: PURGE within the purge lag, entry key destroyed
+    V->>A: Purge recorded with its basis, reg 6 sub-regulation 5
+    V-->>K: Token now resolves to a tombstone
+
+    Note over C,P: Our operator never reveals or keys a number

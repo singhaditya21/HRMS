@@ -1,0 +1,39 @@
+flowchart TD
+    RENDER["AI artefact produced<br/>summary, ranking, parsed field, suggestion"]
+    SURFACE{"Where did it land?"}
+    SHOWN["Influence class SHOWN<br/>rendered to a decider"]
+    ORDERED["Influence class ORDERED<br/>set the order or filter of the list"]
+    FIELD["Influence class FIELD<br/>wrote a structured field a rule or human read"]
+    CAND["Rendered to the candidate only<br/>TR-7: recorded, no employer taint"]
+    UNKNOWN["Render not confirmed<br/>TR-8: resolves to SHOWN, resolution ASSUMED"]
+
+    TRIPLE["Taint attached to the triple<br/>person + requisition or cycle + stage<br/>TR-1"]
+    STICKY["Sticky forward through later stages<br/>of the same requisition, TR-2"]
+    NOBACK["Never backwards in time,<br/>never to another requisition<br/>unless re-rendered, TR-3"]
+    CONFIG["Disabling the feature does not clear<br/>taint already recorded, TR-4"]
+
+    DEC{"Decision proposed<br/>on this person"}
+    ADV{"Is it adverse?<br/>REJECT, KNOCKOUT, RATING,<br/>CALIBRATION_MOVE, PIP_START,<br/>TERMINATION_RECO, adverse RECO"}
+    GATE["Confirmer gate, FR-T-D001<br/>named human + timestamp + reason"]
+    SNAP["Snapshot composed in the<br/>commit transaction, FR-T-D002"]
+    COMMIT["COMMITTED<br/>state change + decision record"]
+    PLAIN["Recorded without the gate<br/>taint still stored for FR-T-D003 populations"]
+    BULK["Bulk action: union of the batch's<br/>classes, TR-5; one record per person, FR-T-D015"]
+
+    RENDER --> SURFACE
+    SURFACE -->|Decider surface| SHOWN
+    SURFACE -->|List order or filter| ORDERED
+    SURFACE -->|Structured field| FIELD
+    SURFACE -->|Candidate surface only| CAND
+    SURFACE -->|Telemetry missing| UNKNOWN
+
+    SHOWN --> TRIPLE
+    ORDERED --> TRIPLE
+    FIELD --> TRIPLE
+    UNKNOWN --> TRIPLE
+    TRIPLE --> STICKY --> NOBACK --> CONFIG --> DEC
+
+    DEC --> ADV
+    DEC --> BULK --> ADV
+    ADV -->|Yes, and influence is not NONE| GATE --> SNAP --> COMMIT
+    ADV -->|No, or influence is NONE| PLAIN --> COMMIT

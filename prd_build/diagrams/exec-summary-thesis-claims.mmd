@@ -1,0 +1,32 @@
+flowchart LR
+    classDef thesis fill:#0b5c3e,stroke:#17b37a,color:#eafff5,stroke-width:2px;
+    classDef ver fill:#132b4a,stroke:#2f5f9e,color:#e3efff,stroke-width:1px;
+    classDef hyp fill:#4a3a10,stroke:#8a6d1f,color:#fff2cf,stroke-width:1px;
+    classDef open fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+    classDef test fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+
+    TH["Filing-first thesis<br/>the filing, carried through the portal,<br/>is the unit of delivery"]:::thesis
+
+    V["Verified<br/>T-01 every surface is an attended portal<br/>T-02 no priced vendor claims to submit<br/>T-05 computation is free<br/>T-06 state layer greenfield in Tally and Frappe<br/>T-08 six of six bill a 50-seat block<br/>T-12 HR AI priced at zero<br/>T-15 enterprise closed about 3 years"]:::ver
+    H["Hypothesis<br/>T-09 our price inside the band<br/>T-10 a premium for submission and SLA<br/>T-11 the CA as a channel<br/>T-16 a late filing is a felt pain"]:::hyp
+    O["Open with counsel<br/>T-04 attended submission lawful,<br/>permitted and insurable"]:::open
+    U["Unsized cost<br/>T-13 the four COGS lines<br/>T-14 supervised minutes fit the price"]:::open
+
+    RC["Re-capture and watch<br/>competitor re-capture<br/>portal and format watcher"]:::test
+    FV["Field validation<br/>V-01, V-03, V-05, V-07, V-16"]:::test
+    CR["Counsel register<br/>CR-17a to CR-17f"]:::test
+    IQ["Instrumented design-partner quarter<br/>FR-OPS-031 and cost attribution"]:::test
+
+    K["Whole-thesis kill conditions<br/>only combinations stop the plan"]:::thesis
+
+    TH --> V
+    TH --> H
+    TH --> O
+    TH --> U
+    V --> RC
+    H --> FV
+    O --> CR
+    U --> IQ
+    FV -.-> K
+    IQ -.-> K
+    RC -.-> K

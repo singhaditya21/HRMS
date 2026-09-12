@@ -1,0 +1,39 @@
+flowchart TD
+    subgraph PERF["Performance module - v2, no per-unit meter"]
+        A["FR-T-P10 Configure cycle<br/>annual / half-yearly / quarterly / probation-confirmation<br/>windows, populations, reviewers"]
+        B["FR-T-P11 Review form<br/>self-appraisal then manager appraisal<br/>optional skip-level / reviewer stage"]
+        C{"FR-T-P12 360 multi-rater? (optional)"}
+        D["Collect peer / direct-report / manager feedback"]
+        E["Rating roll-up<br/>goal score §10.9 + competency + qualitative<br/>FR-T-P18 rating scale 1-5 / 1-4 / bands"]
+        F{"FR-T-P13 Calibration mode"}
+        G["Forced bell curve (e.g. 10/20/60/10)"]
+        H["No forced distribution"]
+        I["Audited move: actor, R_old to R_new, reason<br/>pre + post rating both retained<br/>AI-influenced move: named confirmer FR-T-D005<br/>FR-T-P14 9-box performance x potential"]
+        J["Final calibrated rating maps to<br/>FR-T-P18 increment / promotion eligibility band"]
+    end
+
+    subgraph OUT["Outcome artefacts"]
+        K["FR-T-P15 Increment pct / promotion band change<br/>generate increment / promotion letter"]
+        L["FR-T-P17 Variable / performance-bonus payout<br/>distinct named line - NEVER merged with<br/>Code on Wages s.26 statutory bonus"]
+    end
+
+    subgraph PAY["Payroll engine (the spine)"]
+        M["FR-T-P15 Effective-dated CTC record<br/>starts at D_eff (e.g. 1 Apr)"]
+        N{"FR-T-P16 D_eff before run date D_run?<br/>(e.g. approved 10 Jun)"}
+        O["Compute arrears for each paid period P1..Pn<br/>against statutory rule version in force THAT period<br/>PF / PT / ESI / TDS recomputed"]
+        R["Payslip + statutory registers<br/>current salary + arrears + variable pay<br/>as distinct named lines, full audit trail"]
+    end
+
+    A --> B --> C
+    C -- yes --> D --> E
+    C -- no --> E
+    E --> F
+    F -- forced curve --> G --> I
+    F -- no distribution --> H --> I
+    I --> J
+    J --> K
+    J --> L
+    K --> M --> N
+    N -- yes, retro --> O --> R
+    N -- no --> R
+    L --> R

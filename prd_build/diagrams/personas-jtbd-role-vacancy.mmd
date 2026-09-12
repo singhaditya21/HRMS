@@ -1,0 +1,24 @@
+stateDiagram-v2
+    [*] --> HELD: RV1 a named person is assigned the role at activation
+    HELD --> DELEGATED: RV2 approved absence with a configured backup who is not the maker
+    DELEGATED --> HELD: RV3 the absence ends or the delegation lapses
+    HELD --> AT_RISK: RV4 the holder's exit is recorded, or the sole holder's delegation has no backup
+    AT_RISK --> HELD: RV5 a successor is assigned and the hand-over pack is acknowledged
+    AT_RISK --> VACANT: RV6 the holder's last working day passes with no successor
+    VACANT --> HELD: RV7 a successor is assigned and every re-derived item is acknowledged
+    DELEGATED --> AT_RISK: RV4 the holder's exit is recorded during the absence
+    HELD --> HELD: RV8 the role is handed to another person - open artefacts are superseded
+    VACANT --> [*]
+    HELD --> [*]
+
+    note right of AT_RISK
+        Every open item and artefact held by the leaver is listed with its due date
+        The written authority to act goes SUSPENDED when a named contact leaves
+        Nothing is reassigned to the maker of the same subject
+    end note
+
+    note right of VACANT
+        Items re-derive to the tenant owner and appear on the readiness report
+        The gates the role holds stall - they are never waived and never auto-approved
+        The month's exposure is shown with the date it starts to cost
+    end note

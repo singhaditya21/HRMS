@@ -1,0 +1,56 @@
+flowchart TB
+    START(["Artefact enters review:<br/>model, deck, website copy,<br/>contract, RFP answer, code fixture"])
+
+    START --> SCAN["Scan for every banned figure in 20.4<br/>and every registered variant spelling"]
+
+    SCAN --> EXACT{"Exact banned value present?"}
+    EXACT -->|"yes"| CTX{"Is it inside a<br/>correction context?<br/>20.4, 20.5, 02 EV register"}
+    EXACT -->|"no"| NEAR{"Within<br/>banned_number_near_miss_tolerance_pct<br/>of a banned value?"}
+
+    CTX -->|"yes, with the ban stated"| PASS1["Allowed: the ban is being taught"]
+    CTX -->|"no"| FAILC["FAIL CLOSED<br/>artefact is wrong on its face"]
+
+    NEAR -->|"yes"| PROV{"Can the author name the<br/>primary source and its date?"}
+    NEAR -->|"no"| QUAL{"Is it a figure from the<br/>qualifier table in 20.4?"}
+
+    PROV -->|"no"| FAILC
+    PROV -->|"yes"| RECHK["Re-derive from the primary source<br/>and record the working"]
+    RECHK --> QUAL
+
+    QUAL -->|"yes"| QCHK{"Does the qualifier<br/>travel with the figure?"}
+    QUAL -->|"no"| HYP{"Is the figure marked<br/>Hypothesis anywhere in the PRD?"}
+
+    QCHK -->|"no"| FAILQ["FAIL: a stripped qualifier<br/>is how the next banned figure is born"]
+    QCHK -->|"yes"| HYP
+
+    HYP -->|"yes"| HCHK{"Labelled Hypothesis with its<br/>V item and kill criterion?"}
+    HYP -->|"no"| CITE{"Compliance or competitive claim?"}
+
+    HCHK -->|"no"| FAILH["FAIL: standing rule 4"]
+    HCHK -->|"yes"| CITE
+
+    CITE -->|"yes"| SRC{"Gazette, notified rule, filing or<br/>regulator citation with URL and date?<br/>Competitor claims also state<br/>executed or only read"}
+    CITE -->|"no"| EPFO{"EPFO establishment count present?"}
+
+    SRC -->|"no"| FAILS["FAIL: standing rule 1"]
+    SRC -->|"yes"| EPFO
+
+    EPFO -->|"yes"| REGC{"States registered or<br/>contributing explicitly?"}
+    EPFO -->|"no"| PASS2["Artefact may ship"]
+
+    REGC -->|"no"| FAILR["FAIL: standing rule 7"]
+    REGC -->|"yes"| PASS2
+
+    FAILC --> FIX["Correct and re-enter the scan.<br/>A failure is not a review comment"]
+    FAILQ --> FIX
+    FAILH --> FIX
+    FAILS --> FIX
+    FAILR --> FIX
+    FIX --> SCAN
+
+    classDef bad fill:#f8d7da,stroke:#c0392b,color:#611a15;
+    classDef good fill:#d4edda,stroke:#27ae60,color:#14532d;
+    classDef q fill:#fff3cd,stroke:#b7950b,color:#5c4408;
+    class FAILC,FAILQ,FAILH,FAILS,FAILR bad;
+    class PASS1,PASS2,RECHK good;
+    class EXACT,NEAR,CTX,PROV,QUAL,QCHK,HYP,HCHK,CITE,SRC,EPFO,REGC q;

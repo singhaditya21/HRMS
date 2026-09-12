@@ -1,0 +1,46 @@
+flowchart LR
+    P1["Operator has done<br/>run PROCESSED, no blocking item<br/>TDS challan prepared"]
+
+    subgraph S1["Sitting 1 - pay, on or before 7 September"]
+        A1["SO-PAYRUN<br/>approve and lock - M6, M8"]
+        A2["SO-BANK<br/>release - M9"]
+        A3["Bank's own approval and OTP<br/>in its corporate channel"]
+        A4["Pay the TDS challan<br/>CIN captured"]
+    end
+
+    LCK(["LOCKED<br/>artefacts may be generated"])
+    DIS(["DISBURSED<br/>actual disbursal date recorded"])
+    P2["Operator has done<br/>ECR uploaded, return statement reconciled<br/>ESIC challan and any PT return prepared"]
+
+    subgraph S2["Sitting 2 - file, before 15 September"]
+        B0["SO-EXIT<br/>one per leaver not yet marked"]
+        B1["SO-RETURN<br/>an approved return can never be cancelled"]
+        B2["SO-GATE - M10<br/>last point for a downward correction"]
+        B3["Pay the EPF challan<br/>PAYMENT_INITIATED"]
+        B4["SO-ESIC<br/>then pay ESI"]
+        B5["SO-PT<br/>then pay PT - return months only"]
+    end
+
+    FIL(["M11 FILED<br/>digest generated"])
+    CNT["Clean month - 9 acts<br/>11 in a PT-return month, plus 1 per leaver<br/>one sitting only if the bank confirms disbursal inside it"]
+
+    P1 --> A1 --> A2 --> A3 --> DIS
+    A1 --> A4
+    A1 --> LCK --> P2
+    P2 --> B0 --> B1 --> B2
+    DIS --> B2
+    B2 --> B3 --> FIL
+    P2 --> B4 --> FIL
+    P2 --> B5 --> FIL
+    FIL -.- CNT
+
+    classDef prep fill:#f3f4f6,stroke:#6b7280,color:#111827;
+    classDef act fill:#e8f0fe,stroke:#1a56db,color:#111827;
+    classDef gate fill:#fef3c7,stroke:#b45309,color:#111827;
+    classDef state fill:#ecfdf5,stroke:#047857,color:#111827;
+    classDef note fill:#f3f4f6,stroke:#9ca3af,color:#374151,font-style:italic;
+    class P1,P2 prep;
+    class A1,A2,A3,A4,B0,B1,B4,B5 act;
+    class B2,B3 gate;
+    class LCK,DIS,FIL state;
+    class CNT note;

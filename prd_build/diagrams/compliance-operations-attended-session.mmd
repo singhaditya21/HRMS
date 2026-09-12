@@ -1,0 +1,45 @@
+stateDiagram-v2
+    direction TB
+    [*] --> REQUESTED: S1 artefact validated and approved, or portal task raised
+    REQUESTED --> READY: S2 pre-checks pass
+    READY --> CHECKED_OUT: S3 operator starts, credential bound to the session
+    CHECKED_OUT --> AUTHENTICATING: S4 sign-in begun, the human solves any CAPTCHA
+    AUTHENTICATING --> IN_SESSION: S5 sign-in succeeds
+    AUTHENTICATING --> HANDED_BACK: S6 one failed sign-in, or OTP not relayed
+    IN_SESSION --> AWAITING_INSTRUCTION: S7 next step is irreversible
+    AWAITING_INSTRUCTION --> IN_SESSION: S8 approver instructs against the object hash
+    AWAITING_INSTRUCTION --> HANDED_BACK: S9 declined or timed out
+    IN_SESSION --> EVIDENCE_PENDING: S10 closing step reached
+    EVIDENCE_PENDING --> CLOSED: S11 evidence stored and reconciled
+    IN_SESSION --> ABORTED: S12 scope breach, revocation, security event or drift
+    IN_SESSION --> EXPIRED: S13 session time limit reached
+    CLOSED --> [*]
+    HANDED_BACK --> [*]
+    ABORTED --> [*]
+    EXPIRED --> [*]
+
+    note right of CHECKED_OUT
+      Mode C only. In Modes A and B the
+      employer signs in and no credential
+      ever reaches us.
+    end note
+
+    note right of AWAITING_INSTRUCTION
+      Approve an EPFO return, generate a challan,
+      mark an exit date, upload a Form 138
+      statement, submit a PT return - each bound
+      to the hash of what the portal shows.
+    end note
+
+    note left of ABORTED
+      S12 and S13 apply from every active
+      state, not only IN_SESSION - drawn once
+      here for legibility. S14 links a retry
+      or a Mode A filing to the prior session.
+    end note
+
+    note left of HANDED_BACK
+      Artefact, form values, checklist and
+      portal state go to the employer for
+      Mode A before the hand-back cut-off.
+    end note

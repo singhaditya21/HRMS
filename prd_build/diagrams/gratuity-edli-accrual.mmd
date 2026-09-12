@@ -1,0 +1,33 @@
+flowchart TD
+    WB["§08 wage base (add-back gratuity wage, last-drawn, versioned, effective-dated)"]
+
+    subgraph GRAT["Gratuity — Code on Social Security 2020 ss.53–56 (Payment of Gratuity Act 1972 repealed)"]
+        direction TB
+        G1["Every pay period from 10 employees"]
+        G2["Accrue into gratuity_accrual (BEN-17)<br/>(15/26) × last-drawn monthly wages × completed years<br/>service over 6 months in the final year counts as a full year"]
+        G3["Apply two effective-dated ceiling parameters:<br/>payment ceiling — unset, no CoSS s.53(3) notification located<br/>tax-exempt ceiling — parameter, v0.3 figure ₹20,00,000 under 1961-Act s.10(10)<br/>carried not re-captured, 2025-Act equivalent unmapped"]
+        G4["Persist accrued_amount per period<br/>= book balance-sheet provision + actuarial value"]
+        G1 --> G2 --> G3 --> G4
+        G5{"Exit / death / disablement / fixed-term expiry?"}
+        G4 --> G5
+        G5 -- "No" --> G1
+        G5 -- "Yes: 5+ yrs continuous<br/>(condition waived on death, disablement, fixed-term expiry;<br/>fixed-term and deceased paid pro rata)" --> G6["Deterministic exit payout<br/>routed to nominee (CoSS s.55; legacy Form F)"]
+    end
+
+    subgraph EDLI["EDLI — EDLI Scheme 1976, saved only to about 21 Nov 2026"]
+        direction TB
+        E1{"Tenant EDLI-exempt via superior GTL?<br/>(legacy EPF Act s.17(2A) carried, Code-era provision unmapped) — BEN-19"}
+        E1 -- "No" --> E2["Employer contributes 0.5% of wages<br/>capped at ₹15,000 ceiling (max ₹75/emp/mo)<br/>in expected dues; challan is portal-generated"]
+        E1 -- "Yes (exempting GTL on file)" --> E3["Exclude 0.5% from expected dues;<br/>add inspection charge 0.005%, min ₹1,250;<br/>EDLI Wages still on every ECR line"]
+        E2 --> E4["Death benefit, legacy scheme, v0.3 values carried not re-captured:<br/>≈35× avg monthly wages (capped at ceiling) + bonus<br/>min ₹2,50,000 · max ₹7,00,000 — display only<br/>computed and paid by EPFO to nominee"]
+    end
+
+    WB --> G2
+    WB --> E2
+
+    NOM["Shared nominee table (BEN-18)<br/>share_pct must sum to 100% per scheme<br/>minor → guardian required<br/>form per instrument version"]
+    NOM -. "scheme_ref = gratuity" .-> G6
+    NOM -. "scheme_ref = EPF/EDLI" .-> E4
+
+    G6 --> AUD["Append-only audit; retro wage correction re-computes deterministically"]
+    E4 --> AUD

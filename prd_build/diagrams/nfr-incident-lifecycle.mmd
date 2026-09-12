@@ -1,0 +1,35 @@
+stateDiagram-v2
+    direction TB
+    [*] --> CANDIDATE : detection D-1 to D-8, OBS-1105, or a customer or third-party report<br/>noticed_at stamped from the NIC or NPL synced clock
+
+    CANDIDATE --> TRIAGE : on-call acknowledges<br/>clock already running from noticed_at, not from this moment
+    TRIAGE --> REPORTABLE : matches a runbook Annexure I class
+    TRIAGE --> NOT_REPORTABLE_RECORDED : named approver records a reason_code and the evidence considered<br/>never on-call alone
+    TRIAGE --> REPORTABLE : triage budget expires - auto-promotion by the timer, not by a person
+
+    REPORTABLE --> REPORT_READY : report assembled from the pre-staged incident record<br/>unknowns marked as not yet known, never left blank
+    REPORT_READY --> REPORTED : sent to CERT-In through the registered point of contact<br/>deadline at most six hours from noticed_at
+
+    REPORTED --> SUPPLEMENTARY_DUE : new facts materially change scope<br/>the initial report is never edited in place
+    SUPPLEMENTARY_DUE --> REPORTED : follow-up sent
+
+    REPORTED --> CLOCK_B_ARMED : personal data confirmed involved AND on or after commencement<br/>approximately 13 May 2027 per EV-058
+    CLOCK_B_ARMED --> REPORTED : r.7 intimations to each affected principal and to the Board,<br/>then the detailed Board report - in addition, never instead
+
+    REPORTED --> RESOLVED : containment and recovery complete
+    RESOLVED --> CLOSED : post-incident review covers elapsed time against six hours,<br/>every not-reportable decision in the period, and the false-page rate
+    NOT_REPORTABLE_RECORDED --> CLOSED : reviewed in the same post-incident review
+    CLOSED --> [*]
+
+    note right of TRIAGE
+      Internal budget inside the six hours - proposal, replaced by DR-F drill data
+      acknowledge at most 5 min, classify at most 40 min, assemble at most 75 min,
+      review and send at most 120 min, leaving a two-hour reserve.
+      The reserve absorbs the gap between an incident becoming knowable
+      and the platform noticing it. A drill finishing at 5 h 55 has failed.
+    end note
+
+    note right of NOT_REPORTABLE_RECORDED
+      There is no transition to a suppressed or reportable-but-not-reported state.
+      Indecision resolves toward reporting by the auto-promotion timer.
+    end note

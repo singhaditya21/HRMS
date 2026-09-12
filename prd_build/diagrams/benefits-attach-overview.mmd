@@ -1,0 +1,47 @@
+flowchart TB
+  subgraph FAM["Benefit estate — 3 voluntary families + 1 statutory (§11.2)"]
+    direction LR
+    INS["Insurance (group)<br/>GMC · GPA · GTL · parental top-up"]
+    RET["Retiral (voluntary)<br/>Corp NPS · Superannuation · VPF"]
+    FLX["Flexi-benefits (FBP)<br/>Meal · fuel · LTA · gadget · telephone"]
+    STA["Statutory terminal/death<br/>Gratuity · EDLI"]
+  end
+
+  subgraph DM["v1 data model — partner-agnostic · monetisation-agnostic · bitemporal by entity class, erasable classes shredded (§11.2)"]
+    direction LR
+    E1["scheme · enrollment<br/>dependant · nominee"]
+    E2["FBP declaration · proof_of_spend<br/>wallet_config (nullable provider_ref)<br/>1-Apr-2026 ₹200 meal / ₹15,000 gift = config<br/>with conditions enforced (BEN-62, BEN-63)"]
+    E3["endorsement · contribution_instruction<br/>retiral_contribution_ledger · gratuity_accrual"]
+  end
+
+  ENG["Payroll perquisite and tax engine<br/>deterministic valuation · ₹7.5L retiral cap · Rule 3B<br/>§08: no statutory/monetary figure is model-generated"]
+
+  subgraph FIL["Tax and statutory artefacts — benefits totals tie exactly (§11.17)"]
+    direction LR
+    F1["Form 123 (ex-12BA) · s.392 TDS<br/>annual tax computation feeding Form 138 Annex II<br/>Q4 fenced · Form 130 is TRACES-prepared"]
+    F2["ECR artefact for attended upload · NPS SCF<br/>nominations on instrument-versioned forms"]
+  end
+
+  subgraph PART["Partner integration surface — data/files only, NO money movement (§11.13)"]
+    direction LR
+    P1["Insurer / TPA / broker<br/>endorsement batches · census reconcile"]
+    P2["NPS CRA — Protean / KFintech, identities carried (B11)<br/>SCF artefact for employer upload, fenced until B11 · PRAN status"]
+    P3["Superann trustee: contribution instruction files<br/>EPFO: attended portal, no API (§22)"]
+    P4["Card issuer / PPI<br/>DEFERRED — null hook only"]
+  end
+
+  GUARD{{"v1 guardrail (BEN-52)<br/>no payment instrument · no float<br/>no interchange · no attach revenue booked"}}
+
+  subgraph V2["v2 monetisation — deferred, gated on §20, NEVER blended with software PEPM (§11.14)"]
+    direction LR
+    M1["Card issuance / interchange / float"]
+    M2["Broker override / commission"]
+    M3["NPS POP fees"]
+  end
+
+  FAM --> DM
+  DM --> ENG
+  ENG --> FIL
+  DM --> PART
+  PART --> GUARD
+  GUARD -.->|"§20 validation programme gate"| V2

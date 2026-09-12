@@ -1,0 +1,39 @@
+flowchart TB
+  T["Tenant<br/>one employer establishment group"]
+  G["1 · Group<br/>exactly one per tenant"]
+  LE["2 · LegalEntity<br/>PAN · valid_from to valid_to"]
+  REGE["3 · Registration owned by the entity<br/>TAN · PTEC per state"]
+  EST["4 · Establishment<br/>opened_on to closed_on<br/>optional parent for sub-code rows"]
+  REGS["3 · Registration owned by the establishment<br/>EPF code · ESIC code · PTRC · LWF · S&amp;E · LIN<br/>valid_from to valid_to, status"]
+  COV["RegistrationCoverage<br/>one covering registration per scheme per date<br/>its own, or an ancestor establishment's"]
+  EMP["Employment<br/>DOJ to DOL"]
+  ASG["5 · Assignments, closed-open ranges<br/>EstablishmentMapping holds PF Member ID<br/>WorkLocationAssignment · OrgAssignment<br/>CompensationAssignment · deductor TAN"]
+  SR["6 · ServiceRecord per person and legal entity<br/>derived, counted days frozen at each lock"]
+  FIL["Filing instance<br/>registration x obligation x period"]
+
+  T -->|"1 : 1"| G
+  G -->|"1 : N"| LE
+  LE -->|"1 : N"| REGE
+  LE -->|"1 : N"| EST
+  EST -->|"1 : N"| REGS
+  EST -->|"effective-dated"| COV
+  COV -->|"points at"| REGS
+  LE -->|"1 : N"| EMP
+  EMP -->|"1 : N each"| ASG
+  ASG -->|"N : 1"| EST
+  EMP -->|"segments"| SR
+  REGS -->|"raised against"| FIL
+  REGE -->|"raised against"| FIL
+
+  subgraph TC["Temporal constraints"]
+    direction TB
+    T1["T1 nesting: child range inside parent range at every level"]
+    T2["T2 coverage: eligible and mapped means one active covering registration, or registration_pending"]
+    T5["T5 closure sets valid_to, never deletes, and abandons no due period"]
+    T8["T8 service record is derived only, break treatment audited"]
+  end
+
+  ASG -.-> T1
+  COV -.-> T2
+  REGS -.-> T5
+  SR -.-> T8

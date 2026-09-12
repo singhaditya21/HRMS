@@ -1,0 +1,23 @@
+stateDiagram-v2
+    [*] --> Open: MP1 capture lands with host_is_primary false
+    Open --> FetchAttempted: MP2 re-checker fetches from the primary host
+    FetchAttempted --> HostRefused: MP3 the primary host refuses or returns nothing
+    HostRefused --> FetchAttempted: MP4 retry with a different tool or header set
+    HostRefused --> Open: MP5 attempts exhausted - task stays open and is reported
+    FetchAttempted --> PulledMatch: MP6 primary bytes hash-match the mirror
+    FetchAttempted --> PulledDiffers: MP7 primary bytes differ from the mirror
+    PulledMatch --> Closed: MP8 qualifier cleared by L9 on the row and its dependants
+    PulledDiffers --> Regrading: MP9 every difference listed and every citation flagged
+    Regrading --> Closed: MP10 row re-graded against the primary text
+
+    note right of PulledMatch
+        A match clears provenance only.
+        An open date question stays open,
+        as with 13 or 14 May for EV-058.
+    end note
+
+    note right of Open
+        Engine use is allowed, flagged.
+        Customer-facing use is barred
+        until the pull closes.
+    end note

@@ -1,0 +1,35 @@
+flowchart LR
+  classDef decline fill:#f8d7da,stroke:#b02a37,color:#5c161c;
+  classDef acq fill:#fff3cd,stroke:#997404,color:#5c4708;
+  classDef commit fill:#d1e7dd,stroke:#146c43,color:#0a3622;
+  classDef expand fill:#cfe2ff,stroke:#0a58ca,color:#052c65;
+  classDef defer fill:#e2e3e5,stroke:#6c757d,color:#343a40;
+
+  subgraph DECLINE["DECLINE COMMERCIALLY - not a revenue line"]
+    B1["1-9 emp<br/>Live: TDS s.392 (ex-192), S&E, min wages,<br/>wage slip, POSH IC or Local Committee<br/>Free rivals: Kredily, Zoho - computation free<br/>ACV ~Rs.0 marginal"]:::decline
+  end
+
+  subgraph ACQ["ACQUISITION ONLY - free funnel, no revenue"]
+    B2["10-19 emp<br/>+ ESI at 10 persons; gratuity + maternity<br/>(their 10-employee test latches)<br/>+ appointment letter at 10+ workers, state form<br/>ACV 18k-30k = funnel number<br/>Convert on crossing 20"]:::acq
+  end
+
+  subgraph COMMIT["COMMIT - v1 beachhead (20-200)"]
+    B3["20-49 emp - LOWER HALF / land<br/>+ EPF (turns on at 20), grievance cmte at 20+ workers<br/>the six EV-027 rivals each bill a 50-employee minimum<br/>ACV 24k-60k<br/>Wedge: quality-of-delivery"]:::commit
+    B4["50-199 emp - REVENUE CORE<br/>+ creche (50), canteen (100 workers);<br/>works cmte only on a govt order,<br/>multi-state PT/LWF - a differentiator<br/>ACV 90k-4L - carries the revenue"]:::commit
+  end
+
+  subgraph EXPAND["EXPANSION - v2, same product shape, private only"]
+    B5["200-999 emp (v2)<br/>+ retrenchment approval + standing orders (300),<br/>multi-establishment, contractor<br/>ACV 4L-25L"]:::expand
+    B6["1,000-1,999 emp (late v2)<br/>+ group entities, complex CTC;<br/>needs SSO/SCIM + support org<br/>ACV 25L+"]:::expand
+  end
+
+  subgraph DEFER["DEFER - documentary entry gate (see 05.3)"]
+    B7["2,000+ emp<br/>+ security/residency gates,<br/>PSU/BFSI RFP norms, works-council IR<br/>ACV 50L+ - gate is certs + refs, not code"]:::defer
+  end
+
+  B1 -.->|"cross 20 = EPF wedge"| B3
+  B2 -.->|"convert on crossing 20"| B3
+  B3 -->|"grow into core"| B4
+  B4 ==>|"v1 exit + 05.3 gate"| B5
+  B5 --> B6
+  B6 -.->|"Vision gates 05.3"| B7

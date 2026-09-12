@@ -1,0 +1,73 @@
+stateDiagram-v2
+    direction LR
+
+    [*] --> Applicant
+    Applicant --> Hired: offer accepted
+    Hired --> Onboarding: DOJ or Day 1
+    Onboarding --> Confirmed: probation cleared
+    Confirmed --> Confirmed: transfer, promotion or revision
+    Confirmed --> Resigned: notice served
+    Resigned --> FnF: last working day
+    FnF --> Alumni: dues settled
+    Alumni --> [*]
+    Alumni --> Hired: rehire
+
+    note right of Applicant
+        No statutory obligation yet.
+        Collect PAN and any prior UAN.
+        Bank details only after written
+        SPDI consent is recorded.
+        Aadhaar optional, token store only.
+    end note
+
+    note right of Hired
+        Employee generates or links UAN
+        via UMANG face authentication,
+        employer tracks and chases.
+        ESI IP registration if covered wage
+        at a covered establishment.
+        Form 124 ex-12BB and regime election.
+        Appointment letter in the state form
+        where the establishment has 10 plus workers.
+    end note
+
+    note right of Onboarding
+        EPF and EDLI contributions begin
+        from the first wage month, and EPS
+        only where the member is eligible.
+        PT deduction per state slab.
+        LWF deduction where the state levies it.
+        Employee Register entry, Form I or state form.
+    end note
+
+    note right of Confirmed
+        Monthly ECR and ESI contribution.
+        PT return at the frequency the state sets.
+        Quarterly TDS return Form 138 ex-24Q.
+        Gratuity accrues on continuous service.
+        A revision triggers PF and TDS recompute
+        as a diff, never an overwrite.
+    end note
+
+    note right of Resigned
+        Date of exit marked on the EPFO portal,
+        not in the ECR file.
+        Contributions stop at the date of leaving.
+        Notice-pay TDS adjustment.
+    end note
+
+    note right of FnF
+        Gratuity after 5 years of continuous
+        service by the day count, or pro rata
+        on death, disablement or fixed-term expiry.
+        Leave encashment, final TDS true-up.
+        Form 130 ex-Form 16 comes from TRACES
+        after the Tax Year, fenced until Q4.
+    end note
+
+    note right of Alumni
+        UAN stays with the member.
+        Registers kept five years from last entry.
+        Other classes per the counsel schedule.
+        Template erasure confirmed per device.
+    end note

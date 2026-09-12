@@ -1,0 +1,22 @@
+sequenceDiagram
+    autonumber
+    participant AU as Author or pipeline
+    participant GT as Release gate
+    participant RG as Evidence register
+    participant KG as Kill guards
+    participant CL as Clearance registers §21 and §23
+    AU->>GT: Submit artefact with its surface and every cited row
+    GT->>KG: Evaluate text against every KillGuard and BannedEntry
+    KG-->>GT: Pass, or block naming the EV-K row or the §20.4 entry
+    GT->>RG: licence query for each row, component and surface, as of now
+    RG-->>GT: Allowed, or allowed with a same-sentence condition, or refused
+    GT->>RG: basis query for each derived figure
+    RG-->>GT: Derivation with inputs, basis and rounding, or none
+    GT->>CL: Clearance status for each legal or competitor statement
+    CL-->>GT: Cleared entry with owner and date, or not cleared
+    alt every check passes
+        GT-->>AU: Release with the citation set recorded
+    else any check fails
+        GT-->>AU: Block naming each failing row, rule and surface
+    end
+    Note over GT,RG: If the register cannot answer, the gate fails closed. Payroll runs never call the register - they read published rule versions only

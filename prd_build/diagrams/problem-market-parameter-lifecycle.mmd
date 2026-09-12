@@ -1,0 +1,16 @@
+stateDiagram-v2
+    [*] --> UNMEASURED: named with an owner and a section 20 route
+    UNMEASURED --> SCENARIO: bounded range adopted with its derivation
+    UNMEASURED --> MEASURED: evidence class permits, study meets its pass criterion
+    SCENARIO --> MEASURED: evidence class permits, study meets its pass criterion
+    SCENARIO --> SCENARIO: narrowed by a directional study
+    MEASURED --> STALE: refresh trigger fires
+    STALE --> MEASURED: re-pulled and dated
+    MEASURED --> SCENARIO: regraded as a model output, marked Reversed
+    UNMEASURED --> KILLED: contradicted by a primary source
+    SCENARIO --> KILLED: pre-registered kill fires, or a primary source contradicts
+    MEASURED --> KILLED: contradicted by a primary source
+    STALE --> KILLED: contradicted by a primary source
+    KILLED --> [*]
+    note right of SCENARIO: models use it only in labelled scenario rows
+    note right of STALE: external use blocked until re-pulled

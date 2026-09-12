@@ -1,0 +1,20 @@
+gantt
+    title Effective-dating and retrospective recomputation (wage-definition 50% add-back rule)
+    dateFormat YYYY-MM-DD
+    axisFormat %b %Y
+
+    section Rule versions (append-only, never mutated in place)
+    V1 in force, valid_from 2026-04-01 to valid_to 2026-09-01        :done, v1, 2026-04-01, 2026-09-01
+    V2 hypothetical re-notification of the add-back percentage, valid_from 2026-09-01, open range  :active, v2, 2026-09-01, 2026-12-31
+    V1a corrigendum, retro_effective supersedes V1 for past periods  :crit, v1a, 2026-04-01, 2026-09-01
+
+    section Resolution picks the version in force for the PERIOD, as known at the as-of decision time
+    Period 2026-07 resolves V1, or V1a once the corrigendum is known :milestone, p1, 2026-07-15, 0d
+    Period 2026-10 resolves V2                       :milestone, p2, 2026-10-15, 0d
+    Run-date 2026-11-15 does NOT drive resolution    :milestone, rd, 2026-11-15, 0d
+
+    section Arrears run (promotion backdated to 2026-06, processed on run-date 2026-11-15)
+    Recompute Jun to Aug against V1's per-period versions   :ar1, 2026-06-01, 2026-09-01
+    Recompute Sep to Oct against V2's per-period versions   :ar2, 2026-09-01, 2026-11-01
+    Each month stamped with resolved version in computation trace :milestone, tr, 2026-11-15, 0d
+    PF due month and Form 138 quarter follow the disbursal date, not the wage months :milestone, dd, 2026-11-20, 0d

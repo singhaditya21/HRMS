@@ -1,0 +1,44 @@
+flowchart LR
+    classDef svc fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+    classDef store fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef gate fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef ext fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+    classDef copy fill:#4a3a0b,stroke:#8a6d14,color:#fff6da,stroke-width:1px,stroke-dasharray:3 3;
+
+    subgraph IN["India region: every log stream lands here, whatever the tenant's inference residency"]
+        direction TB
+        GW{{"API gateway<br/>access and security events"}}:::gate
+        SVC["Domain services"]:::svc
+        DEV["ADMS / WDMS receiver"]:::svc
+        ORCH["AI orchestrator"]:::svc
+        EG{{"Redaction egress gateway<br/>only path to any model provider"}}:::gate
+
+        LP[("India log plane<br/>ICT logs, at least 180 days")]:::store
+        AB[("Audit and event backbone<br/>hash-chained, tenant-partitioned")]:::store
+        LL[("LLM prompt and completion log<br/>tokenised, tenant-partitioned")]:::store
+        TM[("Token map<br/>separate store, per-subject keys")]:::store
+        DR[("AI attribution and disclosure records")]:::store
+        MT[("Metrics and traces<br/>no personal-data field, complete in India")]:::store
+        IP["Six-hour incident pipeline<br/>NTP-synced timestamps"]:::svc
+
+        GW --> LP
+        DEV --> LP
+        SVC --> AB
+        SVC --> MT
+        ORCH --> EG
+        EG --> TM
+        EG --> LL
+        EG --> DR
+        LP --> IP
+        AB --> IP
+        LL --> IP
+    end
+
+    subgraph OUT["Outside India: only where the tenant's residency profile permits"]
+        PROV["Model provider<br/>receives tokenised prompts only"]:::ext
+        OBS["Observability copy<br/>metrics and traces, no personal data<br/>never the only copy, never for India-only tenants"]:::copy
+    end
+
+    EG -->|"tokenised prompt"| PROV
+    PROV -->|"completion, logged in India"| EG
+    MT -.->|"optional copy"| OBS

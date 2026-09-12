@@ -1,0 +1,46 @@
+sequenceDiagram
+    autonumber
+    participant T as eSSL or ZKTeco Terminal, illustrative serial T-PUNE-01
+    participant R as Tenant-scoped Push Receiver URL+secret
+    participant A as Auth and Device Registry
+    participant M as device_user to employee_id map
+    participant S as Punch Store dedup + tamper-evident
+    participant E as Attendance Engine FR-ATT-001 ledger
+
+    Note over T,R: No middleware / no static IP / no port-forward - device HTTP-POSTs outbound
+    T->>R: Handshake with serial and secret or token
+    R->>A: Authenticate serial to this tenant
+    alt Serial unknown or wrong tenant
+        A-->>R: Reject
+        R-->>T: Rejected and logged - multi-tenant isolation, AC3
+    else Authorized
+        A-->>R: OK, tenant-scoped
+    end
+    loop Heartbeat - last-seen and clock skew, FR-DEV-003
+        T->>R: Heartbeat with device-local clock
+        R->>R: Measure offset vs NTP-synced server time, alert if unseen over threshold before lock
+    end
+
+    Note over T,R: Long-weekend outage Fri 18:00 to Mon 09:00 - 42 workers punch to local store
+    T->>R: POST attendance-log batch - about 168 buffered records, late, out of order, some Fri retries
+    R->>S: Persist raw punches with payload_hash and device-local, UTC and tz times
+    S->>S: De-dup on sn, user, ts, direction plus payload_hash - AC4
+    S->>S: Check verify mode against consent - biometric without consent raises exception, punch kept, erasure queued, FR-DEV-008 AC3
+    R-->>T: ACK batch - device marks delivered, stops re-flooding, AC2
+    T->>R: Command poll
+    R-->>T: Queued commands incl. delete-template for erased employees, or empty
+    T->>R: Command acknowledgement - closes the per-device erasure item, FR-DEV-007
+
+    S->>M: Resolve device_user_id to employee_id, effective-dated
+    alt Device user unmapped
+        M-->>S: Enrollment exception - punch retained, backfilled on mapping, FR-DEV-002 AC1
+    else Mapped
+        M-->>S: employee_id
+    end
+    S->>E: Emit events attributed to Fri, Sat, Sun pay dates - capture time, not sync time
+    E->>E: Recompute affected past dates plus weekend OT and substituted-rest-day lines - AC5
+    alt Prior period already locked
+        E->>E: Open retro run against the period rule version - FR-ATT-001 AC3
+    else Open period
+        E->>E: Re-project day-status from the event log
+    end

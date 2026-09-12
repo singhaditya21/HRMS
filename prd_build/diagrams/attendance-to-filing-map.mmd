@@ -1,0 +1,44 @@
+flowchart LR
+    LEDGER["Attendance ledger<br/>DayStatus projection<br/>(FR-ATT-021, single source of truth FR-FIL-001)"]
+
+    subgraph DERIVED["Attendance-derived quantities (no consumer re-derives from raw punches)"]
+        Q1["Paid days + NCP<br/>non-contributory days"]
+        Q2["Days worked / wages<br/>in contribution period"]
+        Q3["Continuous service<br/>240 days in 12 months<br/>incl. paid EL, lay-off, ML"]
+        Q4["4 years + 240 days<br/>rounds to 5"]
+        Q5["80 days qualifying service<br/>window: ml_qualifying_window"]
+        Q6["30 days worked in<br/>accounting year"]
+        Q7["LOP / absent days"]
+    end
+
+    LEDGER --> Q1 & Q2 & Q3 & Q4 & Q5 & Q6 & Q7
+
+    F1["EPF ECR filing<br/>NCP Days = field 10 of 11"]
+    F2["ESI half-yearly contribution<br/>+ benefit eligibility<br/>Apr-Sep / Oct-Mar"]
+    F3["Gratuity accrual<br/>+ payment"]
+    F4["Gratuity eligibility"]
+    F5["Maternity benefit<br/>eligibility"]
+    F6["Statutory bonus<br/>eligibility"]
+    F7["Proportionate wages /<br/>minimum wages"]
+
+    Q1 -->|"EV-035 / EPF Scheme 2026"| F1
+    Q2 -->|"ESIC contribution-period table"| F2
+    Q3 -->|"CoSS s.54"| F3
+    Q4 -.->|"case-law rounding, validate A10"| F4
+    Q5 -.->|"CoSS Ch. VI, window and section to validate A15"| F5
+    Q6 -->|"Code on Wages s.26"| F6
+    Q7 -->|"Code on Wages 2019"| F7
+
+    ZERO["FR-FIL-002: zero paid-days still files<br/>nil / NCP line, member never dropped"]
+    LEDGER -.-> ZERO
+    ZERO -.-> F1 & F2
+
+    classDef verified fill:#dcfce7,stroke:#16a34a,color:#14532d;
+    classDef hypothesis fill:#fef9c3,stroke:#ca8a04,color:#713f12;
+    classDef source fill:#dbeafe,stroke:#2563eb,color:#1e3a8a;
+    classDef note fill:#f3e8ff,stroke:#9333ea,color:#581c87;
+
+    class LEDGER source;
+    class F1,F2,F3,F6,F7 verified;
+    class F4,F5 hypothesis;
+    class ZERO note;

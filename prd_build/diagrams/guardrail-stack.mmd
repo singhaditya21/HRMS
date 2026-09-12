@@ -1,0 +1,54 @@
+flowchart TB
+    REQ([Request: any task class, any model]) --> PRE
+
+    subgraph PRE["PRE-generation guards (server-side, provider-agnostic)"]
+        direction TB
+        G7["Budget / rate guard (P5)<br/>per-tenant + per-user caps"]
+        G4in["Prompt-injection defence<br/>strip instructions from untrusted<br/>docs / worker messages"]
+        G3in["Scope / PII containment (in)<br/>caller-entitled data only"]
+        G5in["Jailbreak / policy filter (in)"]
+        G7 --> G4in --> G3in --> G5in
+    end
+
+    PRE --> CHK["Redaction / tokenisation chokepoint (Part E-7)<br/>the only egress to model providers<br/>default-deny Aadhaar · PAN · bank a/c + IFSC · biometric templates<br/>reversible tokens, token map in India"]
+    CHK --> GEN["Model generation<br/>(engine values supplied as grounded facts)"]
+    GEN --> TOOL{"Tool call?"}
+    TOOL -->|yes| G4tb["Tool-boundary check<br/>ACL inherited on every call<br/>(defence-in-depth, AC-T-1)"]
+    G4tb --> POST
+    TOOL -->|no| POST
+
+    subgraph POST["POST-generation guards"]
+        direction TB
+        G1["Statutory-figure interceptor (P1)<br/>every ₹ amount, rate, slab, ceiling<br/>must match engine ledger / rule store"]
+        G2["Cite-or-abstain (P4)<br/>policy/statutory claim needs<br/>resolvable citation"]
+        G3out["Scope / PII containment (out)<br/>no cross-person leak on shared device"]
+        G5out["Jailbreak / policy filter (out)"]
+        G6["Output-format / validation<br/>staged filing / bank file conforms to schema"]
+        G1 --> G2 --> G3out --> G5out --> G6
+    end
+
+    POST --> PASS([Delivered to user])
+
+    G7 -.fail.-> A7["Queue / downgrade tier / refuse<br/>never silently overspend"]
+    G4in -.fail.-> A4["Strip instructions;<br/>ACL blocks escalation"]
+    G3in -.fail.-> A3["Redact / block; log scope breach"]
+    G5in -.fail.-> A5["Block; log; rate-limit repeat offender"]
+    CHK -.ambiguous = block.-> A8["Block and surface,<br/>never pass"]
+    G1 -.divergence = block.-> A1["Substitute engine value or abstain<br/>target 0% wrong figures (AC-G-1)"]
+    G2 -.fail.-> A2["Abstain: 'I don't have a cited answer'"]
+    G3out -.fail.-> A3
+    G5out -.fail.-> A5
+    G6 -.fail.-> A6["Return validation errors,<br/>never a malformed artefact"]
+
+    A4 -.->|"AI/ML incident candidate"| CERT["CERT-In AI/ML incident class, Annexure I item xx:<br/>report within six hours · 180 days of ICT logs in India ·<br/>NIC/NPL NTP clock sync (EV-062)"]
+    A5 -.->|"AI/ML incident candidate"| CERT
+
+    classDef pre fill:#e3f2fd,stroke:#1565c0,color:#0d3c61;
+    classDef post fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+    classDef fail fill:#fdecea,stroke:#c62828,color:#7f1d1d;
+    classDef key fill:#fff8e1,stroke:#f9a825,color:#6d4c00;
+    class G7,G4in,G3in,G5in,G4tb pre;
+    class G1,G2,G3out,G5out,G6 post;
+    class A1,A2,A3,A4,A5,A6,A7,A8 fail;
+    class G1,CHK key;
+    class CERT fail;

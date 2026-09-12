@@ -1,0 +1,46 @@
+flowchart TD
+    classDef input fill:#3d3d3d,stroke:#6b6b6b,color:#ffffff,stroke-width:1px;
+    classDef out fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef fence fill:#5a3a1e,stroke:#8f5c2f,color:#fff3ea,stroke-width:1px;
+    classDef stop fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+
+    IN["A filing need for wage month M<br/>read against the establishment ledger"]:::input
+    NIL{"Any active member in M?"}
+    DCE["No file<br/>Direct Challan Entry for admin and inspection charges<br/>row 9"]:::out
+    EXIT{"An exit date recorded in error<br/>for a member of M?"}
+    JD["Joint declaration first<br/>then route the later months<br/>row 10"]:::fence
+    ARR{"True arrears<br/>such as a pay revision paid later?"}
+    AR["File Arrear Return - fenced<br/>due month set by the disbursal date<br/>row 7"]:::fence
+    BEL{"Belated payment of the month's own salary?"}
+    BELR["Classified with a recorded basis<br/>route confirmed against FAQ Q15 before use<br/>row 8"]:::fence
+    INP{"Another return in process for M?"}
+    NONE["No new return<br/>complete or reject the one in process<br/>row 2"]:::stop
+    REG{"Approved Regular return for M?"}
+    R1["Regular<br/>row 1"]:::out
+    WHAT{"What changed?"}
+    SUP["Supplementary - repeatable<br/>only members absent from every prior return<br/>row 3"]:::out
+    PAY{"Payment initiated?<br/>a generated challan counts"}
+    REV["Revised - overwrites the portal data<br/>our ledger keeps the diff<br/>row 4"]:::out
+    DIR{"Direction of the change"}
+    DOWN["No ECR route<br/>diff recorded, runbook in section 22<br/>row 5"]:::stop
+    UP["Hypothesis - not offered<br/>until validated on a live portal<br/>row 6"]:::fence
+
+    IN --> NIL
+    NIL -->|"no"| DCE
+    NIL -->|"yes"| EXIT
+    EXIT -->|"yes"| JD
+    EXIT -->|"no"| ARR
+    ARR -->|"yes"| AR
+    ARR -->|"no"| BEL
+    BEL -->|"yes"| BELR
+    BEL -->|"no"| INP
+    INP -->|"yes"| NONE
+    INP -->|"no"| REG
+    REG -->|"no"| R1
+    REG -->|"yes"| WHAT
+    WHAT -->|"members not yet returned are added"| SUP
+    WHAT -->|"figures for members already returned"| PAY
+    PAY -->|"no"| REV
+    PAY -->|"yes"| DIR
+    DIR -->|"reduced"| DOWN
+    DIR -->|"increased"| UP

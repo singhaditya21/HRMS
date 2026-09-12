@@ -1,0 +1,16 @@
+flowchart TD
+    classDef step fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef gate fill:#4a3a0b,stroke:#8a6d14,color:#fff6da,stroke-width:1px;
+    classDef bad fill:#5a1a1a,stroke:#a33,color:#ffecec,stroke-width:1px;
+    classDef done fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:2px;
+
+    SRC["Source export<br/>Tally, Zoho Payroll, Kredily, Frappe HR, greytHR, Excel"]:::step --> MAP["Importer field map<br/>unmapped columns reported, never dropped"]:::step
+    MAP --> INT{"Internal consistency<br/>YTD carried plus YTD projected"}:::gate
+    INT -->|"inconsistent"| BLK["Go-live blocked<br/>employee, head, month, both figures"]:::bad
+    INT -->|"consistent"| IND{"Tie-out against an independent record<br/>register, filed statements, .csi challans,<br/>approved ECR returns and receipts, ESIC challans"}:::gate
+    IND -->|"any head outside migration.tieout_tolerance, default zero"| BLK
+    BLK --> FIX["Fix at source or record an override<br/>with reason and approver"]:::step
+    FIX --> INT
+    IND -->|"every blocking head within tolerance"| PAR["Parallel-run month<br/>first live run diffed against the source's last run"]:::step
+    PAR -->|"diff not zero"| BLK
+    PAR -->|"reconciles to the rupee"| LIVE(["Go-live<br/>leave and gratuity flags remain as worklist items"]):::done

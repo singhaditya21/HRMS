@@ -1,0 +1,22 @@
+flowchart TB
+    classDef decl fill:#3d3d3d,stroke:#6b6b6b,color:#ffffff,stroke-width:1px;
+    classDef step fill:#123a52,stroke:#1f5f85,color:#e6f5ff,stroke-width:1px;
+    classDef ok fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef stop fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+
+    DECL["Declared fixed-point node - FR-PAY-211<br/>loop members, convergence variable,<br/>start rule, pinned rule-set version"]:::decl
+    START["Iterate 1 from the start rule<br/>Example G - gratuity accrual on Basic<br/>Example H - gross equals the target net"]:::step
+    EVAL["Evaluate the loop members in order<br/>against the pinned rule versions<br/>full precision, no rounding - RP3"]:::step
+    TRACE["Append the iterate to the trace"]:::step
+    TEST{"Change in the convergence variable<br/>under fixed_point.tolerance?"}
+    LIMIT{"Iteration count at<br/>fixed_point.max_iterations?"}
+    CONV["Converged<br/>round once under FR-PAY-209<br/>publish the converged values"]:::ok
+    FAIL["Blocking validation - FR-PAY-1004<br/>node, employee, last two iterates<br/>no figure published, month stays PROCESSED"]:::stop
+    GAIN["Loop gain at or near one<br/>for example a gross-up inside the<br/>s.87A marginal-relief band"]:::decl
+
+    DECL --> START --> EVAL --> TRACE --> TEST
+    TEST -->|"yes"| CONV
+    TEST -->|"no"| LIMIT
+    LIMIT -->|"no"| EVAL
+    LIMIT -->|"yes"| FAIL
+    GAIN -. "typical cause" .-> FAIL

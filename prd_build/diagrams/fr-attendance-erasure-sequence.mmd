@@ -1,0 +1,28 @@
+sequenceDiagram
+    autonumber
+    participant W as Trigger source - worker, HR admin or exit
+    participant ES as Erasure service
+    participant BK as Biometric keyspace
+    participant Q as Device command queue
+    participant T1 as Terminal T1 online
+    participant T3 as Terminal T3 offline
+    participant CV as Compliance view
+    W->>ES: Trigger - exit, written withdrawal, method switch or site transfer
+    ES->>ES: Create ErasureRequest, due time from template_erasure_delay_days for the trigger
+    ES->>BK: Phase 1 - destroy the server-side key where the template is server-synced
+    BK-->>ES: Key destroyed, access event logged
+    ES->>Q: Queue one item per DeviceEnrolment with the command type the model supports
+    T1->>Q: Command poll
+    Q-->>T1: Delete command with command id
+    T1->>Q: Command result success
+    Q-->>ES: T1 item ERASED_CONFIRMED
+    Note over T3,Q: T3 never polls, so its item stays QUEUED
+    ES->>CV: Queued-age alert after erase_queued_alert_h
+    W->>ES: HR admin attests T3 decommissioned, with reason and date
+    ES->>CV: T3 item CLOSED_BY_ATTESTATION, request complete
+    T3->>Q: Months later the same serial authenticates
+    Q-->>ES: Security event, device SUSPENDED, item reopened
+    ES->>Q: Re-queue the delete command, served even while suspended
+    T3->>Q: Command result success
+    Q-->>ES: T3 item ERASED_CONFIRMED, request complete again
+    ES->>CV: Evidence pack updated with both outcomes

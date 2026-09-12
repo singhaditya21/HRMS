@@ -1,0 +1,32 @@
+flowchart LR
+    classDef direct fill:#0b5c3e,stroke:#17b37a,color:#eafff5,stroke-width:2px;
+    classDef people fill:#132b4a,stroke:#2f5f9e,color:#e3efff,stroke-width:1px;
+    classDef leads fill:#3a3a3a,stroke:#6b6b6b,color:#f0f0f0,stroke-width:1px;
+    classDef gate fill:#f2f2f2,stroke:#c0392b,color:#111111,stroke-width:1px,stroke-dasharray:4 3;
+    classDef target fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:2px;
+
+    D["<b>Direct - published card</b><br/>self-serve checkout, GSTIN capture<br/>in-product upgrade from Free"]:::direct
+    CA["<b>CAs and tax consultants</b><br/>referral or agency - CA console, Mode D<br/>contested: Kredily CA Program - r3/03"]:::people
+    PSP["<b>Payroll service providers</b><br/>white-label operator of our product"]:::people
+    T["<b>Tally partners</b><br/>four grades, 1,257 on the locator<br/>attach to the accounting sale"]:::people
+    BK["<b>Bank alliances</b><br/>SME-channel placement<br/>bank-neutral payout files"]:::people
+    DV["<b>Device dealers</b><br/>referral from the premises<br/>no hardware resale"]:::people
+    RM["<b>Review marketplaces</b><br/>G2 owns Capterra, GetApp,<br/>Software Advice since 5 Feb 2026"]:::leads
+    IM["<b>Indian marketplaces</b><br/>SoftwareSuggest prepaid packages<br/>Techjockey listing plus checkout"]:::leads
+
+    E["<b>Employer, 20 to 200</b><br/>buyer committee: HR, finance, founder"]:::target
+
+    D --> E
+    CA --> E
+    PSP --> E
+    T --> E
+    BK --> E
+    DV -.-> E
+    RM -.->|"leads into Direct"| D
+    IM -.->|"leads into Direct"| D
+
+    G1["<b>Gate before any channel revenue</b><br/>CA and PSP: V-05<br/>Tally: V-02<br/>Bank: H-P16<br/>Marketplaces: H-P17, short increments"]:::gate
+    CA -.- G1
+    T -.- G1
+    BK -.- G1
+    RM -.- G1

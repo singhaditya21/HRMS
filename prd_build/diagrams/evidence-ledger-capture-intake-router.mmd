@@ -1,0 +1,32 @@
+flowchart TD
+    CAP["A new capture arrives<br/>source, host, methods, scope read, research reference"] --> S0{"Is the only source a search<br/>summary or a summarising tool?"}
+    S0 -->|"yes"| LEAD(["CI16 · refused as evidence<br/>logged as a lead against the row"])
+    S0 -->|"no"| S1{"Does the row exist?"}
+    S1 -->|"no"| IDR(["CI1 · ID request opened<br/>the fact is cited to its research file"])
+    S1 -->|"yes"| S2{"Does the capture omit an amending<br/>instrument the row's capture cites?"}
+    S2 -->|"yes"| NOTAD(["CI15 · refused under C3<br/>logged as not adopted, grade unchanged"])
+    S2 -->|"no"| S3{"What is the row's current state?"}
+    S3 -->|"Killed"| TERM(["CI14 · refused and logged<br/>a new quantity enters by a new ID"])
+    S3 -->|"Ungraded"| UG{"open, blocked or undone?"}
+    UG -->|"open"| L3(["CI2 · L3 to Verified or Hypothesis"])
+    UG -->|"blocked"| L4(["CI3 · L4 on a method other than the failure"])
+    UG -->|"undone"| L5(["CI4 · L5 one new row per jurisdiction"])
+    S3 -->|"Hypothesis"| HY{"Does the primary source support<br/>or contradict the claim?"}
+    HY -->|"supports"| L6(["CI5 · L6 to Verified"])
+    HY -->|"contradicts"| L7(["CI6 · L7 to Killed"])
+    S3 -->|"Verified"| VE{"What does the capture show?"}
+    VE -->|"primary host copy"| MP(["CI7 or CI8 · mirror pull closes<br/>match clears the qualifier, a difference re-grades"])
+    VE -->|"same source, holds"| L13(["CI9 · L13 re-verified and re-dated"])
+    VE -->|"amending instrument"| L15(["CI10 · L15 killed, plus a search on the base"])
+    VE -->|"one component unsupported"| L16(["CI11 · L16 the row splits"])
+    VE -->|"audit finds a restricting condition"| L19(["CI12 · L19 a qualifier is added"])
+    VE -->|"a law, judgment or designation found"| L11(["CI13 · L11 the dated negative dies"])
+
+    classDef q fill:#1f2a44,stroke:#0b1220,color:#ffffff;
+    classDef bad fill:#7f1d1d,stroke:#450a0a,color:#ffffff;
+    classDef good fill:#1f5f2f,stroke:#0f3f1f,color:#ffffff;
+    classDef neutral fill:#3f3f46,stroke:#18181b,color:#ffffff;
+    class CAP,S0,S1,S2,S3,UG,HY,VE q;
+    class LEAD,NOTAD,TERM,L7,L11,L15 bad;
+    class L3,L4,L6,L13,MP good;
+    class IDR,L5,L16,L19 neutral;

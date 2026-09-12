@@ -1,0 +1,30 @@
+flowchart TD
+    classDef step fill:#e8eef7,stroke:#41618c,color:#1b2a44;
+    classDef gate fill:#fff4d6,stroke:#b8891f,color:#5a4208;
+    classDef stop fill:#f9e3e3,stroke:#a04040,color:#4a1515;
+    classDef ok fill:#eef7e8,stroke:#5a8c41,color:#24401b;
+
+    A["Competitor claim drafted<br/>website, deck, battlecard, sales email, proposal, contract"]:::step --> B{"Claim class"}:::gate
+    B -->|price| C1["Vendor's own page only - raw fetch with comment scan,<br/>rendered read, pricing config file, archive if withdrawn"]:::step
+    B -->|capability| C2["Label it - declared capability, docs or source read,<br/>or observed in product, executed"]:::step
+    B -->|absence| C3["Scope it to the artefact inspected,<br/>or write - we are not aware of any, as of the capture date"]:::step
+    B -->|AI| C4["Claim posture only - never stated as capability"]:::step
+    B -->|financials| C5["Filed figures only - no evaluative adjectives"]:::step
+    C1 --> D{"Capture younger than the maximum age?"}:::gate
+    C2 --> D
+    C3 --> D
+    C4 --> D
+    C5 --> D
+    D -->|no| R["Re-capture under the section 02.5 dual-capture rule"]:::step
+    R --> D
+    D -->|yes| E{"Wording clears the never-say list?"}:::gate
+    E -->|no| W["Rewrite - say what our product does and cite dated evidence"]:::step
+    W --> E
+    E -->|yes| F{"Fits a counsel-cleared template for its class,<br/>and the class is not counsel-per-instance?"}:::gate
+    F -->|no| G["Counsel clears this instance - section 23<br/>always for absence, terms and legal-comparative claims"]:::gate
+    F -->|yes| H["Named claim owner clears against the template"]:::gate
+    G --> P
+    H --> P["Publish with capture date and evidence label"]:::ok
+    P --> M["Claim register entry with a re-capture trigger"]:::ok
+    M -->|source page changes or capture expires| X["Withdraw or re-clear inside the withdrawal window"]:::stop
+    X --> D

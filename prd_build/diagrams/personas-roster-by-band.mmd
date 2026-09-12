@@ -1,0 +1,36 @@
+flowchart TB
+    classDef buyer fill:#fde68a,stroke:#b45309,color:#1f2937
+    classDef user fill:#bfdbfe,stroke:#1d4ed8,color:#1f2937
+    classDef both fill:#e9d5ff,stroke:#7e22ce,color:#1f2937
+    classDef ext fill:#e5e7eb,stroke:#6b7280,color:#1f2937
+
+    subgraph B1["Band 20-80 : roles COLLAPSE into 1-2 humans"]
+        direction TB
+        C["Meera IS payroll officer IS the one who calls the CA<br/>No role separation assumed below ~100 emp"]
+        M1["P1 Meera - HR generalist<br/>User + economic-influencer<br/>(sole owner 20-80)"]:::user
+        A1["P3 CA Anjali - consultant / bureau<br/>CHANNEL persona, not a v1 design target<br/>(outsourced 20-80, thin console)"]:::both
+        V1["P5 Vikram - founder / CXO<br/>Economic BUYER below ~120<br/>(owner-operator)"]:::buyer
+    end
+
+    subgraph B2["Band 80-200 : roles SPECIALISE into distinct seats"]
+        direction TB
+        M2["P1 Meera - small HR team lead"]:::user
+        S2p["P2 Suresh - payroll officer / accountant<br/>User + technical-approver<br/>(dedicated role ~80+)"]:::user
+        A2["P3 CA Anjali - co-sourced<br/>CHANNEL persona: reseller / gatekeeper"]:::both
+        V2["P5 Vikram - CFO / COO<br/>Approver above ~120"]:::buyer
+        L1["S1 Line manager / dept head<br/>User (approves leave/attendance/hikes)"]:::ext
+        IT["S3 IT / systems admin (fractional)<br/>Gatekeeper on integration (100-200)"]:::ext
+    end
+
+    subgraph ALL["All bands 20-200"]
+        direction TB
+        R["P4 Ravi - employee (desk + deskless)<br/>User only; drives inference + WhatsApp lines,<br/>not the dominant supervised-filing line (EV-088)"]:::user
+        INS["S2 Statutory inspector / auditor<br/>EPFO/ESIC/PT/labour; demands the register"]:::ext
+    end
+
+    C -.-> M1
+    C -.-> A1
+    C -.-> V1
+    M1 ==>|"headcount grows ~100+"| M2
+    V1 ==>|"~120+ shifts buyer to approver"| V2
+    A1 ==>|"outsourced to co-sourced"| A2

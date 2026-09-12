@@ -1,0 +1,51 @@
+flowchart TB
+    subgraph CH["Channels admitted to one model turn"]
+        direction TB
+        T["template - our versioned instructions<br/>prompt_template_version, reviewed<br/>like the corpus - DET-AI-04"]
+        TC["typed_context - tool results<br/>manifest-filtered, chokepoint-classified"]
+        RT["retrieved - tenant policy corpus<br/>and rule-store rows, versioned"]
+        UT["untrusted - user turn, worker message,<br/>uploaded document, resume, fetched page"]
+    end
+
+    SC{"Span classifier<br/>is this span an instruction<br/>addressed to the assistant?"}
+    NEU["Neutralise the span in the payload<br/>original retained in the tenant store<br/>DET-AI-02 counts the hit"]
+    PASS["Pass as marked data<br/>an obligation on a person stays<br/>quotable with its citation"]
+    QUAR["Quarantine the item<br/>encoded, obfuscated or uninspectable<br/>call blocked if the item is required"]
+    ASM["Assembled turn<br/>every non-template item wrapped and<br/>labelled with its channel and source"]
+    MOD["Model"]
+
+    subgraph BR["What contains a persuaded model - marking alone does not"]
+        direction TB
+        TL["Fixed tool list of the registry row - W4"]
+        ACL["Caller's ACL on every tool - AC-T-1"]
+        IC["Statutory-figure interceptor - &sect;12.8.1"]
+    end
+
+    MF["Use-case manifest - the fields<br/>no channel may carry - &sect;12.8.5"]
+    OUT["Turn outcome - &sect;12.9.7"]
+
+    T --> ASM
+    TC --> SC
+    RT --> SC
+    UT --> SC
+    SC -->|"yes"| NEU
+    SC -->|"no"| PASS
+    SC -->|"cannot inspect"| QUAR
+    NEU --> ASM
+    PASS --> ASM
+    MF -.-> ASM
+    ASM --> MOD
+    MOD --> TL
+    TL --> ACL
+    ACL --> IC
+    IC --> OUT
+    QUAR -.-> OUT
+
+    classDef trust fill:#e9f7ef,stroke:#1e8449,color:#0b3d22;
+    classDef data fill:#e6f2ff,stroke:#1b6ca8,color:#083b5c;
+    classDef deny fill:#ffebee,stroke:#c62828,color:#5b160d;
+    classDef gate fill:#fff8e1,stroke:#f9a825,color:#6d4c00;
+    class T trust;
+    class TC,RT,UT,PASS,ASM,MOD data;
+    class NEU,QUAR deny;
+    class SC,TL,ACL,IC,MF gate;

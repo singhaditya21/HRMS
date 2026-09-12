@@ -1,0 +1,25 @@
+graph LR
+  classDef base fill:#e8f5e9,stroke:#2e7d32,color:#1b5e20;
+  classDef ramp fill:#fff8e1,stroke:#f9a825,color:#e65100;
+  classDef peak fill:#ffebee,stroke:#c62828,color:#b71c1c;
+  classDef note fill:#e3f2fd,stroke:#1565c0,color:#0d47a1;
+
+  G["3rd-6th<br/>Baseline<br/>steady interactive load"]:::base
+  F["7th<br/>TDS deposit due date<br/>(date a hypothesis until read<br/>against the Income-tax Rules 2026)<br/>statutory window"]:::ramp
+  A["Days 8-14<br/>Baseline"]:::base
+  B["15th<br/>EPF ECR + ESI due date<br/>statutory window - §05.9 expects a spike"]:::ramp
+  C["Days 16-24<br/>Baseline"]:::base
+  D["25th-31st<br/>Pay-run: process, approve,<br/>lock, bank file"]:::peak
+  E["1st-2nd<br/>Disbursal + payslips"]:::peak
+
+  G --> F --> A --> B --> C --> D --> E
+
+  subgraph PW["Critical window 25th to 2nd (NFR-AVAIL-801, hypothesis) - size for peak-to-average, not average"]
+    D
+    E
+  end
+
+  E --> T["Peak day unmeasured - approx 10x average is a provisional assumption (NFR-SCALE-902)<br/>Peak concurrent users (NFR-SCALE-901, provisional)<br/>P0 5,000  -  P1 50,000  -  P2 200,000"]:::note
+  T --> R1["Windowed SLO (NFR-AVAIL-801): 99.95% in 25th-2nd, 99.5% otherwise<br/>Statutory windows (NFR-AVAIL-802): 99.95% internal objective + deploy freeze"]:::note
+  T --> R2["Graceful degradation (NFR-AVAIL-803): shed AI first, protect payroll and statutory artefacts last"]:::note
+  T --> R3["Kill/validate: measure real peak-to-average and peak day over first 3 month-ends; if greater than 10x, re-size autoscale envelope"]:::note

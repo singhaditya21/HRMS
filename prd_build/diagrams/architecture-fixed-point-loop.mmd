@@ -1,0 +1,26 @@
+stateDiagram-v2
+    direction TB
+    [*] --> DECLARED: FP1 node declared in the graph with loop members, max iterations and tolerance
+    DECLARED --> SEEDED: FP2 starting iterate taken from the declared seed rule
+    SEEDED --> ITERATING: FP3 first pass evaluates every loop member against the pinned rule versions
+    ITERATING --> ITERATING: FP4 delta above tolerance and iteration count below the limit
+    ITERATING --> CONVERGED: FP5 delta at or under tolerance
+    ITERATING --> OSCILLATING: FP6 the same iterate pair repeats
+    ITERATING --> LIMIT_REACHED: FP7 iteration count reaches max iterations
+    OSCILLATING --> LIMIT_REACHED: FP8 no tie-break rule declared for this node
+    CONVERGED --> ROUNDED: FP9 statutory rounding applied once to the converged values only
+    ROUNDED --> [*]: FP10 result published with iterate history in the computation trace
+    LIMIT_REACHED --> BLOCKED: FP11 run stops at PROCESSED, names node, employee and last two iterates
+    BLOCKED --> [*]: FP12 no intermediate iterate is ever published
+
+    note right of ITERATING
+      Rule versions are pinned before the loop
+      and are never re-resolved mid-loop, so
+      replay reproduces the iterate sequence.
+    end note
+
+    note right of BLOCKED
+      Blocking is the correct outcome. A published
+      first iterate under-accrues gratuity and
+      breaks the CTC reconciliation.
+    end note

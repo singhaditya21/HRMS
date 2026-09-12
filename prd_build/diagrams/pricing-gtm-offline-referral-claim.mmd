@@ -1,0 +1,27 @@
+sequenceDiagram
+    autonumber
+    participant P as Partner - CA or Tally partner
+    participant E as Employer prospect
+    participant PP as Partner portal
+    participant S as Sales and billing
+    participant L as Commission ledger
+
+    P->>E: introduces us by phone or in person, no link
+    P->>PP: registers the named prospect before first contact
+    PP->>S: deal registration opens, window starts
+    E->>S: signs up direct from the published card
+    S->>S: no link attribution present on the tenant
+    P->>PP: raises an offline referral claim naming the tenant
+    PP->>S: claim queued for approval with the registration record
+    S->>S: checks registration window, prior direct touches and any competing claim
+    alt registration active and no competing claim
+        S->>PP: claim approved, partner ID stamped on the tenant, append only
+        S->>L: accrual opens on collected revenue, ex-GST
+        L->>P: payout statement reconciles to the ledger
+    else competing claim or prior direct touch
+        S->>PP: claim declined with the reason and the deciding record
+        S->>L: no accrual opens
+    end
+    E->>S: churns inside the stickiness window
+    S->>L: clawback posted against the partner balance
+    L->>P: revised statement issued

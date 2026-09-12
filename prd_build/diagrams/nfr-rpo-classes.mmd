@@ -1,0 +1,31 @@
+flowchart TB
+  Q{"Can this fact be re-created<br/>after it is lost?"}
+
+  Q -->|"No - it came into existence<br/>outside our database"| FRONTIER["THE IRREVERSIBILITY FRONTIER"]
+  Q -->|"Yes - the engine is a pure function of<br/>inputs, rule-set version and evaluation context"| RECOMP["Recomputable"]
+
+  FRONTIER --> A["CLASS A - externally acknowledged<br/>EPFO TRRN and challan, approved-return receipt,<br/>ESIC and TDS upload acknowledgements,<br/>bank submission reference and UTRs<br/><b>RPO 0</b> - durable cross-AZ commit BEFORE the UI confirms"]
+  FRONTIER --> B["CLASS B - consent and authority artefacts<br/>SPDI written consent, biometric-enrolment consent,<br/>section 22 written authority, AI disclosure records<br/><b>RPO 0</b> - consent cannot be backfilled"]
+  FRONTIER --> C["CLASS C - irreversibly communicated<br/>payslip, notice and message dispatch records<br/><b>RPO 0 for the dispatch record</b> - a message cannot be unsent"]
+
+  RECOMP --> D["CLASS D - recomputable from surviving inputs<br/>pay-run outputs, payslip renders, register views,<br/>generated ECR, PT and Form 138 files before submission<br/>platform RPO - cost of loss is compute time"]
+  RECOMP --> E["CLASS E - re-capturable at source<br/>punches still held on the terminal, un-submitted drafts<br/>platform RPO - the device re-delivers, ingest is idempotent"]
+
+  Q -->|"Already erased under the section 14 mechanism"| F["CLASS F - must NOT be restored<br/>shredded subject key stays shredded,<br/>tombstone re-applied on restore"]
+
+  A --> WHY1["Why RPO 0: an approved ECR return can NEVER be cancelled<br/>EV-036, and a Revised return is barred once payment is initiated<br/>EV-037. Lose the approval record and our state and the portal's<br/>state diverge with no automated path back."]
+  B --> WHY2["Why RPO 0: Part E-12 - consent cannot be backfilled.<br/>An erasable entity class is not a losable one. If the artefact<br/>is gone the lawful basis for processing already performed<br/>cannot be reconstructed, only re-requested prospectively."]
+
+  D --> LEDGER["Divergence ledger, per affected tenant<br/>lists every class D and E item believed lost;<br/>worked to zero before the tenant's window closes;<br/>audit-chained, so an inspection sees the recovery"]
+  E --> LEDGER
+
+  A --> NEG["NEGATIVE CASE designed out:<br/>had the bank submission been class D, recovery would leave<br/>a system that believes nothing was sent, a bank that has the file,<br/>and a re-run that sends a second - a duplicate disbursal<br/>with no safe post-hoc reconciliation"]
+
+  classDef q fill:#fff8e1,stroke:#b8860b,color:#000;
+  classDef zero fill:#fde7e7,stroke:#c0392b,color:#000;
+  classDef norm fill:#e7f0fd,stroke:#2c6fbb,color:#000;
+  classDef out fill:#e7f9ee,stroke:#1e8449,color:#000;
+  class Q,FRONTIER,RECOMP q;
+  class A,B,C,F zero;
+  class D,E norm;
+  class WHY1,WHY2,LEDGER,NEG out;

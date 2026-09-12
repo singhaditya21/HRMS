@@ -1,0 +1,33 @@
+flowchart LR
+    classDef state fill:#3d3d3d,stroke:#6b6b6b,color:#ffffff,stroke-width:1px;
+    classDef head fill:#123a52,stroke:#1f5f85,color:#e6f5ff,stroke-width:1px;
+    classDef ok fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef line fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+    classDef warn fill:#5a3a1e,stroke:#8f5c2f,color:#fff3ea,stroke-width:1px;
+
+    DISB["Payroll month DISBURSED<br/>actual disbursal date per employee"]:::state
+
+    subgraph HEADS["Each head passes its own checks before its payment - FR-PAY-309"]
+        direction TB
+        TDS["TDS deposit, due first<br/>VG-C1 to C4, VG-T1, VG-T2<br/>tax deducted on payments made in the month"]:::head
+        ESI["ESI challan<br/>VG-C1 to C4, VG-S1, VG-S2"]:::head
+        PT["PT and LWF, per state<br/>VG-C1 to C4, VG-P1, VG-L1"]:::head
+        EPF["EPF challan<br/>VG-C1 to C4, VG-E1 to E6<br/>statement equals snapshot,<br/>planned Revised returns accepted,<br/>7Q interest in the amount"]:::head
+    end
+
+    PAID["Head paid<br/>instance PAYMENT_INITIATED, then FILED<br/>the month stays DISBURSED"]:::ok
+    LINE["Month enters PAYMENT_INITIATED<br/>no Revised ECR for the wage month from here<br/>EV-037"]:::line
+    FAIL["A failing check names the head,<br/>the check and its family<br/>other heads proceed"]:::warn
+
+    DISB --> TDS
+    DISB --> ESI
+    DISB --> PT
+    DISB --> EPF
+    TDS --> PAID
+    ESI --> PAID
+    PT --> PAID
+    EPF --> LINE
+    TDS -. "fail" .-> FAIL
+    ESI -. "fail" .-> FAIL
+    PT -. "fail" .-> FAIL
+    EPF -. "fail" .-> FAIL

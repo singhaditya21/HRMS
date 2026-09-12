@@ -1,0 +1,22 @@
+gantt
+    title Compliance-Certification Roadmap — the ISO 27001 seasoning clock (section 17.15; Month 0 = 2026-01 illustrative)
+    dateFormat YYYY-MM
+    axisFormat %b %Y
+
+    section ISO 27001 (2022)
+    Acquire, start Month 0 (3-6 mo work)            :crit, iso1, 2026-01, 2026-07
+    Seasoning — 12 mo held before it counts in RFP  :active, iso2, 2026-07, 2027-07
+    In hand by ~Month 6                             :milestone, m1, 2026-07, 0d
+    Counts in an RFP at ~Month 18                    :milestone, m2, 2027-07, 0d
+
+    section SOC 2 Type II
+    Start Month 6-9, needs an observation period    :soc1, 2026-07, 2027-01
+
+    section CERT-In and VAPT (before first customer)
+    CERT-In PoC + empanelled auditor relationship   :crit, cert1, 2026-01, 2026-03
+    VAPT pre-launch baseline                         :vapt1, 2026-01, 2026-03
+    VAPT annual + on major release (continuous)      :vapt2, 2026-03, 2027-07
+
+    section RFP gate
+    First paying customer (~Month 6)                 :milestone, cust, 2026-07, 0d
+    Indian Bank RFP — cert held 1yr+ prior to pub    :crit, milestone, rfp, 2027-07, 0d

@@ -1,0 +1,60 @@
+flowchart LR
+    subgraph SRC["Recurring statutory-change calendar (never stops)"]
+        direction TB
+        B["Union Budget / Finance Act<br/>ANNUAL - 1 Feb, effective 1 Apr<br/>TDS slabs, new regime (ex-115BAC), rebate (ex-87A), std deduction"]
+        V["Minimum-wage VDA revision<br/>central sphere 1 Apr and 1 Oct - states vary<br/>wage floors -> dual wage base"]
+        P["State PT slab / exemption<br/>AD-HOC, state-by-state"]
+        L["LWF rate / schedule<br/>AD-HOC, state-by-state"]
+        E["EPFO ceiling / rate / admin charge<br/>AD-HOC - Rs 15,000 re-fixed 29 May 2026"]
+        I["ESIC threshold / rate<br/>+ position after 22 Nov 2026 (time-critical)"]
+        C["CBDT form-format changes<br/>AD-HOC - Form 138 remap in flight, Q4 unreleased"]
+        F["Perquisite / FBP thresholds<br/>1 Apr 2026: meal Rs50->200, gift Rs5k->15k<br/>figures are a Hypothesis - EV-019, rule text unread<br/>meal only with its conditions: premises or eatery-only vouchers"]
+        S["State rules under 4 Codes<br/>ROLLING, uneven - unbounded tail"]
+    end
+
+    subgraph DESK["Compliance desk - item 12 pipeline (the true capacity constraint)"]
+        direction TB
+        W["1. CATCH: statutory-change watcher<br/>amendments + corrigenda, not just new instruments"]
+        D["2. DIFF vs rule-version in force"]
+        RV["3. NEW rule-version row<br/>effective-dated, NO code deploy"]
+        RT["4. REGRESSION-TEST engine<br/>incl. regime-election edges"]
+        SH["5. SHIP before dependent filing"]
+        W --> D --> RV --> RT --> SH
+    end
+
+    subgraph OUT["Filings / artefacts fed"]
+        direction TB
+        TDS["TDS s.392 (ex-192), Form 138, Form 130 data"]
+        ECR["EPF ECR"]
+        ESIC["ESI challan"]
+        PTR["PT return"]
+        LWFR["LWF remittance"]
+        WR["Payroll base + wage register"]
+        FBP["FBP / perquisites"]
+    end
+
+    B --> W
+    V --> W
+    P --> W
+    L --> W
+    E --> W
+    I --> W
+    C --> W
+    F --> W
+    S --> W
+
+    SH --> TDS
+    SH --> ECR
+    SH --> ESIC
+    SH --> PTR
+    SH --> LWFR
+    SH --> WR
+    SH --> FBP
+
+    SPIKE["Ship before 1 Apr payroll run<br/>then the first TDS deposit (7 May, 1962-Rules convention)<br/>then Form 138 Q1 due 31 Jul (EV-049)<br/>A slip mis-deducts the WHOLE book at once"]
+    B -. "annual load SPIKE - hard 8-week deadline" .-> SPIKE
+
+    classDef spike fill:#ffe0e0,stroke:#c00,stroke-width:2px,color:#600;
+    classDef budget fill:#fff3cd,stroke:#b8860b,color:#000;
+    class SPIKE spike;
+    class B budget;

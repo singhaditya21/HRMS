@@ -1,0 +1,16 @@
+flowchart TB
+    punches[("Punches for one employment<br/>skew-corrected, exact re-sends removed")] --> win{"Rostered day?"}
+    win -->|"Yes"| rw["Window: shift start less early_in_window_min<br/>to shift end plus late_out_window_min<br/>consecutive shifts form one window"]
+    win -->|"No"| uw["Window: working_day_cutoff_time<br/>to the same time next day"]
+    rw & uw --> order["Order by corrected time<br/>ties broken by fixed source order"]
+    order --> deb["Debounce within punch_debounce_s<br/>collapsed punches kept, flagged debounced"]
+    deb --> dir["Direction table D1 to D6<br/>explicit kept, AUTO alternates"]
+    dir --> sess["Pair IN with next OUT"]
+    sess --> chk{"Session complete<br/>and within max_session_min?"}
+    chk -->|"missing IN or OUT"| unres["missing-in or missing-out<br/>cell UNRESOLVED, lock-gating"]
+    chk -->|"too long"| long["session-too-long<br/>lock-gating, never split"]
+    chk -->|"Yes"| anchor["Anchor to the window date<br/>split at a consecutive shift's start"]
+    anchor --> brk["break_deduction_mode<br/>scheduled, punched or greater_of"]
+    brk --> out["WorkSession rows, worked minutes<br/>feed DayStatus, OT and the Form IX cell"]
+    unres & long -->|"approved regularization"| sess
+    stray["Punch in no window"] --> offw["off-window-punch warning<br/>counted only if regularized"]

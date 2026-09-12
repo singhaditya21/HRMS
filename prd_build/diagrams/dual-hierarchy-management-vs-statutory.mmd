@@ -1,0 +1,34 @@
+graph TD
+  LE["Legal Entity<br/>holds TAN / GSTIN / CIN<br/>files one Form 138 series per TAN (ex-24Q)"]
+
+  subgraph MGMT["Management hierarchy (who reports to whom)"]
+    direction TB
+    BU["Business Unit"]
+    VPS["VP Sales"]
+    DEPT["Department / Team<br/>+ cost-centre tag"]
+    MGR["Reporting-manager graph<br/>(matrix / dotted-line)"]
+    BU --> VPS --> DEPT --> MGR
+  end
+
+  subgraph STAT["Statutory hierarchy (establishment-scoped, first-class)"]
+    direction TB
+    PUNE["Establishment: Pune plant<br/>PF code + ESIC code + S&E + LIN<br/>work-location = Maharashtra"]
+    BLR["Establishment: Bengaluru sales office<br/>PF code/sub-code + ESIC code<br/>work-location = Karnataka"]
+    MH["Maharashtra PT / LWF registration"]
+    KA["Karnataka PT / LWF registration"]
+    PUNE --> MH
+    BLR --> KA
+  end
+
+  LE --> BU
+  LE --> PUNE
+  LE --> BLR
+
+  EMP["Employee: Bengaluru sales engineer<br/>maps to exactly ONE establishment<br/>per effective date"]
+
+  EMP -.->|management: reports to VP Sales| VPS
+  EMP ==>|statutory: mapped to Bengaluru estab| BLR
+  BLR ==>|PT remitted to| KA
+
+  R["Rule: statutory re-derivation follows the establishment /<br/>work-location, never the management move<br/>(dept change = zero PF/ESI/PT churn)"]
+  STAT --- R

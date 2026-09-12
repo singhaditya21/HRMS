@@ -1,0 +1,33 @@
+stateDiagram-v2
+    direction LR
+
+    state "No artefact - collection refused" as None
+    state "SPDI written consent on record" as Spdi
+    state "Withdrawn - data path closed" as Withdrawn
+    state "Both regimes on record, each tagged" as Both
+    state "DPDP-regime record only, new enrolment" as Dpdp
+    state "Imported evidence, original date kept" as Imported
+
+    [*] --> None
+    None --> Spdi: Written consent captured before collection, SPDI r.5 sub-rule 1
+    None --> Imported: Migration attaches dated evidence the employer already holds
+    Imported --> Spdi: Evidence accepted as the SPDI artefact
+    Spdi --> Withdrawn: Employee withdraws in writing, SPDI r.5 sub-rule 7
+    Withdrawn --> None: A new purpose needs a new artefact
+    Spdi --> Both: Switch date reached, on or about 13 May 2027
+    None --> Dpdp: First collection after the switch, capture rule set by counsel
+    Dpdp --> Withdrawn: Withdrawal where consent is the basis
+    Both --> Withdrawn: Withdrawal of the consent-based purpose
+
+    note right of Both
+        No artefact is rewritten, re-dated or discarded at the switch.
+        Whether the SPDI Rules survive the omission of s.43A is CR-12.
+        Written capture stays on by default until counsel answers.
+    end note
+
+    note right of None
+        Payroll is never blocked by a missing artefact.
+        Bank-detail capture waits for the artefact and pay goes by the
+        tenant's configured non-bank disbursal mode, FR-CHR-102.
+        Biometrics wait, and attendance uses the non-biometric path.
+    end note

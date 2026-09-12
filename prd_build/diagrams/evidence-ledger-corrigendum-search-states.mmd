@@ -1,0 +1,29 @@
+stateDiagram-v2
+    [*] --> Owed: CS1 a statutory or file-format capture is written with no search
+    [*] --> NotApplicable: CS5 statistic, filing, vendor page, repository, judgment or government publication
+    Owed --> PartiallySearched: CS6 part of the amendment set is read and the unread part is written down
+    PartiallySearched --> Owed: the row stays owed until the unexamined instruments are read
+    Owed --> NoneFound: CS2 the ministry and date window is swept with nothing citing the base
+    Owed --> Found: CS3 an amending instrument is located
+    Found --> Regrading: every row resting on the base instrument is re-graded against the amended text
+    Regrading --> NoneFound: the amended text is captured and its own window is swept
+    NoneFound --> Owed: CS4 a new instrument citing the base appears in the watch feed
+    NotApplicable --> [*]
+
+    note right of Owed
+        A blank field is not a clean search.
+        Dependent rule versions cannot leave
+        drafting while any row reads owed.
+    end note
+
+    note right of NoneFound
+        One recorded search discharges every row
+        resting on that base instrument.
+        Fifteen searches clear forty-nine rows.
+    end note
+
+    note right of Found
+        The link records both dates.
+        Effective earlier than publication
+        is the corrigendum fingerprint.
+    end note

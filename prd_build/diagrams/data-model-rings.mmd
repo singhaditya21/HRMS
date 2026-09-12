@@ -1,0 +1,70 @@
+flowchart TB
+  subgraph R1["Ring 1 - Tenancy &amp; Org"]
+    direction LR
+    Tenant["Tenant"]
+    Group["Group<br/>(one per tenant)"]
+    Employer["Employer / LegalEntity<br/>(PAN, owns TAN and PTEC registrations)"]
+    Estab["Establishment<br/>(owns EPF/ESIC/PTRC/LWF/S&amp;E/LIN registrations)"]
+    Reg["Registration<br/>(the key every filing is raised against)"]
+    WorkLoc["WorkLocation<br/>(state, sphere, Code-regime date)<br/>jurisdiction lives here, never on the employee"]
+    OrgDim["Dept / CostCentre / Grade<br/>(no statutory effect)"]
+    Tenant --> Group --> Employer --> Estab
+    Employer -.-> Reg
+    Estab -.-> Reg
+    Estab -.-> WorkLoc
+    Estab -.-> OrgDim
+  end
+
+  subgraph R2["Ring 2 - People &amp; Compliance Master"]
+    direction LR
+    Person["Employee / Person<br/>(immutable id)"]
+    Employment["Employment<br/>(DOJ to DOL)"]
+    StatId["StatutoryIdentifier on the person<br/>(UAN, PAN, ESI IP)<br/>PF Member ID sits on the establishment mapping"]
+    Elig["EligibilityState<br/>(PF/ESI/PT/gratuity, effective-dated)"]
+    Service["ServiceRecord<br/>(per person and legal entity, derived)"]
+    Person --> Employment
+    Person --> StatId
+    Person --> Service
+    Employment --> Elig
+  end
+
+  subgraph R3["Ring 3 - Operating Record (comp, attendance, pay, filing)"]
+    direction LR
+    Comp["CompensationStructure /<br/>PayComponent / Assignment"]
+    Att["Punch (erasable) / DayStatus /<br/>FormIXRow (per-day IN and OUT) / Leave"]
+    PayRun["PayRun<br/>(payroll-month states per 08)"]
+    Result["PayrollResult<br/>(rule-versioned)"]
+    Payslip["Payslip"]
+    Filing["Filing<br/>THE UNIT OF DELIVERY"]
+    Challan["Challan / Payment"]
+    Comp --> PayRun
+    Att --> PayRun
+    PayRun --> Result --> Payslip
+    Result --> Filing
+    Filing --> Challan
+  end
+
+  subgraph R4["Ring 4 - Cross-cutting Spine (referenced by almost everything)"]
+    direction LR
+    Rule["EffectiveDatedRule /<br/>Jurisdiction (rules-as-data)"]
+    Doc["Document<br/>(classification + retention, erasable)"]
+    Audit["AuditEvent<br/>(append-only lineage)"]
+    Consent["ConsentRecord (versioned, two regimes) /<br/>DataPrincipalRequest"]
+    Hold["RetentionHold"]
+  end
+
+  subgraph SEG["Segregated stores - outside the rings by construction"]
+    direction LR
+    Vault["AadhaarTokenVault<br/>number only here, business rows hold a token"]
+    Bio["BiometricTemplate keyspace<br/>no image column, no image bucket"]
+  end
+
+  R1 ==>|"parents"| R2
+  R2 ==>|"parents"| R3
+  R4 -.->|"lineage / rules / evidence"| R3
+  R4 -.-> R2
+  Person -.->|"opaque token"| Vault
+  Employment -.->|"template, never referenced by a Punch"| Bio
+
+  Migrate["Migration imports OUTSIDE-IN:<br/>Ring 1 to 2 to 3, spine 4 first<br/>never imports consent or templates"]
+  Migrate -.-> R1

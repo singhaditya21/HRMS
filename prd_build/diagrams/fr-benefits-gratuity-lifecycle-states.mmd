@@ -1,0 +1,36 @@
+stateDiagram-v2
+    [*] --> accruing : enrollment in the statutory gratuity scheme at joining, GA1
+
+    accruing --> accruing : GA2, a period closes, provision moves by the change in the accrued amount
+    accruing --> accruing : GA3, a wage revision or a retro correction re-bases last drawn wages
+    accruing --> vested : GA4, completed years reach gratuity_vesting_years
+    vested --> vested : GA2 and GA3 continue after vesting
+
+    accruing --> settlement_due : GA5, exit on death, disablement or fixed-term expiry, the vesting condition does not apply
+    vested --> settlement_due : GA6, exit for any cause
+
+    settlement_due --> computed : GA7, gratuity wage base and completed years resolved for the exit date
+    computed --> operator_review : GA8, a continuity, transfer or reduction question the engine may not decide
+    operator_review --> computed : GA9, the operator records the basis and a distinct checker approves
+
+    computed --> approved : GA10, F and F run approved with the exempt and taxable split
+    approved --> paid : GA11, settled through the F and F disbursal
+    paid --> closed : GA12, the accrual row closes and the liability releases
+    closed --> [*]
+
+    accruing --> closed : GA13, exit with no entitlement, the provision releases in full
+    vested --> closed : GA13
+
+    note right of computed
+        Exempt part is the lesser of the amount paid and the
+        remaining lifetime exemption ceiling, per the carried reading.
+        Further limbs of the exemption are not captured, B9.
+        A missing prior exempt declaration is a blocking Task,
+        never a silent zero.
+    end note
+
+    note left of accruing
+        gratuity_payment_ceiling stays unset until a CoSS s.53 sub 3
+        notification is located, B10. While unset the accrual is
+        uncapped and every figure carries the flag.
+    end note

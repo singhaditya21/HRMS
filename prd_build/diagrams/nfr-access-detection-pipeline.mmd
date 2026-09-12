@@ -1,0 +1,55 @@
+flowchart LR
+  subgraph SRC["Sources - every mutation, every Restricted-class read"]
+    direction TB
+    S1["Application write path<br/>audit event in the SAME transaction<br/>as the mutation (NFR-SEC-401)"]
+    S2["Restricted-class read<br/>Aadhaar token, bank, PAN, health,<br/>biometric template (17.4)"]
+    S3["Auth and session events<br/>login, MFA, step-up, revoke"]
+    S4["Assistant tool-calls<br/>actor_type = assistant, on_behalf_of named"]
+    S5["Operator actions under section 22<br/>actor_type = operator, authority_ref set"]
+  end
+
+  CHAIN["Append-only, hash-chained store<br/>chain per tenant per UTC day + anchor chain<br/>Restricted values held as tokens only"]
+  S1 --> CHAIN
+  S2 --> CHAIN
+  S3 --> CHAIN
+  S4 --> CHAIN
+  S5 --> CHAIN
+
+  subgraph DET["NFR-SEC-404 detection catalogue - EV-064 standard: detect, not merely record"]
+    direction TB
+    D1["D-1 read anomaly vs the actor's own baseline<br/>detect.restricted_read_zscore"]
+    D2["D-2 unmask without a reason_code<br/>hard invariant - request rejected"]
+    D3["D-3 read by a role with no business need<br/>derived from the section 07 permissions matrix"]
+    D4["D-4 salary export volume or off-hours<br/>detect.export_rows"]
+    D5["D-5 impossible travel or new-ASN privileged login<br/>detect.geo_velocity_kmh"]
+    D6["D-6 token-store read outside an enumerated call site"]
+    D7["D-7 assistant touching a Restricted classification<br/>blocked at the section 12 chokepoint"]
+    D8["D-8 orphan monetary mutation - target 0"]
+  end
+  CHAIN --> DET
+
+  VERIFY["NFR-SEC-405 nightly chain verification<br/>VERIFIED / GAP / BROKEN<br/>no human 'mark verified' transition exists"]
+  CHAIN --> VERIFY
+
+  EXCL{{"Named exclusions, asserted in NT-205:<br/>month-end bank-file run,<br/>CA-console audit read,<br/>employee reading their own record"}}
+  DET --> EXCL
+
+  SHADOW["Threshold unset - SHADOW MODE<br/>finding raised to a review queue, never paged<br/>the findings build the baseline (17.16)"]
+  PAGE["Threshold set - incident channel<br/>MTTA target per NFR-OBS-1104"]
+  EXCL --> SHADOW
+  EXCL --> PAGE
+
+  VERIFY --> PAGE
+  PAGE --> RUN["17.6.1 incident machine at TRIAGE<br/>CERT-In six-hour clock runs from noticed_at<br/>EV-062, not from acknowledgement"]
+  SHADOW --> RISK["Named launch risk<br/>section 20 sets the thresholds<br/>from the first three month-ends"]
+
+  classDef src fill:#e7f0fd,stroke:#2c6fbb,color:#000;
+  classDef store fill:#ede7f6,stroke:#5e35b1,color:#000;
+  classDef det fill:#fff8e1,stroke:#b8860b,color:#000;
+  classDef out fill:#e7f9ee,stroke:#1e8449,color:#000;
+  classDef warn fill:#fde7e7,stroke:#c0392b,color:#000;
+  class S1,S2,S3,S4,S5 src;
+  class CHAIN,VERIFY store;
+  class D1,D2,D3,D4,D5,D6,D7,D8,EXCL det;
+  class PAGE,RUN out;
+  class SHADOW,RISK warn;

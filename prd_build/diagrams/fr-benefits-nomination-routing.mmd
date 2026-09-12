@@ -1,0 +1,28 @@
+flowchart TD
+    EV["A routing event: death in service, or a benefit that matures<br/>the product never decides entitlement, it produces the artefact"]
+    SET{"A nomination set in force for this scheme<br/>on the event date, as recorded now?"}
+    EV --> SET
+
+    SET -->|"no set"| GAP["Gap. Operator task plus the legal lead.<br/>The product never falls back to legal heirs: that is law, not configuration.<br/>N2"]
+    SET -->|"set found"| SUM{"Shares sum to 100 for the scheme?"}
+
+    SUM -->|"no, an imported or legacy set"| HOLD["Routing held, the set is shown with its source.<br/>Never re-normalised silently. N5"]
+    SUM -->|"yes"| ALIVE{"Every named nominee living on the event date?"}
+
+    ALIVE -->|"a nominee predeceased"| REALLOC["nomination_share_reallocation is unset.<br/>Operator review with the legal lead, counsel question.<br/>N3"]
+    ALIVE -->|"yes"| MINOR{"Any minor nominee?"}
+
+    MINOR -->|"yes"| GUARD["Guardian carried on the artefact, from the set.<br/>A minor without a guardian was refused at capture, BV-30. N4"]
+    MINOR -->|"no"| ART
+    GUARD --> ART["benefit_routing_record, R class.<br/>Names the set version, the event date, the shares and the actor.<br/>A later correction is a new record, never an edit."]
+
+    ART --> WHO{"Which instrument?"}
+    WHO -->|"gratuity"| GRAT["Paid by the employer through the F and F run<br/>section 11.7.2"]
+    WHO -->|"EDLI and EPF"| EPFO["Computed and paid by EPFO.<br/>The product supplies the nomination artefact only, BEN-18"]
+    WHO -->|"GTL and GPA"| INS["Paid by the insurer on the policy's own terms.<br/>Claims are out of scope, section 11.6"]
+    WHO -->|"NPS and superannuation"| CRA["The scheme's own process, which the product does not run, B11"]
+
+    classDef warn fill:#fff3cd,stroke:#a80,color:#000;
+    classDef ok fill:#d4edda,stroke:#2a7,color:#000;
+    class GAP,HOLD,REALLOC warn;
+    class ART ok;

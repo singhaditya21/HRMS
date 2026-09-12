@@ -1,0 +1,26 @@
+flowchart TB
+    base["FX baseline: USD/INR ₹94.43 (Sep 2026, EV-089)<br/>Steady-state 2027 = Gemini 3.x Flash at $1.50/$7.50 (2x)<br/>Gemini 2.5 Flash-Lite: no announced increase<br/>Budget 23,675 in / 2,045 out tokens/emp/mo<br/>USD-priced tiers scale linearly with the rupee"]
+
+    base --> fx90 & fx95 & fx100
+
+    subgraph model["FX sensitivity — inference line per employee-month (one COGS line of four)"]
+        direction TB
+        fx90["USD/INR ₹90<br/>Lean ₹0.29 · Rich ₹4.58<br/>Rich = 9.2% of ₹50 floor / 5.7% of ₹80<br/>Steady state, USD routing"]
+        fx95["USD/INR ₹95<br/>Lean ₹0.30 · Rich ₹4.83<br/>Rich = 9.7% of ₹50 floor / 6.0% of ₹80<br/>Steady state, USD routing"]
+        fx100["USD/INR ₹100 (risk-register trigger, §20 R-13)<br/>Lean ₹0.32 · Rich ₹5.09<br/>Rich = 10.2% of ₹50 floor / 6.4% of ₹80"]
+    end
+
+    fx90 -. "~11% swing ₹90 to ₹100<br/>paise on Lean · past 10% of a floor seat on Rich" .-> fx100
+
+    fx100 --> trigger{"Router action at ₹100:<br/>which classes move to<br/>Sarvam 105B (INR, ₹0.84 flat)?"}
+
+    trigger --> mid["Mid-tier classes (A2, A5, A6):<br/>move where quality permits<br/>Sarvam undercuts 3.x Flash at any rate"]
+    trigger --> lite["Flash-Lite classes (A0, A1, A3):<br/>stay put<br/>Sarvam costs more until ~₹265/USD"]
+    trigger --> reg["Regulated tenant:<br/>residency pin WINS over FX hedge<br/>stay on Vertex India<br/>INR billing only if available<br/>or absorb depreciation<br/>Sarvam residency unverified"]
+
+    fx100 --> stress["Combined stress case:<br/>₹100 + Flash 2x + 5x token estimate<br/>Rich ~₹25/emp/mo = ~half a ₹50 seat<br/>Lean ~₹1.59 = ~3% of a ₹50 seat"]
+    stress --> rule["Flash-heavy routing is never the default<br/>router, not the token estimate, keeps<br/>low-end bundling alive · metered SKUs (§13.8) carry excess"]
+
+    mid --> hedged["Inference line capped by routing<br/>gross margin decided on supervised filing (EV-088)"]
+    lite --> hedged
+    reg --> hedged

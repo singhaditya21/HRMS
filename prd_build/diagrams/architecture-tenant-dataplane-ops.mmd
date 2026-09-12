@@ -1,0 +1,36 @@
+flowchart TB
+    classDef life fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+    classDef op fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef guard fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef hold fill:#4a3a0b,stroke:#8a6d14,color:#fff6da,stroke-width:1px;
+    classDef end1 fill:#2a1636,stroke:#59306e,color:#f7e9ff,stroke-width:1px;
+
+    L1["Lifecycle: contracted"]:::life
+    L2["Lifecycle: consent run and load"]:::life
+    L3["Lifecycle: live"]:::life
+    L4["Lifecycle: notice given"]:::life
+    L5["Lifecycle: revoked"]:::life
+    L6["Lifecycle: retained"]:::life
+    L7["Lifecycle: closed"]:::life
+
+    O1["Provision the partition, issue the tenant key,<br/>create the residency profile and the object prefix"]:::op
+    O2["Issue per-subject keys on first write,<br/>open the consent store, open the filing ledger"]:::op
+    O3["Steady state: grants, projections, rule-pack promotion,<br/>event stream, cost attribution"]:::op
+    O4["Freeze new grants, build the export bundle,<br/>hand back registers and filing artefacts"]:::op
+    O5["Revoke every grant and credential,<br/>shred vault entries, close the attended queue"]:::op
+    O6["Retention hold: reads for production on request only,<br/>no new writes, no erasure while a clock runs"]:::op
+    O7["Purge the partition, destroy remaining keys,<br/>keep the tombstone and the hash chain"]:::end1
+
+    G1{"Every retention clock expired<br/>and no open filing or dispute"}:::guard
+    H1["Retention hold blocks the purge<br/>and is recorded with its reason"]:::hold
+
+    L1 --> O1 --> L2
+    L2 --> O2 --> L3
+    L3 --> O3
+    O3 --> L4
+    L4 --> O4 --> L5
+    L5 --> O5 --> L6
+    L6 --> O6 --> G1
+    G1 -- no --> H1 --> O6
+    G1 -- yes --> L7
+    L7 --> O7

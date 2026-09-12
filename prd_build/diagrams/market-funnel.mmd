@@ -1,0 +1,20 @@
+flowchart TD
+    A["All registered EPFO establishments<br/>24,18,266 &#40;31.03.2024&#41;<br/><b>[Verified]</b> — but ~3.2x the contributing base, two-thirds dormant"]
+    B["Contributing establishments<br/>7,66,254 &#40;FY23-24, EV-001&#41;<br/><b>[Verified]</b> — TAM denominator"]
+    C["20-200 employee band &#40;beachhead&#41;<br/>up to ~7.24 lakh on the r2/09 fit; 1.8-2.6 lakh if 64-75pct have fewer than 20<br/><b>[Hypothesis]</b> — beachhead_sub20_share unmeasured; above-200 count modelled"]
+    D["Reachable via CA / Tally channel<br/>share unknown<br/><b>[Hypothesis]</b> — status-quo distribution, V-02 and V-05"]
+    E["SOM: 3-year target, 0.5-1.5pct of the beachhead<br/>~1,100-3,300 accounts at 2.2 lakh; ~3,600-10,900 at 7.24 lakh<br/><b>[Hypothesis]</b> — bounded by greytHR ~3.9pct, 30,000+ claimed Sep 2026"]
+
+    A --> B --> C --> D --> E
+
+    classDef top fill:#1e3a5f,stroke:#0d1b2a,color:#fff
+    classDef mid fill:#2a5d7c,stroke:#0d1b2a,color:#fff
+    classDef band fill:#3a7d99,stroke:#0d1b2a,color:#fff
+    classDef chan fill:#5aa0b8,stroke:#0d1b2a,color:#000
+    classDef som fill:#7fc4d6,stroke:#0d1b2a,color:#000
+
+    class A top
+    class B mid
+    class C band
+    class D chan
+    class E som

@@ -1,0 +1,55 @@
+flowchart LR
+    classDef hub fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:2px;
+    classDef sys fill:#123a52,stroke:#1f6a94,color:#e8f6ff,stroke-width:1px;
+    classDef gov fill:#1d1a3a,stroke:#3b357a,color:#ecebff,stroke-width:1px;
+    classDef talent fill:#2a2a2a,stroke:#555,color:#f0f0f0,stroke-width:1px;
+    classDef fb fill:#4a3a0b,stroke:#8a6d14,color:#fff6da,stroke-width:1px,stroke-dasharray:3 3;
+
+    HUB{{"Filing-First HRMS<br/>Integration Bus<br/>queue · retry/backoff · idempotency<br/>DLQ · per-tenant secrets · audit"}}:::hub
+
+    subgraph FIN["Finance / Money"]
+        direction TB
+        TALLY["Tally Prime / ERP 9<br/>payroll GL journal"]:::sys
+        BANK["Banks<br/>salary + statutory debit"]:::sys
+    end
+
+    subgraph DEV["On-prem devices"]
+        direction TB
+        BIO["Biometric / access<br/>eSSL · ZKTeco · Matrix"]:::sys
+    end
+
+    subgraph GOVT["Govt statutory portals"]
+        direction TB
+        EPFO["EPFO Unified<br/>ECR + KYC"]:::gov
+        ESIC["ESIC<br/>MC + contribution"]:::gov
+        TRACES["TRACES / income-tax<br/>24Q · Form 16"]:::gov
+        PT["State PT portals<br/>(Mah/Kar/WB/TN...)"]:::gov
+    end
+
+    subgraph HIRE["Talent inflow"]
+        direction TB
+        JOBS["Job boards<br/>Naukri · LinkedIn · Indeed"]:::talent
+    end
+
+    %% Finance
+    HUB <-->|"XML/TDL over HTTP<br/>(Tally Connector)"| TALLY
+    TALLY -.->|"fallback: signed<br/>XML/CSV import file"| TALLYFB["Manual import"]:::fb
+    HUB -->|"H2H API / SFTP<br/>ISO 20022 · encrypted"| BANK
+    BANK -.->|"fallback: NEFT bulk<br/>upload file per bank fmt"| BANKFB["Portal upload"]:::fb
+
+    %% Devices
+    HUB <-->|"push webhook / SDK poll<br/>+ CSV agent"| BIO
+    BIO -.->|"fallback: buffer offline,<br/>replay on reconnect"| BIOFB["Edge buffer"]:::fb
+
+    %% Government
+    HUB -->|"generate + validate<br/>ECR text file"| EPFO
+    EPFO -.->|"fallback: assisted<br/>manual upload + receipt capture"| EPFOFB["Guided upload"]:::fb
+    HUB -->|"contribution file<br/>+ challan"| ESIC
+    HUB -->|"RPU/FVU-valid<br/>24Q .fvu file"| TRACES
+    TRACES -.->|"fallback: NSDL RPU<br/>offline gen + upload"| TRACESFB["Offline RPU"]:::fb
+    HUB -->|"per-state schema<br/>PT return + challan"| PT
+    PT -.->|"fallback: state-wise<br/>manual e-payment"| PTFB["Manual e-pay"]:::fb
+
+    %% Talent
+    JOBS -->|"apply-webhook / feed<br/>(read-only ingest)"| HUB
+    JOBS -.->|"fallback: email/CSV<br/>candidate import"| JOBSFB["CSV import"]:::fb

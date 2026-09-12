@@ -1,0 +1,45 @@
+flowchart TD
+    subgraph AT["State at the moment of decision"]
+        C1["Requisition version<br/>criteria with justification records<br/>FR-T-D013"]
+        C2["Knock-out rule versions<br/>and the candidate's own answers"]
+        C3["Submitted scorecards<br/>immutable, FR-T-R32"]
+        C4["AI outputs shown or used<br/>use-case row, model, prompt template,<br/>manifest version, call ids, output as shown"]
+        C5["Controls in force<br/>AI configuration, EOP version,<br/>headcount facts with counting units"]
+    end
+
+    Q{"AI-influenced?<br/>display-or-use rule, §10.13b.1"}
+    HUM["Human decision<br/>authenticated actor, NTP timestamp,<br/>reason code"]
+    CONF["ConfirmerEvent<br/>named confirmer, recorded criterion,<br/>free-text reason, one decision at a time"]
+    TX["One transaction<br/>stage move plus DecisionSnapshot<br/>if the snapshot fails, the move fails"]
+    SNAP[("DecisionSnapshot<br/>R-class, append-only<br/>personal fields under the subject key<br/>hash-chained per subject")]
+    ANN["Later facts attach as annotations<br/>an attribute corrected under FR-LEG-027<br/>a reinstatement, a merge"]
+
+    AT --> Q
+    Q -- "no" --> HUM --> TX
+    Q -- "yes" --> CONF --> TX
+    TX --> SNAP
+    SNAP --> ANN
+
+    subgraph USE["Later use"]
+        REC["Reconstruct this decision, FR-T-D002<br/>reads the snapshot and versioned refs only<br/>no re-run action exists"]
+        RULE32["Rule 3 sub-rule 2 case file, FR-T-D008"]
+        DOS["Due-diligence dossier, FR-LEG-021"]
+        PROD["Production on demand, FR-T-D015"]
+    end
+
+    SNAP --> REC
+    REC --> RULE32
+    REC --> DOS
+    REC --> PROD
+
+    HOLD["RetentionHold<br/>complaint or proceedings, FR-LEG-026<br/>no erasure or expiry releases it"]
+    ERASE["Subject key shredded, FR-T-X03<br/>reconstruction returns the tombstone"]
+    HOLD -. "blocks" .-> ERASE
+    ERASE -. "only when no hold" .-> SNAP
+
+    classDef gate fill:#fef9c3,stroke:#854d0e,color:#111;
+    classDef store fill:#dbeafe,stroke:#1e3a8a,color:#111;
+    classDef stop fill:#fee2e2,stroke:#991b1b,color:#111;
+    class Q,CONF gate;
+    class SNAP store;
+    class HOLD,ERASE stop;

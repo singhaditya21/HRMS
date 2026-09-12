@@ -1,0 +1,42 @@
+stateDiagram-v2
+    direction TB
+    [*] --> NotCovered
+
+    NotCovered: Not covered
+    NotCovered: gross above Rs 21,000 at entry, or above Rs 25,000 for PwD
+    NotCovered: or the establishment is not in a notified area
+    NotCovered: or below the headcount line, 10 persons or 20 for Central-sphere extended classes
+
+    Covered: Covered and contributing
+    Covered: 0.75 pct employee plus 3.25 pct employer on FULL gross
+    Covered: contribution uncapped once in the period
+    Covered: the ceiling is a coverage gate, not a contribution cap
+
+    LatchedToBoundary: Ceiling crossed mid-period
+    LatchedToBoundary: gross now above Rs 21,000 but the member stays IN
+    LatchedToBoundary: keeps contributing on actual gross to the period end
+    LatchedToBoundary: example - raise from Rs 20k to Rs 23k on 1 Jul, ESI on full Rs 23k through Sep
+
+    Exited: Exited ESI
+    Exited: exit effective at the next period start, 1 Oct or 1 Apr
+    Exited: benefit-continuation edge cases are carried from v0.3, not re-captured
+
+    NotCovered --> Covered: gross at or below Rs 21,000 - enrol first and obtain the IP number
+    Covered --> Covered: within Apr-Sep or Oct-Mar, monthly contribution by the 15th
+    Covered --> LatchedToBoundary: wage crosses Rs 21,000 mid-period, overtime treatment per the carried rule, unverified
+    LatchedToBoundary --> LatchedToBoundary: contribute on full gross until the period ends
+    LatchedToBoundary --> Exited: period ends 30 Sep or 31 Mar
+    Exited --> Covered: gross back at or below Rs 21,000 - re-enrol, timing per esi.reentry_timing, not captured
+    Exited --> [*]
+
+    note right of Covered
+        Contribution period feeds a lagged benefit period
+        Apr-Sep contributions give Jan-Jun benefits
+        Oct-Mar contributions give Jul-Dec benefits
+    end note
+
+    note left of LatchedToBoundary
+        THE ESI TRAP - do NOT drop the member
+        in the month the wage crosses the ceiling.
+        Exit is period-boundary-aligned, not month-aligned.
+    end note

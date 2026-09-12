@@ -1,0 +1,19 @@
+stateDiagram-v2
+    direction LR
+    [*] --> PREP: reason-coded preparation opened against an instance
+    PREP --> ACTIVE: operator enters the portal session
+    ACTIVE --> WAIT_BLOCKING: waiting on an OTP or an authorised signatory and unable to switch work
+    ACTIVE --> WAIT_PARKED: waiting on the tenant and the operator switches to other work
+    WAIT_BLOCKING --> ACTIVE: wait clears
+    WAIT_PARKED --> ACTIVE: wait clears
+    ACTIVE --> EXCEPTION: rejection, error file or hand-back on this instance
+    EXCEPTION --> ACTIVE: rework resumes in session
+    ACTIVE --> CLOSED: session ends with an outcome recorded
+    PREP --> CLOSED: preparation closed without a session, for example a Mode A instance
+    CLOSED --> [*]
+
+    note right of WAIT_PARKED
+        Parked waits are metered and reported
+        but never added to chargeable minutes.
+        Only blocking waits enter the meter total.
+    end note

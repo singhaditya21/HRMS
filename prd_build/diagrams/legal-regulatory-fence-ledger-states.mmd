@@ -1,0 +1,30 @@
+stateDiagram-v2
+    direction LR
+
+    state "Fenced - Modes A and B only, no submit action" as Fenced
+    state "Counsel cleared for this portal and filing type" as Counsel
+    state "Authority to act executed for this registration" as Instrument
+    state "Mode C enabled - operator may submit" as ModeC
+    state "Suspended - submit actions withdrawn at once" as Suspended
+
+    [*] --> Fenced
+    Fenced --> Counsel: Opinions recorded for CR-17a to CR-17f, scoped to this surface
+    Counsel --> Instrument: Customer executes the instrument covering this registration
+    Instrument --> ModeC: Liability clause in the contract and insurance position recorded
+    ModeC --> Suspended: Portal terms change, opinion reopened, instrument revoked, or re-verification lapses
+    Suspended --> ModeC: Cause cleared and all four gates re-verified
+    Suspended --> Fenced: CR-17a or CR-17b answered adversely for this portal
+    ModeC --> Fenced: CR-17a or CR-17b answered adversely for this portal
+
+    note right of Fenced
+        One row per tenant, registration, portal and filing type.
+        A 90-person tenant with EPF, ESIC, TAN and PT in three states
+        holds six rows and thirty-six counsel cells.
+    end note
+
+    note right of ModeC
+        Mode is derived, never chosen by the operator.
+        Per-filing approval is always required.
+        Payment initiation stays the customer's act by default.
+        A Mode D session on our credentials is a Mode C session here.
+    end note

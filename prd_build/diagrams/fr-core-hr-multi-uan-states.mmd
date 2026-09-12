@@ -1,0 +1,31 @@
+stateDiagram-v2
+    direction LR
+
+    state "Single UAN, active for filing" as SINGLE
+    state "Further UAN declared, active one unconfirmed" as DECLARED
+    state "Active UAN confirmed by a distinct checker" as CONFIRMED
+    state "Member's EPFO-side outcome recorded" as RESOLVED
+    state "A submitted or filed line used another UAN" as WRONG
+
+    [*] --> SINGLE: MU1 linked at joining or carried by migration
+    SINGLE --> DECLARED: MU2 employee, HR, import or operator declares another UAN
+    DECLARED --> CONFIRMED: MU3 active UAN proposed with evidence and checked
+    CONFIRMED --> RESOLVED: MU4 evidence of the member's outcome attached
+    RESOLVED --> SINGLE: MU5 exactly one UAN remains active, others kept as history
+    SINGLE --> WRONG: MU6 evidence a line credited the wrong UAN
+    CONFIRMED --> WRONG: MU6 the same, found after confirmation
+    WRONG --> CONFIRMED: MU7 route decided and recorded per affected month
+
+    note right of DECLARED
+        Payroll runs. The ECR for each period
+        reads the UAN active in that period.
+        MULTIPLE_UAN_DECLARED stays on the
+        readiness report until MU4.
+    end note
+
+    note right of WRONG
+        An approved return is never cancelled.
+        Revised only before payment initiation.
+        The product never creates, merges
+        or retires a UAN.
+    end note

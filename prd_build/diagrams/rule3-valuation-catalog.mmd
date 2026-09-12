@@ -1,0 +1,39 @@
+flowchart LR
+    ROOT["Perquisite Valuation Catalog<br/>1962-Rules numbering and values unless marked<br/>two rule versions per row, 2026 citations pending §20 B9<br/>1962-Rules values carried from v0.3, Hypothesis until B9 re-reads them<br/>deterministic, effective-dated (BEN-30), no entry model-generated"]
+
+    ROOT --> MEAL["Free meals / vouchers<br/><b>1962: Rule 3(7)(iii) · 2026: citation pending B9</b>"]
+    ROOT --> GIFT["Gift / voucher in kind<br/><b>1962: Rule 3(7)(iv) · 2026: citation pending B9</b>"]
+    ROOT --> CAR["Motor car (employer)<br/><b>Rule 3(2), Table II</b>"]
+    ROOT --> ASSETUSE["Use of movable asset<br/><b>Rule 3(7)(vii)</b>"]
+    ROOT --> ASSETXFER["Transfer of movable asset<br/><b>Rule 3(7)(viii)</b>"]
+    ROOT --> LOAN["Interest-free / concessional loan<br/><b>Rule 3(7)(i)</b>"]
+    ROOT --> TEL["Telephone / internet reimb.<br/><b>Rule 3(7)(ix)</b>"]
+    ROOT --> PREM["Employer-paid insurance premium<br/><b>s.17(2)</b>"]
+    ROOT --> RETIRAL["Employer retiral over Rs 7.5L<br/><b>s.17(2)(vii) + Rule 3B</b>"]
+
+    MEAL --> MEAL_M["Exempt up to per-meal cap, excess taxable.<br/>Cap Rs 50 to <b>Rs 200/meal from 1 Apr 2026</b>, EV-019, rule text not read<br/>ONLY if provided in working hours at office or factory premises,<br/>or via non-transferable vouchers usable only at eating outlets (BEN-62)"]
+    MEAL_M --> MEAL_E(["Edge: cash allowance or unattested card = fully taxable<br/>eligible-meal count drives cap, LOP and holidays reduce it,<br/>WFH days per tenant parameter"])
+
+    GIFT --> GIFT_M["Nil-value threshold on the tax-year aggregate<br/>Rs 5,000 to <b>Rs 15,000 from 1 Apr 2026</b><br/>on crossing: whole aggregate taxed by default (BEN-63)"]
+    GIFT_M --> GIFT_E(["Edge: aggregate across gifts, not per gift<br/>cash gifts fully taxable at any amount"])
+
+    CAR --> CAR_M["1962 values, to 31 Mar 2026: Rs 1,800/mo (engine <= 1.6L)<br/>or Rs 2,400/mo (> 1.6L), + Rs 900/mo if driver;<br/>fully personal use = actual cost less recovery<br/>Tax Year 2026-27 values unknown: provisional + exception"]
+    CAR_M --> CAR_E(["Edge: depends on ownership, cc slab, driver, expense-bearer;<br/>employee-owned reimbursed = actual less prescribed exempt"])
+
+    ASSETUSE --> ASSETUSE_M["<b>10% p.a. of actual cost</b> (or hire charges) less recovery,<br/>for period of use"]
+    ASSETUSE_M --> ASSETUSE_E(["Edge: laptops + telephones for use are specifically exempt<br/>(Rule 3(7)(vii) proviso) - a common mis-tax"])
+
+    ASSETXFER --> ASSETXFER_M["Cost less depreciation for completed years:<br/>computers/electronics 50% WDV/yr, cars 20% WDV/yr,<br/>other 10% SLM/yr; result less recovery"]
+    ASSETXFER_M --> ASSETXFER_E(["Edge: depreciation basis differs by class;<br/>laptop after 2 yrs valued at 25% of cost"])
+
+    LOAN --> LOAN_M["SBI benchmark rate (as on 1 Apr of FY) on max monthly<br/>outstanding, less interest actually charged"]
+    LOAN_M --> LOAN_E(["Edge: loans <= Rs 20,000 and specified medical loans exempt;<br/>rate is SBI rate for the matching loan type"])
+
+    TEL --> TEL_M["Reimbursement of <b>actual bills</b> for official use exempt;<br/>fixed allowance without bills fully taxable"]
+    TEL_M --> TEL_E(["Edge: personal-use portion of mixed bill taxable;<br/>proof adjudication sets the exempt amount"])
+
+    PREM --> PREM_M["Premium borne by employer valued at premium paid,<br/>apportioned per covered life where policy separates it"]
+    PREM_M --> PREM_E(["Edge: voluntary parental top-up = common taxable slice;<br/>employee GMC premium generally not taxable"])
+
+    RETIRAL --> RETIRAL_M["Aggregate employer PF + NPS + superann over<br/><b>Rs 7,50,000/FY</b> is perquisite;<br/>Rule 3B adds accretion on cumulative excess"]
+    RETIRAL_M --> RETIRAL_E(["Edge: cross-vehicle, stateful across years (see 11.10)"])

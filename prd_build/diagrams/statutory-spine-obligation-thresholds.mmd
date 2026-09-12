@@ -1,0 +1,22 @@
+flowchart TD
+    classDef any fill:#0b3d2e,stroke:#0f5c46,color:#eafff5,stroke-width:1px;
+    classDef ten fill:#1d3a5a,stroke:#2f5c8f,color:#eaf3ff,stroke-width:1px;
+    classDef twenty fill:#3a2a5a,stroke:#5c438f,color:#f1ebff,stroke-width:1px;
+    classDef big fill:#5a3a1e,stroke:#8f5c2f,color:#fff3ea,stroke-width:1px;
+    classDef state fill:#3d3d3d,stroke:#6b6b6b,color:#ffffff,stroke-width:1px;
+    classDef rule fill:#5a1e1e,stroke:#8f2f2f,color:#ffecec,stroke-width:1px;
+
+    NONE["No headcount threshold<br/>TDS on salary, s.392 - Form 138 quarterly, Form 130 via TRACES<br/>POSH Internal Committee - every employer<br/>minimum wages"]:::any
+    TEN["10<br/>ESI - 10 persons, notified area, contributions from the notified date - 20 for Central-sphere extended classes<br/>establishment registration - within 60 days, handbook level<br/>gratuity and maternity benefit - 10 employees, latches<br/>appointment letter - establishment of 10 workers, state-prescribed form<br/>fewer than 10 workers and no IC - district Local Committee, not an exemption"]:::ten
+    TWENTY["20<br/>EPF, EPS, EDLI - 20 employees, scheduled-employments limit removed<br/>Grievance Redressal Committee - 20 workers<br/>OSH factory - over 20 workers with power, 40 without<br/>statutory bonus - legacy 20, Code-era threshold unconfirmed"]:::twenty
+    FIFTY["50<br/>contract-labour provisions - 50 contract labour, latches, raised from 20<br/>creche - 50 employees, number prescribable<br/>lay-off, retrenchment, closure notice regime - industrial establishments"]:::big
+    HUNDRED["100<br/>canteen - 100 workers<br/>works committee - only on an appropriate-Government order"]:::big
+    THREEH["300<br/>standing orders<br/>prior permission for lay-off, retrenchment, closure - raised from 100, industrial establishments"]:::big
+    STATE["Not headcount-triggered<br/>Professional Tax and LWF - by work-location state and wage band<br/>Shops and Establishments registration - per state Act"]:::state
+    SCHEMA["Every threshold carries two schema fields<br/>counting unit - employees, persons, workers or contract labour<br/>sphere - central text verified, operative state value is configuration"]:::rule
+
+    NONE --> TEN --> TWENTY --> FIFTY --> HUNDRED --> THREEH
+    STATE -. "runs alongside every band" .-> NONE
+    SCHEMA -. "applies to every row" .-> TEN
+    SCHEMA -.-> TWENTY
+    SCHEMA -.-> FIFTY

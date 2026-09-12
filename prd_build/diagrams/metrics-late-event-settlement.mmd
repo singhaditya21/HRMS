@@ -1,0 +1,19 @@
+sequenceDiagram
+    autonumber
+    participant P as Authority portal
+    participant F as Filing ledger
+    participant B as Event bus
+    participant W as Metrics warehouse
+    participant D as North-star board
+
+    F->>B: filing.submitted with our own timestamp
+    P-->>F: acknowledgement carrying the authority timestamp
+    F->>B: filing.filed with authority_ts_utc
+    B->>W: event lands before the watermark
+    W->>D: weekly figure published and sealed with a version
+    P-->>F: receipt captured late, after the weekly seal
+    F->>B: filing.filed correction as a new append, never an overwrite
+    B->>W: event lands after the watermark
+    W->>W: decide restatement or footnote against the materiality rule
+    W->>D: restated figure published with a new definition-run version and a visible restatement note
+    Note over W,D: A sealed period is never edited in place. Every published number<br/>carries the run version that produced it.

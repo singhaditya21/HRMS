@@ -1,0 +1,32 @@
+stateDiagram-v2
+    [*] --> DRAFT: raised on an open exception, or an allowed reason code
+    DRAFT --> PENDING: submitted, the day is in an open period
+    DRAFT --> PENDING_RETRO: submitted, the day is inside a locked period
+    PENDING --> PENDING: a level approves, further levels remain
+    PENDING --> APPLIED: final approval writes a dated correction event
+    PENDING --> REJECTED: rejected with a reason, the exception stays open
+    PENDING --> WITHDRAWN: withdrawn by the creator
+    PENDING --> ESCALATED: reg_approval_timeout_h elapses
+    ESCALATED --> APPLIED: decided at the escalation level
+    ESCALATED --> REJECTED: decided at the escalation level
+    PENDING_RETRO --> APPLIED_RETRO: final approval plus retro authority
+    PENDING_RETRO --> REJECTED: rejected with a reason
+    APPLIED --> SUPERSEDED: a later regularization for the same day applies
+    APPLIED --> REVERSED: compensating correction, period still open
+    APPLIED_RETRO --> REVERSED: a further retro diff, never a mutation
+    PENDING --> UNRESOLVABLE_SOURCE_ERASED: the day's punches passed retention
+    REJECTED --> [*]
+    WITHDRAWN --> [*]
+    SUPERSEDED --> [*]
+    REVERSED --> [*]
+    UNRESOLVABLE_SOURCE_ERASED --> [*]
+    note right of APPLIED_RETRO
+        Emits a retro diff, an arrears input to
+        section 08, and a new register version.
+        The locked projection is never rewritten.
+    end note
+    note right of PENDING
+        An open item blocks the period lock.
+        A forced lock records the item and
+        the forcing actor.
+    end note

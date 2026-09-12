@@ -1,0 +1,30 @@
+flowchart TD
+    Start([Claim to grade<br/>walk in order, first stop wins]) --> Q1{Q1: Previously believed,<br/>now disproven by a primary source<br/>or a fatal provenance defect?}
+
+    Q1 -->|Yes| Killed[["#91;Killed#93;<br/>Record: dead claim, kill reason,<br/>replacement or 'none — unsized'<br/>Add to §20 blocklist"]]
+    Q1 -->|No| Q2{Q2: Rests on a captured primary source<br/>that survived a hostile re-check<br/>including the §02.4 corrigendum step?}
+
+    Q2 -->|Yes| Verified[["#91;Verified#93;<br/>Record: source, URL, capture date,<br/>effective/publication/amendment dates,<br/>re-verification date<br/>Mirror-read source: #91;Verified — mirror#93;"]]
+    Q2 -->|No| Q3{Q3: Plausible and uncontradicted,<br/>but not itself primary-source evidence?}
+
+    Q3 -->|Yes| Hyp[["#91;Hypothesis#93;<br/>Cannot ship without a §20 kill criterion<br/>(method + threshold + consequence)<br/>Attach one or downgrade"]]
+    Q3 -->|No — bare assertion,<br/>aggregator-only,<br/>provenance unknown| Defect[["Defect<br/>Treat as #91;Hypothesis#93; with kill criterion<br/>'capture a primary source or delete';<br/>flag for grading before section is complete"]]
+
+    Hyp -.->|no kill criterion attached| Defect
+
+    Verified --> Note1[/"Composite rule: output cannot grade higher<br/>than min(marker of load-bearing inputs);<br/>name which input is weakest"/]
+    Hyp --> Note1
+    Killed --> Note1
+    Defect --> Note1
+
+    Killed -.->|"conclusion drawn from it"| Rev[["#91;Reversed#93;<br/>conclusion this PRD stated and now retracts;<br/>one-line reason + the kill row"]]
+
+    classDef killed fill:#7a1f1f,stroke:#4a0f0f,color:#fff;
+    classDef verified fill:#1f5f2f,stroke:#0f3f1f,color:#fff;
+    classDef hyp fill:#8a6d1f,stroke:#5a4400,color:#fff;
+    classDef defect fill:#5a2d5a,stroke:#3a1a3a,color:#fff;
+    class Killed killed;
+    class Verified verified;
+    class Hyp hyp;
+    class Defect defect;
+    class Rev killed;
