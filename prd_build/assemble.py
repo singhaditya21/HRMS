@@ -2,7 +2,7 @@
 """Assemble the Filing-First HRMS PRD from section fragments + diagrams into PRD.md."""
 import os, re, sys, glob
 
-REPO = "/Users/adityasingh/PersonalWork/HRMS"
+REPO = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # repo root, derived from this file
 SECT = os.path.join(REPO, "prd_build", "sections")
 DIAG = os.path.join(REPO, "prd_build", "diagrams")
 IMG = os.path.join(REPO, "images")

@@ -5,7 +5,7 @@ import { JSDOM } from 'jsdom';
 const dom = new JSDOM('<!doctype html><html><body></body></html>', { pretendToBeVisual: true });
 globalThis.window = dom.window; globalThis.document = dom.window.document;
 globalThis.DOMParser = dom.window.DOMParser; globalThis.Element = dom.window.Element; globalThis.HTMLElement = dom.window.HTMLElement;
-const m = await import('/Users/adityasingh/.bun/install/cache/mermaid@11.12.0@@@1/dist/mermaid.esm.min.mjs');
+const m = await import('mermaid');  // resolved from prd_build/tools/node_modules (pnpm install)
 const mermaid = m.default; mermaid.initialize({ startOnLoad: false });
 const files = [];
 for (const a of process.argv.slice(2)) {

@@ -1,1 +1,1 @@
-{"name":"prd-tools","private":true,"type":"module","dependencies":{"jsdom":"^30.0.1"}}
+{"name":"prd-tools","private":true,"type":"module","dependencies":{"jsdom":"^30.0.1","mermaid":"11.12.0"}}

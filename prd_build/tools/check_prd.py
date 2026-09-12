@@ -7,7 +7,7 @@ placeholders all resolve. Exit 0 when there are no hard failures.
 """
 import re, sys, os, collections
 
-REPO = "/Users/adityasingh/PersonalWork/HRMS"
+REPO = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))  # repo root, derived from this file
 PRD = os.path.join(REPO, "PRD.md")
 SECT = os.path.join(REPO, "prd_build", "sections")
 DIAG = os.path.join(REPO, "prd_build", "diagrams")
